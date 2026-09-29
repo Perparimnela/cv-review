@@ -26,9 +26,9 @@
 
 | | Artifact | Hash (md5) | Bytes | Date |
 |---|---|---|---|---|
-| **PRODUCTION** | `index.html` | `d2b8a938d07fed51fafbb7cfc7056407` | 1,307,116 | 2026-09-29 |
-| **Release snapshot** | `537.html` | `d2b8a938d07fed51fafbb7cfc7056407` | 1,307,116 | 2026-09-29 |
-| **Rollback point** | `index.html.bak-pre-v537-20260929-151453` | `c418ef742351001fc5dbe5ef0883d6dd` (V531) | 1,296,038 | 2026-09-29 |
+| **PRODUCTION** | `index.html` | `929e8b2c48fece0eaae6b94dd27843a8` | 1,309,320 | 2026-09-29 |
+| **Release snapshot** | `542.html` | `929e8b2c48fece0eaae6b94dd27843a8` | 1,309,320 | 2026-09-29 |
+| **Rollback point** | `index.html.bak-pre-v542-20260929-171732` | `d2b8a938d07fed51fafbb7cfc7056407` (V537) | 1,307,116 | 2026-09-29 |
 
 > ### ⚠️ The rollback point is a Release Snapshot, not a backup — corrected 2026-08-29
 >
@@ -54,15 +54,107 @@ artifact, tracked separately, and it changes nothing here: **identity is the has
 CVQualify apparatus `VERSION` = **V482s** (unchanged — ADR-031 is a product change and must not bump
 the apparatus; see "Two versions" below).
 
-**V537 is the reference point for every future audit.** A future delta-audit compares against
-`d2b8a938`. (V531 = `c418ef74` is the rollback target; V529 = `924e655c` is two back.)
+**V542 is the reference point for every future audit.** A future delta-audit compares against
+`929e8b2c`. (V537 = `d2b8a938` is the rollback target; V531 = `c418ef74` is two back.)
 
-`window.CV.build` reports **`V537`** in production — measured from the artifact. Since V509 the label
+`window.CV.build` reports **`V542`** in production — measured from the artifact. Since V509 the label
 is bumped with every version, which is why it can be trusted again; **identity is still the hash.**
 
 ```bash
-cp "index.html.bak-pre-v537-20260929-151453" "index.html"
+cp "index.html.bak-pre-v542-20260929-171732" "index.html"
 ```
+
+## Public mirror (`cv-review`) — anonymised, regenerated after every promotion
+
+**Owner's decision (2026-09-30).** The public repository `cv-review` stays as a live, anonymised mirror of this private project. It serves two purposes:
+- external critical review, for example by ChatGPT;
+- a permanent HTTPS test target through GitHub Pages.
+
+The owner chose that it is **updated after every production release** and carries the **application and the documents**.
+
+**Private side:**
+- `tools/public_copy.py` builds the copy.
+- `tools/private-tokens.json` holds the real values and their fictitious replacements. It is never published. **When a new personal datum enters the project, add it there.**
+
+**Procedure, after each promotion:**
+1. Run `python3 tools/public_copy.py`. It anonymises `index.html` (production) and the documents, including `\uXXXX` forms, into `~/Desktop/CV-review-public`, and runs three checks:
+   - a known-token scan on the decoded text;
+   - a generic scan for e-mails other than `example.com`, phone numbers, ID formats and IBAN;
+   - `node --check` on every script.
+
+   On any finding it stops, moves the folder to the Trash and exits with code 1.
+2. A render check of the anonymised application on the isolated origin, with a temporary copy that is moved to the Trash afterwards.
+3. **The owner uploads the folder's files** through GitHub (Add file → Upload files; files with the same name are replaced). Publishing from this session is blocked by the auto-mode safety classifier ("Data Exfiltration"), and that is not worked around.
+4. From outside, the raw public files are checked to be byte-identical to the package, the leak scan is repeated on them, and GitHub Pages is checked to be live.
+
+**Identity.** The public `index.html` differs from the release by design. `PUBLIC_COPY.md` records the private → public md5 so that a reviewer does not mistake the difference for drift (compare the 36-byte question of the review's second pass). The release identity remains the private hash.
+
+**Hard rules:**
+- Never upload anything from the project folder.
+- If a leak ever reaches the public repository, delete the repository and recreate it, because its history keeps everything.
+
+## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30)
+
+> Added after the external review (point 9). The phrase "device gate passed" had read broader than the evidence behind it. This table is what each capability has actually been exercised on.
+>
+> **Key:**
+> - ✅ exercised and observed;
+> - 🟡 exercised indirectly (the owner loaded that version and reported "everything works", without an item-by-item check);
+> - ⬜ not exercised;
+> - — not applicable.
+>
+> **Environments:**
+> - **Mac:** the Claude Browser pane (Chromium), on the isolated test origin.
+> - **Sim:** the iOS Simulator, iPhone 17 unless stated.
+> - **iPhone:** the owner's phone, over `http://<LAN-IP>`.
+> - **HTTPS:** any real device over HTTPS.
+
+| Capability | Mac | Sim | iPhone | HTTPS |
+|---|---|---|---|---|
+| Desktop layout on a phone from the first paint (V534) | — | ✅ throttled A/B | ✅ owner's screenshot after V534 | ⬜ |
+| Loading curtain, complete page at once (V536/V540/V541) | ✅ instrumented (normal / no signal / start-up error) | ✅ throttled at 130 and 40 KB/s, dark and light designs | 🟡 V536 only; V540/V541 not yet on the phone | ⬜ |
+| Notifications follow the flag (V530) | ✅ | ✅ | ✅ owner, sq and de | ⬜ |
+| Export sheet follows the flag (V533) | ✅ sq/en/de | ✅ de and sq at phone width | 🟡 inside the V536 package | ⬜ |
+| Reset keeps the language (V535) | ✅ 8-row matrix, all pass | ⬜ | ⬜ | ⬜ |
+| Silent notifications now shown (V532) | ✅ photo toolbar; failing export | ⬜ | ⬜ | ⬜ |
+| PDF generation | ✅ | ✅ 1.1 MB | ✅ throughout the series | ⬜ |
+| Download fallback without Web Share | ✅ | — | ✅ (V510) | — |
+| Web Share API with files (`navigator.share`) | — | ✅ over `localhost`, which is a secure context | ⬜ LAN HTTP is not a secure context, so the download fallback is used | ✅ **owner's iPhone, 2026-09-30**, over GitHub Pages |
+| Native share sheet and its targets (Save to Files …) | — | ✅ sheet opens (target not completed) | ⬜ | ✅ **owner's iPhone, 2026-09-30:** the sheet opened and the PDF was saved to Files |
+| Rotation portrait ↔ landscape | — | ⬜ cannot be automated here (macOS Accessibility permission is not granted and was not changed) | ✅ **owner's iPhone, 2026-09-30**: "perfekt" | ✅ same test, on the HTTPS copy |
+| Screen sizes | ✅ desktop | ✅ iPhone 17e, 17, 17 Pro Max, iPad mini (phone rule, 1200 px), iPad Pro 13" (device-width); all complete | ✅ owner's iPhone | ⬜ |
+
+**HTTPS share, verified on the real iPhone (2026-09-30).**
+- The owner enabled GitHub Pages on the public, anonymised review copy: `https://<owner>.github.io/cv-review/`, served with HSTS.
+- Before the test we checked:
+  - Pages serves the repository file byte-identical;
+  - the served page contains no personal data, only "Max Mustermann".
+- On the iPhone, in Safari, the owner went through preview → download → "Paket teilen", which showed "Wird vorbereitet…", and then "Paket teilen" again. Apple's share sheet opened and the PDF was saved to Files. The owner reported that it works.
+- The copy is V537. The share path is byte-identical in V542: `ssCanShareFiles`, `ssHandleAction`, `ssPrepareShareFiles`, the four `navigator.share` calls and `ModeHandler.deliver` were compared. So the result holds for production.
+- The public repository is to be deleted by the owner now that the test is done.
+- **Rotation, same day:** the owner rotated the iPhone on the same HTTPS copy and reported the layout "perfekt".
+  The rotation-relevant code is byte-identical in V537 and V542: the head's `__cvIsPhoneViewport` decision, `isPhoneDevice`/`updateViewportForMode` and the `onOrientationChange` handler were compared.
+- **With this, every row of the matrix that concerns the real phone's share and layout behaviour is closed.**
+
+**The external review's second pass (2026-09-30).** The reviewer read the *public anonymised* copy `cv-review`, not the private repository, and flagged its `index.html` as 36 bytes larger than V537's recorded 1,307,116. That difference is fully explained:
+- The public file is exactly `537.html` plus the anonymisation.
+- Reproducing it from `537.html` with the same replacement rules gives a byte-identical file (md5 `193a6a5b…`, 1,307,152 bytes).
+- The per-replacement size changes add up to exactly +36: for example "Musterstadt" → "Musterstadt" 13 × +3, the phone number 6 × −2, `~` → `~` −12, and so on.
+
+V537's identity (`d2b8a938…`) is untouched: `537.html` and its rollback backup are still in the private repository, since the cleanup removed only sandbox iterations. Production is V542.
+
+**Language persistence matrix (review point 5), sandbox V541, isolated origin: 8 of 8 pass.** State, `currentLang` and `cv_language` agreed in every row:
+
+| Start | Action | Expected | Result |
+|---|---|---|---|
+| sq | Reset | sq | ✅ sq |
+| en | Reset | en | ✅ en |
+| de | Reset | de | ✅ de |
+| sq | Reset → reload | sq | ✅ sq |
+| sq | Reset → close the tab → open a new tab | sq | ✅ sq |
+| sq | Reset → four real saves (design cycled round) → reload | sq | ✅ sq |
+| no stored state, `cv_language=sq` | start | sq | ✅ sq |
+| no stored state, no preference | start | de | ✅ de |
 
 > **Cleanup, 2026-09-29.** The sandbox snapshots (`510`–`536`, except the promoted `520`, `529` and `531`) and the sandbox backups named in the records below were moved to the Trash on the owner's instruction (Neni 6.5). At the owner's request they were also purged from the git history (a force-pushed rewrite), so they exist only in the Trash. The details are in `BACKUP_INDEX.md` → *Cleanup (2026-09-29)*.
 
@@ -492,7 +584,101 @@ The last two are taken here, one cause per version.
   - 28 scripts pass `node --check`; 0 NUL bytes.
   - The two test variants were moved to the Trash.
 
-### Release record — V537 (2026-09-29) — five sandbox fixes, promoted as one
+#### Sandbox ahead of production — V538–V541 (2026-09-29) — the external review — CLOSED by the V542 promotion
+
+**Closed on 2026-09-29:** `index-test.html` = `index.html` = `542.html`.
+
+Production was V537 (`d2b8a938…`). The owner had an external review made of V537, by ChatGPT, on an anonymised public copy. The owner then asked for all of its points, and of our answer to it, to be carried out ("po beji te gjitha").
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V538 | `538.html` | `c68ab10f97f79ae20ee847d16e4c7e30` | 1,307,404 | `index-test.html.bak-pre-v538-20260929-164057` (= V537, `d2b8a938…`) |
+| V539 | `539.html` | `aad7bd696bbec2d67890be7edae6be93` | 1,307,628 | `index-test.html.bak-pre-v539-20260929-164153` (= V538, `c68ab10f…`) |
+| V540 | `540.html` | `c070fc34e3a23fe9d9bef4e2c9dff3f8` | 1,308,667 | `index-test.html.bak-pre-v540-20260929-164355` (= V539, `aad7bd69…`) |
+| V541 | `541.html` | `ce767087360d2e5e5c45ef50e4d537ac` | 1,309,212 | `index-test.html.bak-pre-v541-20260929-164758` (= V540, `c070fc34…`) |
+
+**V538 — the boot curtain loses its only `!important`.**
+- **Found in our own answer to the review (the review itself missed it):** V536's `html.cv-loading[data-cv-boot="light"]{background:#e0e5ec!important}` is a patch under Neni 8.2c. It existed to beat `@media (max-width:820px){html,body{background:#05050e!important}}`.
+- **Why it is unnecessary:** since V534 phones lay out at 1200 px, so that media query no longer matches on a phone. On the desktop the `::before` curtain covers the whole viewport anyway.
+- **Fix:** the `!important` is removed, with the reason in a comment.
+- **Verified:** with a throttled load in the iOS Simulator, the Neumorphic origin shows the light curtain from top to bottom (`rgb(224,229,236)` at the status bar, the middle and the toolbar band), exactly as with the `!important`.
+
+**V539 — no static text in the notification element.**
+- **Finding (review point 2b):** `#autosaveMessage` carried the static Albanian placeholder "Autosave u krye me sukses". It is never displayed, because `Utils.showNotification` sets the text from `TRANSLATIONS[lang].msg` before showing it, and the element is off-screen otherwise. Still, it sat outside the translation contract.
+- **Fix:** the span is empty, with a Neni 23 comment in its place.
+- **Verified:** the element starts empty; the leave-preview notification then reads "Bearbeitungsmodus aktiv" (flag de). Between notifications the box sits off-screen (left 1206 px, window width 1189 px). No console errors.
+
+**V540 — the application itself signals "boot ready" to the curtain.**
+- **Finding (review point 3B):** V536 lifted the curtain on the browser's `load` event. `load` means the document and its subresources have finished, not that the application has. A future asynchronous initialisation could have been revealed half-built.
+- **Fix:**
+  - The head script now also exposes `window.__cvBootReady()`. The application calls it as the last statement of its start-up block (the `DOMContentLoaded` initialiser).
+  - The curtain lifts only when **both** the app has signalled and `load` has fired, plus two frames.
+  - If start-up throws, its `catch` reveals at once, so that the error notification is seen instead of a curtain.
+  - If the signal never comes, the page is revealed 3 s after `load`. The absolute 20 s limit stays.
+- **Verified, instrumented test copies in the isolated origin (a MutationObserver timed the reveal, and the copies were then moved to the Trash):**
+  - A, normal: revealed after `load`, with 16 contacts and 7 terminals.
+  - B, no ready signal: revealed only by the fallback, after `load` + 3 s.
+  - C, start-up throws: revealed at 77 ms, before `load`, showing "Fehler beim Starten der Anwendung. Bitte lade die Seite neu."
+  - The pane was hidden during these runs, so the browser throttled its timers. Absolute times are inflated (A 0.5 s, B 3.9 s); the ordering is what is verified.
+  - iOS Simulator, throttled load, Neumorphic: frames at 3 s and 6 s show only the light curtain and spinner, and the complete page follows at once.
+  - 28 scripts pass `node --check`.
+
+**V541 — the 20 s safety starts once the document is downloaded.**
+- **Finding (review point 3A, measured):** a second throttled server (~40 KB/s, `127.0.0.1` only) made the page take ~35 s to arrive. With V540 in the iOS Simulator:
+  - 15 s: the curtain;
+  - **22 s: a half-built page** (Terminal 1's frame and photo, the next header), because the 20 s safety had fired while the HTML was still downloading;
+  - 38 s: the complete page.
+
+  That is exactly the state the curtain exists to hide.
+- **Fix:** the 20 s timer now starts at `DOMContentLoaded`, when the whole document has arrived and start-up runs. A slow download therefore stays under the curtain, and the 20 s only guard against a start-up that hangs. A new absolute 60 s limit guards against a download that stalls completely.
+- **Verified, same very slow load:** 15, 22 and 30 s show only the curtain and spinner; at 42 s the complete page appears at once. 28 scripts pass `node --check`.
+
+### Release record — V542 (2026-09-29) — four atomic changes, one release transaction
+
+**Promoted on the owner's explicit instruction** ("promovoje"). The transaction carries the four atomic changes that followed the
+external review, V538–V541. V542 is V541 plus the build label only; a byte comparison confirmed that nothing else differs.
+
+**What it carries, V537 → V542**
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V538 | The boot curtain loses its only `!important` (Neni 8.2c) | UI, all platforms | none |
+| V539 | No static text in the notification element | UI | none |
+| V540 | The app signals boot-ready; a start-up error reveals at once; fallbacks at load + 3 s and 20 s | Functional, start-up | none |
+| V541 | The 20 s safety starts at `DOMContentLoaded`; absolute 60 s | Functional, start-up | none |
+
+**Device gate (Neni 72) — stated as it is: NOT exercised on the owner's phone.**
+- The server log shows V541 opened only from the Mac (`192.168.1.138`, 17:16:25), not from the phone.
+- GitHub Pages was not enabled, so the HTTPS test did not happen.
+- All four changes were verified on the Mac (the isolated origin, including instrumented test copies) and in the iOS Simulator: throttled loads at 130 and 40 KB/s, dark and light designs, and five screen sizes.
+- The owner authorised promotion with the gate open, as with V501, V507, V509 and V520.
+- The device coverage matrix above records the state. **Update 2026-09-30:** the HTTPS share path was then verified on the owner's iPhone, through the anonymised copy on GitHub Pages, with share code byte-identical to V542.
+
+**Backups.** Production: `index.html.bak-pre-v542-20260929-171732` (= V537, `d2b8a938…`), hash-verified before the copy and again
+after it. Sandbox: `index-test.html.bak-pre-v542-20260929-171732` (= V541, `ce767087…`). After the copy
+`md5 -q index.html index-test.html 542.html | sort -u | wc -l` printed 1.
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `window.CV.build` | `V542` |
+| Boot curtain after load | removed; `__cvBootReady` present |
+| `window.Utils === Utils` · viewport on the Mac | true · `device-width` |
+| `#autosaveMessage` at start | empty |
+| Title centre / header centre | 595 / 595 |
+| Contact items · terminals | 16 · 7 |
+| Flag sq → Reset Default | stays `sq`; "Të gjitha pozicionet u rivendosën në default!" |
+| JavaScript errors | none |
+| iOS Simulator, production URL | Share Package → 1.1 MB PDF, share sheet opened |
+
+```bash
+cp "index.html.bak-pre-v542-20260929-171732" "index.html"
+```
+
+### Release record — V537 (2026-09-29) — five atomic changes, one release transaction
+
+> **Terminology (external review, point 6).** V537 is **one release transaction carrying five atomic changes** (V532–V536).
+> It is not one change: each atomic change keeps its own cause, fix, backup, snapshot and verification in the sandbox record above.
+> The same reading applies to V520 (V510–V519) and V529 (V521–V528).
 
 **Promoted on the owner's explicit instruction** ("cdo gje ne rregull, promovoji te gjith sandboxet"), carrying
 V532–V536 at once. V537 is V536 plus the build label only (`CV.build = 'V537'` and its comment-chain entry).
@@ -1494,6 +1680,9 @@ same discipline that governs the audit itself — see the two habits below.
 
 ## The Release Checklist
 
+> **Terms.** An *atomic change* is one sandbox version with one cause (Neni 20). A *release transaction* is one promotion. It may carry
+> several atomic changes, and its record lists them. A record never calls a transaction "a change".
+
 ```
 □ 1. Artifacts identified BY HASH
 □ 2. Backup created AND verified
@@ -1503,6 +1692,7 @@ same discipline that governs the audit itself — see the two habits below.
 □ 6. Rollback point confirmed
 □ 7. Documentation updated
 □ 8. Baseline recorded (hash + date — this file)
+□ 9. Public mirror regenerated and verified (tools/public_copy.py → owner uploads → external check)
 ```
 
 ### 1 · Artifacts identified by hash

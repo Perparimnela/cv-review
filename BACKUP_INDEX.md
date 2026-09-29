@@ -13,6 +13,77 @@ edits is gone. Every capability and every decision the project holds today is no
 
 ---
 
+## Manifest — what the folder holds now (2026-09-29)
+
+> A lean inventory, added after the external review (point 8). It is generated from the files themselves and their hashes. The narrative sections below remain the forensic history; this table is the operational list. Roles: **production** (live), **sandbox** (work in progress), **release snapshot** (immutable, Neni 6.5), **rollback** (production backup taken before a promotion, immutable), **sandbox iteration** (may be cleared by the owner, Neni 6.5).
+
+| File | Holds | md5 | Role |
+|---|---|---|---|
+| `index.html` | V542 | `929e8b2c` | production |
+| `index-test.html` | V542 | `929e8b2c` | sandbox (= production) |
+| `486.html` | V486 | `b2c238c6` | release snapshot |
+| `487.html` | V487 | `d0962600` | release snapshot |
+| `488.html` | V488 | `deaeb3b1` | release snapshot |
+| `489.html` | V489 | `acfe9627` | release snapshot |
+| `490.html` | V490 | `b4143279` | release snapshot |
+| `491.html` | V491 | `a71de5fa` | release snapshot |
+| `492.html` | V492 | `56b0c307` | release snapshot |
+| `493.html` | V493 | `e8f9c29d` | release snapshot |
+| `494.html` | V494 | `ddce3d51` | release snapshot |
+| `495.html` | V495 | `b30c2599` | release snapshot |
+| `496.html` | V496 | `d331a41d` | release snapshot |
+| `497.html` | V497 | `53421f19` | release snapshot |
+| `498.html` | V498 | `ad23162d` | release snapshot |
+| `501.html` | V501 | `5267701c` | release snapshot |
+| `504.html` | V504 | `57c9dd4f` | snapshot of the pre-V507 series (release status not documented; kept) |
+| `505.html` | V505 | `43b865d1` | snapshot of the pre-V507 series (release status not documented; kept) |
+| `506.html` | V506 | `e19b4850` | snapshot of the pre-V507 series (release status not documented; kept) |
+| `507.html` | V507 | `ac22bc52` | release snapshot |
+| `509.html` | V509 | `660bc50b` | release snapshot |
+| `520.html` | V520 | `d02b3b39` | release snapshot |
+| `529.html` | V529 | `924e655c` | release snapshot |
+| `531.html` | V531 | `c418ef74` | release snapshot |
+| `537.html` | V537 | `d2b8a938` | release snapshot |
+| `538.html` | V538 | `c68ab10f` | sandbox iteration |
+| `539.html` | V539 | `aad7bd69` | sandbox iteration |
+| `540.html` | V540 | `c070fc34` | sandbox iteration |
+| `541.html` | V541 | `ce767087` | sandbox iteration |
+| `542.html` | V542 | `929e8b2c` | release snapshot |
+| `index.html.bak-pre-v482u` | V479 | `27e9d4cc` | rollback |
+| `index.html.bak-pre-v483` | V482u | `01f22f35` | rollback |
+| `index.html.bak-pre-v493-20260829-014817` | V492 | `56b0c307` | rollback |
+| `index.html.bak-pre-v494-20260829-020510` | V493 | `e8f9c29d` | rollback |
+| `index.html.bak-pre-v495-20260831-013719` | V494 | `ddce3d51` | rollback |
+| `index.html.bak-pre-v496-20260901-173224` | V495 | `b30c2599` | rollback |
+| `index.html.bak-pre-v497-20260902-011839` | V496 | `d331a41d` | rollback |
+| `index.html.bak-pre-v498-20260902-012633` | V497 | `53421f19` | rollback |
+| `index.html.bak-pre-v501-20260902-115235` | V498 | `ad23162d` | rollback |
+| `index.html.bak-pre-v507-20260911-000426` | V501 | `5267701c` | rollback |
+| `index.html.bak-pre-v509-20260911-001420` | V507 | `ac22bc52` | rollback |
+| `index.html.bak-pre-v520-20260927-172538` | V509 | `660bc50b` | rollback |
+| `index.html.bak-pre-v529-20260928-151109` | V520 | `d02b3b39` | rollback |
+| `index.html.bak-pre-v531-20260929-142927` | V529 | `924e655c` | rollback |
+| `index.html.bak-pre-v537-20260929-151453` | V531 | `c418ef74` | rollback |
+| `index.html.bak-pre-v542-20260929-171732` | V537 | `d2b8a938` | rollback — **operational** (one release back) |
+| `index.html.bak-v483-baseline` | V483 | `b2ece1ae` | rollback |
+| `index.html.bak-v484-baseline` | V484 | `6fc7d00a` | rollback |
+| `index.html.bak-v485-baseline` | V485 | `99e0f10d` | rollback |
+| `index-test.html.bak-pre-pilot-retire` | pilot implementation (see its section) | `a0aa5484` | unique — kept |
+| `index-test.html.bak-pre-v538-20260929-164057` | V537 | `d2b8a938` | sandbox iteration |
+| `index-test.html.bak-pre-v539-20260929-164153` | V538 | `c68ab10f` | sandbox iteration |
+| `index-test.html.bak-pre-v540-20260929-164355` | V539 | `aad7bd69` | sandbox iteration |
+| `index-test.html.bak-pre-v541-20260929-164758` | V540 | `c070fc34` | sandbox iteration |
+| `index-test.html.bak-pre-v542-20260929-171732` | V541 | `ce767087` | sandbox iteration |
+
+28 snapshots, 19 production backups, 6 sandbox backups. Verify any row with `md5 -q <file>`.
+
+---
+
+> **Sandbox deviation (named, 2026-09-29, after V537) — CLOSED the same day by the V542 promotion:**
+> `index-test.html` = `index.html` = `542.html` = V542 (`929e8b2c…`). The sandbox had run ahead as V538–V541.
+> Sandbox backups: `index-test.html.bak-pre-v538-20260929-164057` … `index-test.html.bak-pre-v541-20260929-164758`, and
+> `index-test.html.bak-pre-v542-20260929-171732` (= V541). The details are in `RELEASE_PROCESS.md` → *Release record — V542*.
+
 > **Cleanup (2026-09-29, on the owner's instruction, Neni 6.5) — 146 files, 148 MB moved to the macOS Trash.**
 > The folder went from 195 MB to 53 MB. Neni 6.5 lets the owner clear working copies and sandbox iterations.
 > The promoted artefacts it protects were left untouched:
@@ -99,6 +170,27 @@ edits is gone. Every capability and every decision the project holds today is no
 > | `index-test.html.bak-pre-v517-20260927-011716` | V516 (= `516.html`) | `3a0aa4a5…` |
 > | `index-test.html.bak-pre-v518-20260927-162722` | V517 (= `517.html`) | `1c254fef…` |
 > | `index-test.html.bak-pre-v519-20260927-164542` | V518 (= `518.html`) | `8c55cd79…` |
+
+## `index.html.bak-pre-v542-20260929-171732`
+
+| | |
+|---|---|
+| **Version** | V537 |
+| **Hash (md5)** | `d2b8a938d07fed51fafbb7cfc7056407` |
+| **Size** | 1,307,116 bytes |
+
+**Purpose.** **The operational rollback for V542**, promoted 2026-09-29. Hash-verified against the outgoing `index.html`
+immediately before the copy, and again after. It is the last production artifact in which:
+- the boot curtain carries an `!important`;
+- the notification element holds static text;
+- the curtain is lifted by the browser's `load` event rather than by the application;
+- the 20 s safety can fire in the middle of a slow download.
+
+Byte-identical to `537.html`.
+
+```bash
+cp "index.html.bak-pre-v542-20260929-171732" "index.html"
+```
 
 ## `index.html.bak-pre-v537-20260929-151453`
 
@@ -590,14 +682,14 @@ was written to stop without attempting automatic recovery.
 
 ## Restoring
 
-**Production is V537 (`d2b8a938…`). To roll back one release, to V531:**
+**Production is V542 (`929e8b2c…`). To roll back one release, to V537:**
 
 ```bash
-cp "index.html.bak-pre-v537-20260929-151453" "index.html"
+cp "index.html.bak-pre-v542-20260929-171732" "index.html"
 ```
 
-Two releases back, to V529: `cp "index.html.bak-pre-v531-20260929-142927" "index.html"`.
-Three back, to V520: `cp "index.html.bak-pre-v529-20260928-151109" "index.html"`.
+Two releases back, to V531: `cp "index.html.bak-pre-v537-20260929-151453" "index.html"`.
+Three back, to V529: `cp "index.html.bak-pre-v531-20260929-142927" "index.html"`.
 
 > **Corrected 2026-09-11 at the V507 promotion.** This line still read *"Production is V498 … roll
 > back to V497"* — it was not updated when V501 shipped on 2026-09-02, the exact drift the note
