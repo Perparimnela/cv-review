@@ -26,9 +26,9 @@
 
 | | Artifact | Hash (md5) | Bytes | Date |
 |---|---|---|---|---|
-| **PRODUCTION** | `index.html` | `929e8b2c48fece0eaae6b94dd27843a8` | 1,309,320 | 2026-09-29 |
-| **Release snapshot** | `542.html` | `929e8b2c48fece0eaae6b94dd27843a8` | 1,309,320 | 2026-09-29 |
-| **Rollback point** | `index.html.bak-pre-v542-20260929-171732` | `d2b8a938d07fed51fafbb7cfc7056407` (V537) | 1,307,116 | 2026-09-29 |
+| **PRODUCTION** | `index.html` | `e3a635dac72932243c1c9cb3a9200071` | 1,311,399 | 2026-09-30 |
+| **Release snapshot** | `546.html` | `e3a635dac72932243c1c9cb3a9200071` | 1,311,399 | 2026-09-30 |
+| **Rollback point** | `index.html.bak-pre-v546-20260930-113924` | `929e8b2c48fece0eaae6b94dd27843a8` (V542) | 1,309,320 | 2026-09-30 |
 
 > ### ⚠️ The rollback point is a Release Snapshot, not a backup — corrected 2026-08-29
 >
@@ -54,15 +54,76 @@ artifact, tracked separately, and it changes nothing here: **identity is the has
 CVQualify apparatus `VERSION` = **V482s** (unchanged — ADR-031 is a product change and must not bump
 the apparatus; see "Two versions" below).
 
-**V542 is the reference point for every future audit.** A future delta-audit compares against
-`929e8b2c`. (V537 = `d2b8a938` is the rollback target; V531 = `c418ef74` is two back.)
+**V546 is the reference point for every future audit.** A future delta-audit compares against
+`e3a635da`. (V542 = `929e8b2c` is the rollback target; V537 = `d2b8a938` is two back.)
 
-`window.CV.build` reports **`V542`** in production — measured from the artifact. Since V509 the label
+`window.CV.build` reports **`V546`** in production — measured from the artifact. Since V509 the label
 is bumped with every version, which is why it can be trusted again; **identity is still the hash.**
 
 ```bash
-cp "index.html.bak-pre-v542-20260929-171732" "index.html"
+cp "index.html.bak-pre-v546-20260930-113924" "index.html"
 ```
+
+## Quality gate (`tools/verify.py`) and observatory (`tools/observatory.js`)
+
+Added 2026-09-30 on the owner's instruction, following the external review. **Every critical invariant is checked by a tool, not by memory.** Both tools live outside the application: nothing diagnostic ships in the product (Neni 46).
+
+**`python3 tools/verify.py [--file X] [--release]`** checks the artefact statically and prints PASS / WARN / FAIL, ending in `RELEASE CANDIDATE: YES|NO`. It exits with code 1 on any FAIL, and **a FAIL blocks promotion.**
+- **Identity:** a single `CV.build` label; md5 and size; the snapshot named by the label is byte-identical.
+- **Hygiene:** no NUL bytes; `node --check` passes on every script.
+- **Static DOM:** unique ids, checked separately for the main document and the iframe template.
+- **i18n:**
+  - de, en and sq have identical `msg` and `ui` key sets;
+  - every key is referenced in the code (WARN otherwise);
+  - no notification is called with hard-coded text.
+- **Architectural contracts:** one authority per concept, checked on the code with comments removed:
+  - `window.Utils=Utils` once (V532);
+  - one viewport authority, with `isPhoneDevice` delegating to it (V534);
+  - the static 1200 viewport kept for Quick Look;
+  - boot-curtain CSS without `!important` (V538);
+  - the boot-ready gate defined and signalled once (V540);
+  - curtain safety at 20 s after `DOMContentLoaded`, 60 s absolute (V541);
+  - `withLanguage` at its three sites (V535);
+  - an empty `#autosaveMessage` (V539);
+  - no ghost modal (V525);
+  - SRI on the 3 libraries (V524).
+- **`--release`:**
+  - the `RELEASE_PROCESS.md` baseline equals the production md5;
+  - every md5 in the `BACKUP_INDEX.md` manifest matches its file (this catches the stale-baseline defect class);
+  - production is compared with the sandbox.
+
+**Observatory:** on the isolated origin, run `(0,eval)(await (await fetch('/tools/observatory.js')).text())`. It waits for boot and reads, without changing anything:
+- DOM counts and live duplicate ids, in the page and in the frame;
+- the three language sources (state, `currentLang`, `cv_language`) and whether they agree;
+- the viewport decision and layout mode;
+- the boot curtain, the ready gate and navigation timings;
+- `window.Utils`, the notification placeholder and Web Share availability;
+- i18n completeness per language.
+
+It returns `{text, data, problems}`, and `problems` must be empty.
+
+**Golden evidence (`tools/golden.mjs` + `tools/golden_compare.py`)** covers the visual side. It captures the *export* rather than the screen, because the screen has moving glow effects and the export is what an employer receives.
+- **Capture:** headless Chrome on a temporary profile, a fresh browser context per case, and a local static server on `127.0.0.1` only.
+- **Cases:** six, Classic / Modern / B&W / Neumorphic in de, plus Classic in en and in sq. Each is captured with "Save as Image" and stored at 600 px width.
+- **Comparison:** against `tools/golden/baseline/`. A pixel counts as different beyond a tolerance of 24 per channel, and a case fails above **0.02 %** of its pixels or on any size change. Each failure writes a diff map.
+- **Determinism:** two independent captures of the same version differ by **0.000 %**.
+- **Threshold, set by a negative test:**
+  - The first threshold, 0.5 %, let the notification-in-export regression (0.19–0.38 %) pass unnoticed. It was tightened to 0.02 %.
+  - At 0.02 % the same regression fails in exactly the 4 affected cases.
+- **Baseline:** accepted from V543. After a deliberate, approved visual change, run `--accept`.
+- The baseline images show the real CV and stay in this private repository. The public mirror copies only the listed documents.
+
+**Proven to catch real defects (negative tests, 2026-09-30):**
+- A copy with four planted defects gave `RELEASE CANDIDATE: NO`, with **4 FAIL**:
+  - an `!important` in the curtain;
+  - a duplicate id;
+  - a missing sq key;
+  - a hard-coded notification.
+- The observatory reported a planted language-source disagreement.
+
+**Baseline on V542:** `verify.py --release` → PASS 28, WARN 1 (`ui.langChanged` is no longer referenced, a dead key left from the removed language-change notification), FAIL 0 → **YES**. Observatory → `PROBLEMS: none`.
+
+**On V546 (production, 2026-09-30):** the same → **YES**; observatory `PROBLEMS: none`; golden 0.000 % in all six cases.
 
 ## Public mirror (`cv-review`) — anonymised, regenerated after every promotion
 
@@ -93,7 +154,11 @@ The owner chose that it is **updated after every production release** and carrie
 - Never upload anything from the project folder.
 - If a leak ever reaches the public repository, delete the repository and recreate it, because its history keeps everything.
 
-## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30)
+| Mirror sync | Release | Public `index.html` md5 | Verified |
+|---|---|---|---|
+| 2026-09-30 | V542 (`929e8b2c…`) | `d952a89f…` | all 7 public files byte-identical to the package; leak scan clean; Pages serving V542 |
+
+## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V546 since 2026-09-30)
 
 > Added after the external review (point 9). The phrase "device gate passed" had read broader than the evidence behind it. This table is what each capability has actually been exercised on.
 >
@@ -123,6 +188,8 @@ The owner chose that it is **updated after every production release** and carrie
 | Native share sheet and its targets (Save to Files …) | — | ✅ sheet opens (target not completed) | ⬜ | ✅ **owner's iPhone, 2026-09-30:** the sheet opened and the PDF was saved to Files |
 | Rotation portrait ↔ landscape | — | ⬜ cannot be automated here (macOS Accessibility permission is not granted and was not changed) | ✅ **owner's iPhone, 2026-09-30**: "perfekt" | ✅ same test, on the HTTPS copy |
 | Screen sizes | ✅ desktop | ✅ iPhone 17e, 17, 17 Pro Max, iPad mini (phone rule, 1200 px), iPad Pro 13" (device-width); all complete | ✅ owner's iPhone | ⬜ |
+| No notification inside an export (V543) | ✅ golden: 0 green-toast pixels in six cases | ✅ Share Package PDF | ✅ owner, V544: flag switched, PDF saved to Files, no notification inside | ⬜ |
+| Hidden notification fully off-screen (V545) | ✅ observatory geometry | ✅ top-right crop clean (V544 showed the sliver) | ✅ owner, V545: "po eshte ne rregull tani" | ⬜ |
 
 **HTTPS share, verified on the real iPhone (2026-09-30).**
 - The owner enabled GitHub Pages on the public, anonymised review copy: `https://<owner>.github.io/cv-review/`, served with HSTS.
@@ -141,7 +208,7 @@ The owner chose that it is **updated after every production release** and carrie
 - Reproducing it from `537.html` with the same replacement rules gives a byte-identical file (md5 `193a6a5b…`, 1,307,152 bytes).
 - The per-replacement size changes add up to exactly +36: for example "Musterstadt" → "Musterstadt" 13 × +3, the phone number 6 × −2, `~` → `~` −12, and so on.
 
-V537's identity (`d2b8a938…`) is untouched: `537.html` and its rollback backup are still in the private repository, since the cleanup removed only sandbox iterations. Production is V542.
+V537's identity (`d2b8a938…`) is untouched: `537.html` and its rollback backup are still in the private repository, since the cleanup removed only sandbox iterations. Production is V546 (since 2026-09-30).
 
 **Language persistence matrix (review point 5), sandbox V541, isolated origin: 8 of 8 pass.** State, `currentLang` and `cv_language` agreed in every row:
 
@@ -632,6 +699,101 @@ Production was V537 (`d2b8a938…`). The owner had an external review made of V5
   That is exactly the state the curtain exists to hide.
 - **Fix:** the 20 s timer now starts at `DOMContentLoaded`, when the whole document has arrived and start-up runs. A slow download therefore stays under the curtain, and the 20 s only guard against a start-up that hangs. A new absolute 60 s limit guards against a download that stalls completely.
 - **Verified, same very slow load:** 15, 22 and 30 s show only the curtain and spinner; at 42 s the complete page appears at once. 28 scripts pass `node --check`.
+
+#### Sandbox ahead of production — V543–V545 (2026-09-30) — CLOSED by the V546 promotion
+
+**Closed on 2026-09-30:** `index-test.html` = `index.html` = `546.html`.
+
+Production was V542 (`929e8b2c…`).
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V543 | `543.html` | `aca3eb6bd7a9dc968f0073437861c88d` | 1,310,039 | `index-test.html.bak-pre-v543-20260930-005650` (= V542, `929e8b2c…`) |
+| V544 | `544.html` | `e4605753ade67bc19e9d442a8cff76e6` | 1,311,029 | `index-test.html.bak-pre-v544-20260930-010634` (= V543, `aca3eb6b…`) |
+| V545 | `545.html` | `841494e635f42fa0fd119f6c414e21c8` | 1,311,291 | `index-test.html.bak-pre-v545-20260930-113321` (= V544, `e4605753…`) |
+
+**V543 — transient UI never enters an export.**
+- **Found by the new golden tests** (`tools/golden.mjs`), not by a report. The exported image contained the iframe notification "CV Creator erfolgreich gestartet!".
+- **Cause:** the export clone is built from the live HTML of the page and the iframe. A notification that is visible at that moment (`#notification` in the iframe, `#autosaveNotification` in the page), or the overlay of an earlier "Save as Image" (`#cvImgSaveOverlay`), was baked into the image or PDF. A user exporting within about 2 s of any notification (undo, save, start-up) would send it to an employer inside the document.
+- **Fix at the root:** `prepareForCapture(d)`, the single place for clone mutations before capture, removes those three elements from the clone. The live page is untouched.
+- **Verified:**
+  - Green-toast pixels in the top-right region of the six golden exports:
+    - V542: 2463 / 1282 / 0 / 0 / 1283 / 1283 (timing-dependent, 4 of 6 affected);
+    - **V543: 0 in all six.**
+  - The golden comparison of V542 against the V543 baseline FAILs exactly those 4 cases.
+  - iOS Simulator Share Package: 1.1 MB PDF, share sheet opened.
+  - `verify.py`: YES.
+
+**V544 — build and date in the PDF properties.**
+- **Proposal from the external review, approved by the owner.** It records which version produced a given PDF, as a lighter alternative to a `manifest.json` in the package, which the employer would have received.
+- **Fix:** `PdfPipeline.stampProperties(pdf, config)` is one helper, called by both PDF builders (`canvasToPdf` for CV and letter, `renderDocToA4Pdf` for the certificate). It writes the document's own title as Title and Subject, `Ultra Instinct CV <build>` as Creator, and `build <build>; generated <ISO time>` as Keywords. **The person's name is not added.** Nothing appears on the page.
+- **Verified:**
+  - Headless Chrome, with the PDF blobs captured before download:
+    - CV: Title "Lebenslauf", Creator "Ultra Instinct CV V544", Keywords "build V544; generated 2026-09-29T23:07:07Z";
+    - certificate: 2 pages, Title "VËRTETIM PUNE" (written as byte `0xCB`, which is "Ë" in PDFDocEncoding).
+  - Golden comparison: 0.000 % in all six cases.
+  - `verify.py`: YES.
+  - iOS Simulator Share Package: 1.1 MB PDF.
+
+**V545 — the hidden notification box is fully off-screen at any width (a regression from V539).**
+- **Reported by the owner on the iPhone (sandbox V544):** "a mark at the top right that looks like one of the notifications".
+- **Cause — introduced by V539:**
+  - `.autosave-notification` hid itself with `transform:translateX(120%)`, a shift relative to its *own* width, from `right:20px`. The box is fully hidden only when 0.2 × width > 20 px, that is when it is wider than 100 px.
+  - With the old placeholder text it was 259 px wide and hidden.
+  - V539 emptied the text, the empty box is 66 px wide, the shift is 79 px, and **7 px stayed visible** at the right edge until the first notification.
+- **Where it is:** in production since **V542**.
+- **Why nothing caught it:** `verify.py` is static, and the golden tests capture the export, where the box is `display:none`.
+- **Fix at the root:** the hidden state shifts by `calc(100% + 40px)`, its own width plus the 20 px offset plus the shadow, so it is hidden at any width. The shown state (`translateX(0)`) is unchanged.
+- **Observatory extended:** a hidden notification must lie fully outside the viewport.
+  - On V544 it reports "hidden notification shows 7 px at the right edge".
+  - On V545: none.
+- **Verified:**
+  - Geometry with transitions disabled in the test tab. Shown, the box sits inside with its right edge at viewport − 20. Hidden, its left edge is at viewport + 20, both for a 377 px box and for the empty 66 px one.
+  - iOS Simulator crop of the top-right corner: V544 shows the dark sliver with its cyan border; V545 is clean.
+  - Golden comparison: none.
+  - `verify.py`: YES.
+
+### Release record — V546 (2026-09-30) — three atomic changes, one release transaction
+
+**Promoted on the owner's explicit instruction** ("po eshte ne rregull tani"), given in answer to the question whether V545 could
+go to production. The transaction carries V543–V545. V546 is V545 plus the build label only; a byte comparison confirmed that
+nothing else differs.
+
+**What it carries, V542 → V546**
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V543 | Transient UI (notifications, an earlier image overlay) never enters an export | Functional, export | none |
+| V544 | Build and date in the PDF properties (Title, Subject, Creator, Keywords); no name added, nothing on the page | Functional, export | none |
+| V545 | The hidden notification box is fully off-screen at any width (fixes the 7 px sliver from V539, in production since V542) | UI | none |
+
+**Device gate (Neni 72) — exercised on the owner's iPhone, over the LAN (HTTP), stated as reported.**
+- **V544 (09:26–09:31):** the owner switched the flag, then went through preview → download → "Paket teilen", and an Apple
+  sheet with "Save to Files" opened. The owner saved the PDF and reported the PDFs fine, with no notification inside. The owner
+  then reported the mark at the top right, which became V545.
+- **V545:** the server log shows the phone (`192.168.1.107`) loading `index-test.html?v545` at 11:37:42. The owner then
+  confirmed "po eshte ne rregull tani".
+- This is the first promotion since V529 whose changes the owner looked at on the phone before the OK. The checks were the
+  owner's own, not an item-by-item matrix, so the device matrix records them as the owner's report.
+
+**Backups.** Production: `index.html.bak-pre-v546-20260930-113924` (= V542, `929e8b2c…`), hash-verified before the copy and again
+after it. Sandbox: `index-test.html.bak-pre-v546-20260930-113924` (= V545, `841494e6…`). After the copy
+`md5 -q index.html index-test.html 546.html | sort -u | wc -l` printed 1.
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `python3 tools/verify.py --file index.html` | PASS 25, WARN 1 (`ui.langChanged`), FAIL 0 → YES |
+| `python3 tools/verify.py --release` (after this record) | PASS 28, WARN 1, FAIL 0 → YES (baseline = production, 64 manifest rows match, production = sandbox) |
+| Observatory on production, isolated origin | `V546`, `PROBLEMS: none` (7 terminals, 16 contacts, 0 duplicate ids, sources agree, curtain off, i18n complete, hidden notification off-screen) |
+| Golden evidence on `index.html` | 0.000 % in all six cases → `VISUAL REGRESSION: NONE` |
+| iOS Simulator, production URL | page complete, top-right corner clean; preview → download → "Als Bild speichern" rendered the export |
+
+**Noted, not changed (known and recorded before):** the "Save as Image" overlay hint ("Shtyp gjatë mbi foton …") is Albanian in
+every language. It was listed as fixed-language by choice after V537; it is a candidate for a future sandbox version if the owner
+wants it to follow the flag.
+
+**Rollback:** production returns to V542 by copying `index.html.bak-pre-v546-20260930-113924` over `index.html` (the command is in
+*Current baseline* above).
 
 ### Release record — V542 (2026-09-29) — four atomic changes, one release transaction
 
@@ -1684,6 +1846,8 @@ same discipline that governs the audit itself — see the two habits below.
 > several atomic changes, and its record lists them. A record never calls a transaction "a change".
 
 ```
+□ 0. Quality gate: tools/verify.py → RELEASE CANDIDATE: YES (a FAIL blocks); observatory → PROBLEMS: none
+□ 0b. Golden evidence: node tools/golden.mjs → python3 tools/golden_compare.py → VISUAL REGRESSION: NONE (or an approved --accept)
 □ 1. Artifacts identified BY HASH
 □ 2. Backup created AND verified
 □ 3. Delta-audit completed
