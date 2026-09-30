@@ -26,9 +26,9 @@
 
 | | Artifact | Hash (md5) | Bytes | Date |
 |---|---|---|---|---|
-| **PRODUCTION** | `index.html` | `ba88f1ef186a52993719834109cdfa8a` | 1,319,906 | 2026-09-30 |
-| **Release snapshot** | `548.html` | `ba88f1ef186a52993719834109cdfa8a` | 1,319,906 | 2026-09-30 |
-| **Rollback point** | `index.html.bak-pre-v548-20260930-144638` | `e3a635dac72932243c1c9cb3a9200071` (V546) | 1,311,399 | 2026-09-30 |
+| **PRODUCTION** | `index.html` | `792082b887fa3e2c4cebd7a4f73443e6` | 1,324,414 | 2026-09-30 |
+| **Release snapshot** | `550.html` | `792082b887fa3e2c4cebd7a4f73443e6` | 1,324,414 | 2026-09-30 |
+| **Rollback point** | `index.html.bak-pre-v550-20260930-152856` | `ba88f1ef186a52993719834109cdfa8a` (V548) | 1,319,906 | 2026-09-30 |
 
 > ### ⚠️ The rollback point is a Release Snapshot, not a backup — corrected 2026-08-29
 >
@@ -54,14 +54,14 @@ artifact, tracked separately, and it changes nothing here: **identity is the has
 CVQualify apparatus `VERSION` = **V482s** (unchanged — ADR-031 is a product change and must not bump
 the apparatus; see "Two versions" below).
 
-**V548 is the reference point for every future audit.** A future delta-audit compares against
-`ba88f1ef`. (V546 = `e3a635da` is the rollback target; V542 = `929e8b2c` is two back.)
+**V550 is the reference point for every future audit.** A future delta-audit compares against
+`792082b8`. (V548 = `ba88f1ef` is the rollback target; V546 = `e3a635da` is two back.)
 
-`window.CV.build` reports **`V548`** in production — measured from the artifact. Since V509 the label
+`window.CV.build` reports **`V550`** in production — measured from the artifact. Since V509 the label
 is bumped with every version, which is why it can be trusted again; **identity is still the hash.**
 
 ```bash
-cp "index.html.bak-pre-v548-20260930-144638" "index.html"
+cp "index.html.bak-pre-v550-20260930-152856" "index.html"
 ```
 
 ## Quality gate (`tools/verify.py`) and observatory (`tools/observatory.js`)
@@ -127,6 +127,8 @@ It returns `{text, data, problems}`, and `problems` must be empty.
 
 **On V548 (production, 2026-09-30):** `verify.py` YES; observatory `PROBLEMS: none`; golden 0.000 %; `pdf_check` on desktop and phone: CV and letter PASS, VISUAL 9/9.
 
+**On V550 (production, 2026-09-30):** `verify.py` YES; observatory `PROBLEMS: none`; golden 0.000 %; `pdf_check` on desktop and phone: **ALL PASS**, 9/9 on every check.
+
 ### PDF evidence (`tools/pdf_export.mjs` + `tools/pdf_check.py`) — P0 of the third external review
 
 Added 2026-09-30. The third review (ChatGPT on V546) named "a PDF that looks right but cannot be read by an applicant-tracking system (ATS)" as the main functional gap. It could not read `index.html`, so the claim was measured here: **all three PDFs of production V546 contain 0 extractable characters.** They are images only; the code has just two `addImage` calls and no text call. The CV is also a single page of 1800 × 4364 pt and the letter 1800 × 1167 pt, a deliberate format since about V329; only the certificate is A4. The owner chose to fix this as P0, **test first, with no change to `index.html` until the test exists and has been run against V546.**
@@ -181,7 +183,7 @@ Findings of the controls that matter for the fix:
   - `verify.py` YES.
 - **The source text is never altered to make the test pass.** Characters such as "–", "-" and U+00AD must extract as they are.
 - **Reading order is a property of how the PDF is written.** Text runs are emitted in logical document order, each carrying its page coordinates, not sorted after the fact.
-- **After V547 (promoted as V548):** V549, the text layer of the certificate, which is already A4 but has two pages and page breaks. An A4 print version of the CV is a separate product decision and is not part of V547 or V548.
+- **After V547 (promoted as V548):** V549, the text layer of the certificate, which is already A4 but has two pages and page breaks. It was built as sandbox V549 and promoted as V550; see its section and *Release record — V550*. An A4 print version of the CV is a separate product decision and is not part of V547 or V548.
 
 ## Public mirror (`cv-review`) — anonymised, regenerated after every promotion
 
@@ -216,8 +218,9 @@ The owner chose that it is **updated after every production release** and carrie
 |---|---|---|---|
 | 2026-09-30 | V542 (`929e8b2c…`) | `d952a89f…` | all 7 public files byte-identical to the package; leak scan clean; Pages serving V542 |
 | 2026-09-30 | V546 (`e3a635da…`) | `8830d1a6…` | public commit `97321a2`: all 7 files byte-identical to the package (raw files fetched by commit hash); known-token and generic leak scans clean; Pages serving V546, byte-identical |
+| 2026-09-30 | V548 (`ba88f1ef…`) | `fd20814b…` | public commit `ee68690`: all 7 files byte-identical to the package; leak scans clean. **New for V548:** the PDFs made from the public copy were checked too, because they now carry text. All 9 PDFs contain "Max Mustermann", 0 real tokens and 0 leak patterns. Pages serving V548, byte-identical |
 
-## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V548 since 2026-09-30)
+## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V550 since 2026-09-30)
 
 > Added after the external review (point 9). The phrase "device gate passed" had read broader than the evidence behind it. This table is what each capability has actually been exercised on.
 >
@@ -250,6 +253,7 @@ The owner chose that it is **updated after every production release** and carrie
 | No notification inside an export (V543) | ✅ golden: 0 green-toast pixels in six cases | ✅ Share Package PDF | ✅ owner, V544: flag switched, PDF saved to Files, no notification inside | ⬜ |
 | Hidden notification fully off-screen (V545) | ✅ observatory geometry | ✅ top-right crop clean (V544 showed the sliver) | ✅ owner, V545: "po eshte ne rregull tani" | ⬜ |
 | PDF text layer: search, select and copy (V547/V548) | ✅ pdf_check TEXT/ORDER/UNICODE, VISUAL pixel-identical | ✅ WebKit PDF via Save to Files: 75/75; Apple PDFKit search, word selection and copy exact | ✅ owner, 2026-09-30: e-mail copied to Notes exactly, "Elektro" found, ü/– correct, appearance unchanged | ⬜ |
+| Certificate text layer, 2 A4 pages, Φ via Symbol (V549/V550) | ✅ pdf_check ALL PASS, VISUAL pixel-identical | ✅ WebKit PDF 41/41, UNICODE 32/32; PDFKit finds text on both pages, copies "MAX" and "Φ240" exactly | ✅ owner, 2026-09-30: name copied, "DEKLARATË" on page 2, "Φ240" found and copied, both pages unchanged | ⬜ |
 
 **HTTPS share, verified on the real iPhone (2026-09-30).**
 - The owner enabled GitHub Pages on the public, anonymised review copy: `https://<owner>.github.io/cv-review/`, served with HSTS.
@@ -268,7 +272,7 @@ The owner chose that it is **updated after every production release** and carrie
 - Reproducing it from `537.html` with the same replacement rules gives a byte-identical file (md5 `193a6a5b…`, 1,307,152 bytes).
 - The per-replacement size changes add up to exactly +36: for example "Musterstadt" → "Musterstadt" 13 × +3, the phone number 6 × −2, `~` → `~` −12, and so on.
 
-V537's identity (`d2b8a938…`) is untouched: `537.html` and its rollback backup are still in the private repository, since the cleanup removed only sandbox iterations. Production is V548 (since 2026-09-30).
+V537's identity (`d2b8a938…`) is untouched: `537.html` and its rollback backup are still in the private repository, since the cleanup removed only sandbox iterations. Production is V550 (since 2026-09-30).
 
 **Language persistence matrix (review point 5), sandbox V541, isolated origin: 8 of 8 pass.** State, `currentLang` and `cv_language` agreed in every row:
 
@@ -869,6 +873,90 @@ Production was V546 (`e3a635da…`).
 | iOS image, V546 against V547 | 9 of 8,206,200 pixels differ, in a 19 × 1 px strip. Two V547 captures differ from each other by 20 pixels. **Real Safari is not bit-deterministic**, so on iOS the image is the same within the platform's own noise. Pixel identity is proven on the deterministic Chrome paths. |
 
 **Device gate (Neni 72): passed on the owner's iPhone.** See *Release record — V548*.
+
+#### Sandbox ahead of production — V549 (2026-09-30) — CLOSED by the V550 promotion
+
+**Closed on 2026-09-30:** `index-test.html` = `index.html` = `550.html`.
+
+Production was V548 (`ba88f1ef…`).
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V549 | `549.html` | `6e4221c7fab370868d3824cc1893ea57` | 1,324,306 | `index-test.html.bak-pre-v549-20260930-150739` (= V548, `ba88f1ef…`) |
+
+**V549: the same invisible text layer in the two-page A4 certificate.** It follows the same procedure as P0.
+- **Test first, on V548:** the certificate cases gave TEXT, ORDER and UNICODE FAIL (0 characters) and VISUAL PASS, on the desktop and the phone path.
+- **Scope:** only `PdfPipeline`. The diff hunks all lie inside it, plus the build label. The CV, the letter, Save as Image, CSS, the editor, storage, history, the A4 format and the content are untouched.
+- **Mechanism:**
+  1. **`collectTextRuns` gains an optional `root`.**
+     - The certificate's clone is photographed inside the main document, in an off-screen capture container with `opacity:0`.
+     - With `root` set, coordinates are measured from the clone. The visibility, block and clip walks also stop at the clone, because the capture container is not part of the document.
+     - Without `root` (CV and letter), the behaviour is as in V548.
+  2. **`writeTextLayer` understands pages.**
+     - With `pageH`/`pageGap` (1123 / 40 px, the certificate's own layout), each run goes to its page via `setPage`.
+     - A run in the gap between pages would not be printed, so it is not written.
+  3. **`renderDocToA4Pdf`** collects the runs from the paginated clone before capture and writes them after the pages are added.
+- **Found by the test: the Greek letter Φ.** The certificate says "Φ25mm" and "Φ240 mm" (Φ as the diameter sign).
+  - WinAnsi Helvetica cannot carry Φ. The first build dropped it, which gave content 40/41 and UNICODE FAIL.
+  - Under the absolute rule (change the encoding mechanism, never the text), Greek letters are now written as separate segments in the other standard PDF font, **Symbol**, where Φ is code "F".
+  - Segment widths come from the official Symbol AFM metrics. jsPDF has none for Symbol (it measured Φ as 6.96 pt instead of 9.16 pt), and without them PDFKit read "Φ 25mm" with a gap.
+  - Proven first with this jsPDF: PyMuPDF and PDFKit both read "nga Φ25mm, e deri në Φ240 mm.", and PDFKit's find locates "Φ240".
+  - Runs without Greek letters keep a single segment and are written exactly as before.
+- **Code hygiene:** the `ZERO` regex written in V547 held the invisible characters literally, because the editing tool had turned `\u00AD`… into raw characters. They are now written as escapes, with identical behaviour. (A pre-existing literal zero-width space in the empty-list-item check of `renderDocToA4Pdf` is left as it was: it is outside this change.)
+- **Test tools:**
+  - The certificate expectation now includes the list items (`.a4-doc-ul li`), 41 texts instead of 20.
+  - Before this, the extra-words report had shown 125 visible bullet words that nothing expected. They were visible content, not a leak.
+
+**Verification (final code `6e4221c7`):**
+
+| Check | Result |
+|---|---|
+| `pdf_check` desktop | **ALL PASS: 9/9 on TEXT, ORDER, UNICODE and VISUAL.** Certificate: 3796 characters, critical 2/2, content 41/41, extra 0, order 6/6 and 6/6; VISUAL 2 pages pixel-identical |
+| `pdf_check --mobile` | **ALL PASS: 9/9 on each check** |
+| CV and letter unchanged | the text layer is **identical to V548**, words and positions, in all 6 cases on the desktop and all 6 on the phone path |
+| Golden image export | 0.000 % |
+| `verify.py` | YES |
+| Word boxes over both certificate pages | every box on its word, including justified paragraphs, "Φ25mm" and "Φ240 mm" on page 2, and the signature lines |
+| **iOS Simulator (WebKit):** certificate via Share Package → Save to Files | 2 A4 pages; 3796 characters; critical 2/2; content 41/41; order 6/6 and 6/6; UNICODE 32/32, Φ present; extra 0 |
+| **Apple PDFKit** on that PDF | "VËRTETIM PUNE", "MAX MUSTERMANN" and "Elektroteknik" found on page 1; "Φ25mm", "Φ240 mm", "DEKLARATË" and "Firma dhe Vula" on page 2. Word selection and drag-copy give exactly "MAX" and "Φ240" |
+
+**Device gate (Neni 72): passed on the owner's iPhone.** See *Release record — V550*.
+
+### Release record — V550 (2026-09-30) — the certificate's text layer (V549)
+
+**Promoted on the owner's explicit instruction** ("po, cdo gje funksionon"), after the owner's own iPhone test. V550 is V549 plus the build label only; a byte comparison confirmed that nothing else differs.
+
+**What it carries, V548 → V550**
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V549 | An invisible text layer in the two-page A4 certificate. Greek letters (Φ) are carried by the standard Symbol font, so the text is never altered. The image stays pixel-identical, and the CV and letter layers are unchanged. | Functional, export | none |
+
+**Device gate (Neni 72): exercised on the owner's iPhone, over the LAN (HTTP).**
+- The server log shows the phone (`192.168.1.107`) loading `index-test.html?v549` at 15:24:51.
+- The owner ran the four checks agreed with the external reviewer on the certificate PDF, saved to Files:
+  1. select "MAX MUSTERMANN", copy it and paste it into Notes;
+  2. search "DEKLARATË"; it is on page 2;
+  3. search and copy "Φ240";
+  4. compare both pages with V548.
+- The owner reported: **"po, cdo gje funksionon".**
+
+The external reviewer's caveat is recorded: PyMuPDF, PDFKit and WebKit are strong evidence but not proof against every real ATS. An interoperability test with other PDF readers is a possible later item. It does not block this release.
+
+**Backups.** Production: `index.html.bak-pre-v550-20260930-152856` (= V548, `ba88f1ef…`), hash-verified before the copy and again after it. Sandbox: `index-test.html.bak-pre-v550-20260930-152856` (= V549, `6e4221c7…`). After the copy, `md5 -q index.html index-test.html 550.html | sort -u | wc -l` printed 1.
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `python3 tools/verify.py --file index.html` | PASS 25, WARN 1 (`ui.langChanged`), FAIL 0 → YES |
+| `python3 tools/verify.py --release` (after this record) | YES |
+| `pdf_check` on `index.html`, desktop | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
+| `pdf_check --mobile` on `index.html` | **ALL PASS: 9/9 each** |
+| Golden image export | 0.000 % in all six cases |
+| Observatory on production, isolated origin | `V550`, `PROBLEMS: none` |
+
+**Reference images stay V546.** The text layer is invisible, so the V546 PDFs remain the VISUAL reference. No `--accept` was run.
+
+**Rollback:** production returns to V548 by copying `index.html.bak-pre-v550-20260930-152856` over `index.html` (the command is in *Current baseline*).
 
 ### Release record — V548 (2026-09-30) — the PDF text layer (V547)
 
