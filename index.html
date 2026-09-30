@@ -6354,6 +6354,9 @@ const PdfPipeline = {
       ifr.style.height = fullH + 'px';
       /* V313: rAF×2 for deterministic reflow guarantee (replaces magic 200ms wait) */
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      /* V547: shtresa e tekstit — tekstet e dukshme lexohen nga I NJËJTI dokument që fotografohet, pas faqosjes
+         përfundimtare dhe para kapjes. Vetëm për PDF: foto-eksporti ("Save as Image") nuk mban tekst. */
+      config._textRuns = (config.mode !== 'image') ? this.collectTextRuns(d, config.width, fullH, PdfPipeline.pdfTextChar) : null;
       /* V330 (Engine Router): Zgjidh engine sipas template aktiv.
          tpl-neumorphic → html-to-image (SVG foreignObject + native browser render → shadow fidelity 100%)
          tjerët → html2canvas (i tanishëm, backward compat)
@@ -6626,6 +6629,126 @@ const PdfPipeline = {
       await Promise.all(jobs);
     }catch(_){}
   },
+  /* V547 (2026-09-30): SHTRESA E TEKSTIT NË PDF.
+     Deri në V546 PDF-ja e CV-së dhe e letrës ishte vetëm një foto: 0 shkronja për një sistem punësimi (ATS),
+     pa kopjim dhe pa kërkim (e matur me tools/pdf_check.py në 9 raste, desktop dhe telefon). Rregullimi shton
+     mbi foton një shtresë teksti TË PADUKSHME (render mode 3), si në PDF-të e skanuara me OCR: pamja mbetet
+     identike piksel-për-piksel, teksti bëhet i lexueshëm. Vërtetimi A4 (renderDocToA4Pdf) nuk preket këtu.
+
+     Fonti: Helvetica standarde e PDF-së (kodimi WinAnsi). E provuar me këtë jsPDF 2.5.1: "-", "–", ë, Ë, ü, ß,
+     ä, ö, ’, “ ”, …, • nxirren saktë. Shenjat që ky font NUK i mban (emoji, ⚡, ─) nuk shkruhen në shtresë —
+     mbeten në foto; përndryshe jsPDF e kodon gabim gjithë rreshtin. Teksti i CV-së nuk ndryshohet kurrë. */
+  _WINANSI_EXTRA: [0x152,0x153,0x160,0x161,0x178,0x17D,0x17E,0x192,0x2C6,0x2DC,0x2013,0x2014,0x2018,0x2019,0x201A,
+                   0x201C,0x201D,0x201E,0x2020,0x2021,0x2022,0x2026,0x2030,0x2039,0x203A,0x20AC,0x2122],
+  pdfTextChar(ch){
+    const c = ch.codePointAt(0);
+    if((c >= 0x20 && c <= 0x7E) || (c >= 0xA0 && c <= 0xFF)) return true;
+    return PdfPipeline._WINANSI_EXTRA.indexOf(c) >= 0;
+  },
+  /* Burimi i përcaktuar i shtresës: VETËM LEXON dokumentin e eksportit dhe kthen rreshtat e tekstit të dukshëm
+     me koordinatat e tyre (px CSS):
+       - nyjet e tekstit merren në RENDIN E DOM-it = rendi logjik i dokumentit (jo sipas pozicionit);
+       - vetëm tekst i vizatuar: asnjë paraardhës me display:none / visibility:hidden / opacity:0, drejtkëndësh
+         jo-bosh brenda zonës së kapur [0,cssW]×[0,cssH], dhe qendra e shkronjës brenda prerjes së paraardhësve
+         (overflow jo-visible, `clip`) — p.sh. etiketa .sr-only "Statusi i ngarkimit të fotos" (1×1 px, e prerë)
+         ekziston në DOM por nuk është pjesë e dokumentit të dukshëm;
+       - rresht i ri kur ndryshon rreshti vizual, blloku (elementi jo-inline) ose kur ka boshllëk të madh;
+       - hapësira e burimit në fund të rreshtit ruhet ("Wohn- " + "und" ≠ "3-Phasen-" + "Systeme");
+       - shenjat që `accept` nuk i pranon trajtohen si hapësirë; viza e butë dhe shenjat me gjerësi zero hiqen. */
+  collectTextRuns(d, cssW, cssH, accept){
+    const out = { cssW: cssW, cssH: cssH, runs: [] };
+    try{
+      const win = d.defaultView || window;
+      const vis = new Map(), blk = new Map(), fsz = new Map();
+      const isVisible = function(el){
+        if(vis.has(el)) return vis.get(el);
+        let ok = el.parentElement ? isVisible(el.parentElement) : true;
+        if(ok){ const cs = win.getComputedStyle(el); ok = cs.display !== 'none' && cs.visibility !== 'hidden' && cs.visibility !== 'collapse' && parseFloat(cs.opacity) !== 0; }
+        vis.set(el, ok); return ok;
+      };
+      const blockOf = function(el){
+        if(blk.has(el)) return blk.get(el);
+        const disp = win.getComputedStyle(el).display;
+        const b = ((disp === 'inline' || disp === 'contents') && el.parentElement) ? blockOf(el.parentElement) : el;
+        blk.set(el, b); return b;
+      };
+      const fontOf = function(el){
+        if(!fsz.has(el)) fsz.set(el, parseFloat(win.getComputedStyle(el).fontSize) || 12);
+        return fsz.get(el);
+      };
+      /* zona e dukshme që i lënë paraardhësit: prerja e çdo elementi me overflow jo-visible dhe e `clip` */
+      const clp = new Map();
+      const clipOf = function(el){
+        if(clp.has(el)) return clp.get(el);
+        let c = el.parentElement ? clipOf(el.parentElement) : null;
+        const cs = win.getComputedStyle(el);
+        const ov = cs.overflowX !== 'visible' || cs.overflowY !== 'visible';
+        const cut = cs.clip && cs.clip !== 'auto' && (cs.position === 'absolute' || cs.position === 'fixed');
+        if(ov || cut){
+          const r = el.getBoundingClientRect();
+          let box = { l: r.left, t: r.top, r: r.right, b: r.bottom };
+          if(cut){
+            const m = cs.clip.match(/rect\(([^)]*)\)/), v = m ? m[1].split(/[\s,]+/).map(parseFloat) : [];
+            if(v.length === 4 && v.every(isFinite)) box = { l: r.left + v[3], t: r.top + v[0], r: r.left + v[1], b: r.top + v[2] };
+          }
+          c = c ? { l: Math.max(c.l, box.l), t: Math.max(c.t, box.t), r: Math.min(c.r, box.r), b: Math.min(c.b, box.b) } : box;
+        }
+        clp.set(el, c); return c;
+      };
+      const SKIP = /^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE|TEXTAREA|SELECT|OPTION)$/;
+      const ZERO = /[­​-‍⁠﻿]/;
+      const walker = d.createTreeWalker(d.body, (win.NodeFilter || NodeFilter).SHOW_TEXT);
+      const range = d.createRange();
+      let cur = null, pend = false;
+      const flush = function(){ if(cur && cur.t.trim()){ delete cur.block; out.runs.push(cur); } cur = null; };
+      for(let n = walker.nextNode(); n; n = walker.nextNode()){
+        const el = n.parentElement, s = n.nodeValue;
+        if(!el || !s || SKIP.test(el.tagName) || !isVisible(el)) continue;
+        const block = blockOf(el), fs = fontOf(el), clip = clipOf(el);
+        for(let i = 0; i < s.length; ){
+          const len = s.codePointAt(i) > 0xFFFF ? 2 : 1, ch = s.substr(i, len);
+          const at = i; i += len;
+          if(ZERO.test(ch)) continue;
+          if(/\s/.test(ch) || (accept && !accept(ch))){ pend = true; continue; }
+          range.setStart(n, at); range.setEnd(n, at + len);
+          /* glifi i vërtetë = drejtkëndëshi me gjerësi. Safari (WebKit), për shkronjën e parë të një rreshti të
+             thyer, kthen edhe një drejtkëndësh me gjerësi zero në fund të rreshtit të mëparshëm — i pari në listë;
+             po të merrej ai, "Industrie" dilte "I" + "ndustrie" (e matur në iOS Simulator). Chrome kthen vetëm një. */
+          const rs = range.getClientRects(); let b = null;
+          for(let k = 0; k < rs.length; k++){ if(rs[k].width > 0 && rs[k].height > 0 && (!b || rs[k].width > b.width)) b = rs[k]; }
+          if(!b) continue;
+          if(b.right <= 0 || b.left >= cssW || b.bottom <= 0 || b.top >= cssH) continue;
+          if(clip){ const cx = (b.left + b.right) / 2, cy = (b.top + b.bottom) / 2;
+                    if(cx < clip.l || cx > clip.r || cy < clip.t || cy > clip.b) continue; }
+          const fresh = !cur || cur.block !== block || Math.abs(b.top - cur.top) > b.height * 0.5 ||
+                        b.left < cur.right - 2 || b.left - cur.right > fs * 1.5;
+          if(fresh){ if(cur && pend) cur.t += ' '; flush(); cur = { t: '', x: b.left, top: b.top, right: b.right, fs: fs, block: block }; }
+          else if(pend){ cur.t += ' '; }
+          pend = false;
+          cur.t += ch; cur.right = Math.max(cur.right, b.right); cur.top = Math.min(cur.top, b.top);
+        }
+      }
+      flush();
+    }catch(e){ out.runs = []; }
+    return out;
+  },
+  /* Shkruan shtresën e padukshme mbi foton, rresht pas rreshti në rendin logjik (rendi i shkrimit në PDF =
+     rendi i leximit). Gjerësia e çdo rreshti përshtatet me atë të dukshmin (horizontalScale), që përzgjedhja
+     dhe kërkimi të bien mbi tekstin e duhur. Çdo gabim këtu e lë PDF-në si më parë (vetëm foto). */
+  writeTextLayer(pdf, config, pdfW, pdfH){
+    const tl = config && config._textRuns;
+    if(!tl || !tl.runs || !tl.runs.length) return;
+    try{
+      const kx = pdfW / Math.max(1, tl.cssW), ky = pdfH / Math.max(1, tl.cssH);
+      pdf.setFont('helvetica', 'normal');
+      tl.runs.forEach(function(r){
+        pdf.setFontSize(Math.max(1, r.fs * ky));
+        const natural = pdf.getTextWidth(r.t.trim()), target = (r.right - r.x) * kx;
+        const hs = natural > 0 ? Math.min(3, Math.max(0.3, target / natural)) : 1;
+        pdf.text(r.t, r.x * kx, r.top * ky, { renderingMode: 'invisible', baseline: 'top', horizontalScale: hs });
+      });
+    }catch(_tl){}
+  },
   prepareForCapture(d){
     /* V543 (2026-09-30): NDËRFAQJA KALIMTARE NUK HYN NË EKSPORT. Kopja ndërtohet nga HTML-ja e gjallë (faqja + iframe-i),
        ndaj një njoftim i dukshëm në çastin e eksportit (#notification i iframe-it, #autosaveNotification i faqes) ose
@@ -6756,6 +6879,7 @@ const PdfPipeline = {
       pdf.lines([[0,-R],[0,k,R-k,R,R,R],[-R,0]], 0, ih, [1,1], 'F', true);         /* BL */
       pdf.lines([[-R,0],[k,0,R,k-R,R,-R],[0,R]], iw, ih, [1,1], 'F', true);        /* BR */
     }catch(_vg){}
+    PdfPipeline.writeTextLayer(pdf, config, pdfW, pdfH);
     return pdf;
   },
   generateFilename(config){
@@ -7188,7 +7312,7 @@ window.CV=window.CV||{internals:{},init:{}};
    the QUALIFICATION APPARATUS only, and is embedded in the stored golden fixtures, so a product/UI
    change (MoveExperience, the Quick-Look fix) must NOT bump it or the goldens would drift for no
    reason. This build = V482s apparatus + MoveExperience + the iOS Quick-Look prof-desc fix. */
-window.CV.build='V546'; /* V509 (2026-09-11): the label had been frozen at 'V487+adr035' since V487 — not bumped through V488–V507. Identity is still the hash, never this label. V510 (2026-09-22): bumped with the share-capability gate. V511: with key-based validity of share preparation. V512: with complete-package-only publication. V513: with serialised preparation. V514: with the export-scoped Terminal 1 title centring. V515: with transform-based title centring on the live page. V516: with the iOS link-colour fix for contact links. V517: export title rule removed — one centring authority. V518: with the export-scoped contact-link colour for iOS. V519: with the export-scoped Modern contact-pill rebuild. V520 (2026-09-27): promoted to production — the label carries the release, the hash carries the identity. V521: mobile PDF honours the iOS canvas cap. V522 withdrawn. V523: Neumorphic title transform no longer !important. V524: Subresource Integrity on the CDN libraries. V525: ghost PDF Export modal removed. V526: literal NUL byte replaced by its escape. V527: one mobile-detection source in Utils. V528: libraries load in parallel, one tag each. V529 (2026-09-28): promoted to production — the label carries the release, the hash carries the identity. V530: notifications follow the language flag. V531 (2026-09-29): promoted to production — the label carries the release, the hash carries the identity. V532: Utils exposed as window.Utils (silent notifications now shown). V533: export-sheet labels follow the language flag. V534: phones get the 1200px viewport before the first paint. V535: Reset Default and a fresh start keep the chosen language. V536: the page is revealed complete, once, after load. V537 (2026-09-29): promoted to production — the label carries the release, the hash carries the identity. V538: no !important in the boot curtain. V539: no static text in the notification element. V540: the app itself signals boot-ready to the curtain. V541: the 20 s safety starts at DOMContentLoaded (60 s absolute). V542 (2026-09-29): promoted to production — the label carries the release, the hash carries the identity. V543: transient UI (notifications, image overlay) never enters an export. V544: build and date in the PDF properties. V545: the hidden notification box is fully off-screen at any width. V546 (2026-09-30): promoted to production — the label carries the release, the hash carries the identity. */
+window.CV.build='V548'; /* V509 (2026-09-11): the label had been frozen at 'V487+adr035' since V487 — not bumped through V488–V507. Identity is still the hash, never this label. V510 (2026-09-22): bumped with the share-capability gate. V511: with key-based validity of share preparation. V512: with complete-package-only publication. V513: with serialised preparation. V514: with the export-scoped Terminal 1 title centring. V515: with transform-based title centring on the live page. V516: with the iOS link-colour fix for contact links. V517: export title rule removed — one centring authority. V518: with the export-scoped contact-link colour for iOS. V519: with the export-scoped Modern contact-pill rebuild. V520 (2026-09-27): promoted to production — the label carries the release, the hash carries the identity. V521: mobile PDF honours the iOS canvas cap. V522 withdrawn. V523: Neumorphic title transform no longer !important. V524: Subresource Integrity on the CDN libraries. V525: ghost PDF Export modal removed. V526: literal NUL byte replaced by its escape. V527: one mobile-detection source in Utils. V528: libraries load in parallel, one tag each. V529 (2026-09-28): promoted to production — the label carries the release, the hash carries the identity. V530: notifications follow the language flag. V531 (2026-09-29): promoted to production — the label carries the release, the hash carries the identity. V532: Utils exposed as window.Utils (silent notifications now shown). V533: export-sheet labels follow the language flag. V534: phones get the 1200px viewport before the first paint. V535: Reset Default and a fresh start keep the chosen language. V536: the page is revealed complete, once, after load. V537 (2026-09-29): promoted to production — the label carries the release, the hash carries the identity. V538: no !important in the boot curtain. V539: no static text in the notification element. V540: the app itself signals boot-ready to the curtain. V541: the 20 s safety starts at DOMContentLoaded (60 s absolute). V542 (2026-09-29): promoted to production — the label carries the release, the hash carries the identity. V543: transient UI (notifications, image overlay) never enters an export. V544: build and date in the PDF properties. V545: the hidden notification box is fully off-screen at any width. V546 (2026-09-30): promoted to production — the label carries the release, the hash carries the identity. V547: invisible text layer in the CV and letter PDFs (ATS, copy, search), pixel-identical. V548 (2026-09-30): promoted to production — the label carries the release, the hash carries the identity. */
 /* ============================================================
    224: DUAL SYSTEM ARCHITECTURE
    Terminal Interface + TerminalRegistry + CVApplication

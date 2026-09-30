@@ -19,8 +19,8 @@ edits is gone. Every capability and every decision the project holds today is no
 
 | File | Holds | md5 | Role |
 |---|---|---|---|
-| `index.html` | V546 | `e3a635da` | production |
-| `index-test.html` | V546 | `e3a635da` | sandbox |
+| `index.html` | V548 | `ba88f1ef` | production |
+| `index-test.html` | V548 | `ba88f1ef` | sandbox |
 | `486.html` | V486 | `b2c238c6` | release snapshot |
 | `487.html` | V487 | `d0962600` | release snapshot |
 | `488.html` | V488 | `deaeb3b1` | release snapshot |
@@ -53,6 +53,8 @@ edits is gone. Every capability and every decision the project holds today is no
 | `544.html` | V544 | `e4605753` | sandbox iteration |
 | `545.html` | V545 | `841494e6` | sandbox iteration |
 | `546.html` | V546 | `e3a635da` | release snapshot |
+| `547.html` | V547 | `5b1ffa7e` | sandbox iteration |
+| `548.html` | V548 | `ba88f1ef` | release snapshot |
 | `index.html.bak-pre-v482u` | V479 | `27e9d4cc` | rollback |
 | `index.html.bak-pre-v483` | V482u | `01f22f35` | rollback |
 | `index.html.bak-pre-v493-20260829-014817` | V492 | `56b0c307` | rollback |
@@ -69,7 +71,8 @@ edits is gone. Every capability and every decision the project holds today is no
 | `index.html.bak-pre-v531-20260929-142927` | V529 | `924e655c` | rollback |
 | `index.html.bak-pre-v537-20260929-151453` | V531 | `c418ef74` | rollback |
 | `index.html.bak-pre-v542-20260929-171732` | V537 | `d2b8a938` | rollback |
-| `index.html.bak-pre-v546-20260930-113924` | V542 | `929e8b2c` | rollback — **operational** (one release back) |
+| `index.html.bak-pre-v546-20260930-113924` | V542 | `929e8b2c` | rollback |
+| `index.html.bak-pre-v548-20260930-144638` | V546 | `e3a635da` | rollback — **operational** (one release back) |
 | `index.html.bak-v483-baseline` | V483 | `b2ece1ae` | rollback |
 | `index.html.bak-v484-baseline` | V484 | `6fc7d00a` | rollback |
 | `index.html.bak-v485-baseline` | V485 | `99e0f10d` | rollback |
@@ -83,10 +86,17 @@ edits is gone. Every capability and every decision the project holds today is no
 | `index-test.html.bak-pre-v544-20260930-010634` | V543 | `aca3eb6b` | sandbox iteration |
 | `index-test.html.bak-pre-v545-20260930-113321` | V544 | `e4605753` | sandbox iteration |
 | `index-test.html.bak-pre-v546-20260930-113924` | V545 | `841494e6` | sandbox iteration |
+| `index-test.html.bak-pre-v547-20260930-134747` | V546 | `e3a635da` | sandbox iteration |
+| `index-test.html.bak-pre-v548-20260930-144638` | V547 | `5b1ffa7e` | sandbox iteration |
 
-32 snapshots, 20 production backups, 10 sandbox backups. Verify any row with `md5 -q <file>`.
+34 snapshots, 21 production backups, 12 sandbox backups. Verify any row with `md5 -q <file>`.
 
 ---
+
+> **Sandbox deviation (named, 2026-09-30, after V546) — CLOSED the same day by the V548 promotion:**
+> `index-test.html` = `index.html` = `548.html` = V548 (`ba88f1ef…`). The sandbox had run ahead as V547.
+> Sandbox backups: `index-test.html.bak-pre-v547-20260930-134747` (= V546) and `index-test.html.bak-pre-v548-20260930-144638` (= V547).
+> The details are in `RELEASE_PROCESS.md` → *Release record — V548*.
 
 > **Sandbox deviation (named, 2026-09-30, after V542) — CLOSED the same day by the V546 promotion:**
 > `index-test.html` = `index.html` = `546.html` = V546 (`e3a635da…`). The sandbox had run ahead as V543–V545.
@@ -186,6 +196,24 @@ edits is gone. Every capability and every decision the project holds today is no
 > | `index-test.html.bak-pre-v518-20260927-162722` | V517 (= `517.html`) | `1c254fef…` |
 > | `index-test.html.bak-pre-v519-20260927-164542` | V518 (= `518.html`) | `8c55cd79…` |
 
+## `index.html.bak-pre-v548-20260930-144638`
+
+| | |
+|---|---|
+| **Version** | V546 |
+| **Hash (md5)** | `e3a635dac72932243c1c9cb3a9200071` |
+| **Size** | 1,311,399 bytes |
+
+**Purpose.** **The operational rollback for V548**, promoted 2026-09-30. Hash-verified against the outgoing `index.html`
+immediately before the copy, and again after. It is the last production artifact whose CV and letter PDFs are images
+only, with 0 extractable characters: not readable by an ATS, and with no way to copy or search the text.
+
+Byte-identical to `546.html`.
+
+```bash
+cp "index.html.bak-pre-v548-20260930-144638" "index.html"
+```
+
 ## `index.html.bak-pre-v546-20260930-113924`
 
 | | |
@@ -194,7 +222,7 @@ edits is gone. Every capability and every decision the project holds today is no
 | **Hash (md5)** | `929e8b2c48fece0eaae6b94dd27843a8` |
 | **Size** | 1,309,320 bytes |
 
-**Purpose.** **The operational rollback for V546**, promoted 2026-09-30. Hash-verified against the outgoing `index.html`
+**Purpose.** **The rollback for V546**, promoted 2026-09-30 (two releases back since V548). Hash-verified against the outgoing `index.html`
 immediately before the copy, and again after. It is the last production artifact in which:
 - a notification visible at the moment of export (or an earlier image overlay) is baked into the image or PDF;
 - the PDF properties carry no build or date;
@@ -717,14 +745,14 @@ was written to stop without attempting automatic recovery.
 
 ## Restoring
 
-**Production is V546 (`e3a635da…`). To roll back one release, to V542:**
+**Production is V548 (`ba88f1ef…`). To roll back one release, to V546:**
 
 ```bash
-cp "index.html.bak-pre-v546-20260930-113924" "index.html"
+cp "index.html.bak-pre-v548-20260930-144638" "index.html"
 ```
 
-Two releases back, to V537: `cp "index.html.bak-pre-v542-20260929-171732" "index.html"`.
-Three back, to V531: `cp "index.html.bak-pre-v537-20260929-151453" "index.html"`.
+Two releases back, to V542: `cp "index.html.bak-pre-v546-20260930-113924" "index.html"`.
+Three back, to V537: `cp "index.html.bak-pre-v542-20260929-171732" "index.html"`.
 
 > **Corrected 2026-09-11 at the V507 promotion.** This line still read *"Production is V498 … roll
 > back to V497"* — it was not updated when V501 shipped on 2026-09-02, the exact drift the note
