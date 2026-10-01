@@ -1,0 +1,170 @@
+{
+ "session": "2026-10-01-s1",
+ "note": "Summary of the owner's report.html export (generated 2026-10-01T10:21:21Z). Build V550 public mirror (lab/bug017.html). Chrome 154 restarted beforehand (Skia Graphite Enabled, crash count 0).",
+ "protocol": "deviation: the owner cycled all four designs three times with 5-22 s drags, instead of A,B,B,A x 60 s",
+ "exposure_s": {
+  "default": 36.0,
+  "modern": 22.8,
+  "minimal": 45.7,
+  "neumorphic": 51.0
+ },
+ "drags": [
+  [
+   "10:15:54Z",
+   "default",
+   14.5
+  ],
+  [
+   "10:16:15Z",
+   "modern",
+   12.1
+  ],
+  [
+   "10:16:32Z",
+   "minimal",
+   14.2
+  ],
+  [
+   "10:16:52Z",
+   "neumorphic",
+   2.2,
+   "resize-handle"
+  ],
+  [
+   "10:16:55Z",
+   "neumorphic",
+   6.4
+  ],
+  [
+   "10:17:07Z",
+   "default",
+   11.7
+  ],
+  [
+   "10:17:23Z",
+   "modern",
+   5.1
+  ],
+  [
+   "10:18:02Z",
+   "neumorphic",
+   22.4
+  ],
+  [
+   "10:18:27Z",
+   "neumorphic",
+   5.7
+  ],
+  [
+   "10:18:41Z",
+   "minimal",
+   16.5
+  ],
+  [
+   "10:19:44Z",
+   "default",
+   9.8
+  ],
+  [
+   "10:19:57Z",
+   "modern",
+   5.6
+  ],
+  [
+   "10:20:07Z",
+   "minimal",
+   14.9
+  ],
+  [
+   "10:20:26Z",
+   "neumorphic",
+   14.2
+  ]
+ ],
+ "blackouts": [
+  {
+   "design": "neumorphic",
+   "element": "professional-desc",
+   "drag_start": "10:20:26.857Z",
+   "marks_shift3": [
+    "10:20:31.087Z (held 4.2 s)",
+    "10:20:33.220Z (held 6.4 s)",
+    "10:20:34.347Z (held 7.5 s)",
+    "10:20:41.646Z (after release)",
+    "10:20:42.830Z (after release)"
+   ],
+   "counted_as": "ONE blackout (5 marks within 12 s, one drag)",
+   "shadow_census_page": {
+    "elements": 139,
+    "layers": 290,
+    "blurSum": 2517
+   },
+   "shadow_census_frame": {
+    "elements": 36,
+    "layers": 75,
+    "blurSum": 474
+   },
+   "dpr": 2,
+   "viewport": "1792x998",
+   "cvframe_first_mark": {
+    "windowCovered": true,
+    "framesInWindow": 416,
+    "medianFrameMs": 17,
+    "worstFrameMs": 261,
+    "heartbeat": {
+     "p95": 1.8,
+     "max": 22.7,
+     "over50": 0
+    },
+    "gaps_ms_before_mark": [
+     [
+      -6679,
+      66
+     ],
+     [
+      -6594,
+      51
+     ],
+     [
+      -6441,
+      50
+     ],
+     [
+      -2856,
+      66
+     ],
+     [
+      -2767,
+      51
+     ],
+     [
+      -2682,
+      51
+     ],
+     [
+      -1304,
+      261
+     ],
+     [
+      -1098,
+      151
+     ]
+    ],
+    "loaf": "5 entries, 54-263 ms, blockingDuration 0 in all, scripts [] in all",
+    "verdict_label": "MAIN-THREAD (wrong for this episode: the long frames start at the GPU crashes; main thread free)"
+   }
+  }
+ ],
+ "chrome_gpu_after_session": {
+  "exported": "2026-10-01T10:25:24Z",
+  "crash_count": 3,
+  "skia_graphite": "Disabled (fallback)",
+  "crashes_utc": [
+   "10:20:29.523",
+   "10:20:39.398",
+   "10:20:40.631"
+  ],
+  "signature": "RasterPathAtlas / Recordings are expected to be replayed in order / insertRecording status 5 / exit 8704",
+  "alignment": "CVFrame frame gaps of 261, 233 and 172 ms start 1, 5 and 3 ms after crashes 1-3: the blackout is the GPU-process crash"
+ }
+}

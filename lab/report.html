@@ -27,7 +27,7 @@
   <p class="lead">Lexon vetëm të dhënat e ruajtura nga <code>bug017.html</code> në këtë shfletues (tërheqjet, rastet me Shift×3 dhe rastet e CVFrame). Nuk ndryshon asgjë.</p>
 
   <div class="card">
-    <table id="summary"><thead><tr><th>Dizajni</th><th>Tërheqje</th><th>Kohë gjithsej</th><th>Raste (Shift×3)</th></tr></thead><tbody></tbody></table>
+    <table id="summary"><thead><tr><th>Dizajni</th><th>Tërheqje</th><th>Kohë gjithsej</th><th>Nxirje</th></tr></thead><tbody></tbody></table>
   </div>
 
   <div class="card">
@@ -41,12 +41,18 @@
   function read(k, dflt){ try{ return JSON.parse(localStorage.getItem(k)||'null') || dflt; }catch(_){ return dflt; } }
   var drags=read('cv_lab_bug017_drags', []), ctx=read('cv_lab_bug017_context', []), frames=read('cv_bug017_frames', null);
   var by={};
-  drags.forEach(function(d){ var k=d.design||'?'; by[k]=by[k]||{n:0, ms:0, inc:0}; by[k].n++; by[k].ms+=d.durMs||0; });
-  ctx.forEach(function(c){ if(c.trigger!=='shift3') return; var k=c.design||'?'; by[k]=by[k]||{n:0, ms:0, inc:0}; by[k].inc++; });
+  drags.forEach(function(d){ var k=d.design||'?'; by[k]=by[k]||{n:0, ms:0, inc:0, marks:0}; by[k].n++; by[k].ms+=d.durMs||0; });
+  /* Shift×3 të përsëritur brenda 60 s = e njëjta nxirje (seanca 1 shënoi një nxirje 5 herë) */
+  var lastMark=null;
+  ctx.filter(function(c){ return c.trigger==='shift3'; }).sort(function(a,b){ return a.markIso<b.markIso?-1:1; }).forEach(function(c){
+    var t=Date.parse(c.markIso), k=c.design||'?'; by[k]=by[k]||{n:0, ms:0, inc:0, marks:0}; by[k].marks=(by[k].marks||0)+1;
+    if(lastMark===null || t-lastMark>60000) by[k].inc++;
+    lastMark=t;
+  });
   var tb=document.querySelector('#summary tbody');
   Object.keys(by).sort().forEach(function(k){
     var r=by[k], tr=document.createElement('tr');
-    [k, r.n, (r.ms/1000).toFixed(0)+' s', r.inc].forEach(function(v){ var td=document.createElement('td'); td.textContent=v; tr.appendChild(td); });
+    [k, r.n, (r.ms/1000).toFixed(0)+' s', (r.inc||0)+((r.marks||0)>(r.inc||0)?' ('+r.marks+' shënime)':'')].forEach(function(v){ var td=document.createElement('td'); td.textContent=v; tr.appendChild(td); });
     tb.appendChild(tr);
   });
   if(!tb.children.length){ var tr=document.createElement('tr'), td=document.createElement('td'); td.colSpan=4; td.textContent='Ende asnjë tërheqje e regjistruar në këtë shfletues.'; tr.appendChild(td); tb.appendChild(tr); }

@@ -45,11 +45,10 @@ Choose the design with the app's own design button. Nothing else is changed.
 **Trial:** grab "Berufliche Beschreibung" by its frame (not by the text, which starts editing). Move it slowly up and down for about **60 s**, then release.
 
 **Before every session (added 2026-10-01, after the owner's `chrome://gpu`):**
-1. Quit Chrome completely (Cmd+Q) and reopen it.
-2. Open `chrome://gpu` and check that *Skia Graphite* reads **Enabled**.
-3. Note the *GPU process crash count*.
+1. Type **`chrome://restart`** in the address bar. A short Cmd+Q is not enough: on macOS Chrome may keep running.
+2. Open `chrome://gpu` and check two things: *Skia Graphite* reads **Enabled**, and *GPU process crash count* reads **0**.
 
-This matters because after GPU-process crashes Chrome appears to fall back from Graphite to Ganesh for the rest of the browser session; the export of 09:55Z read "Skia Graphite: Disabled" right after three crashes, with no flags set. After a blackout, the rest of that session is therefore **not** a valid trial.
+**Verified 2026-10-01:** after GPU-process crashes, Chrome falls back from Graphite to Ganesh until the browser restarts (3 crashes → "Disabled"; after `chrome://restart` → "Enabled", count 0). After a blackout, the rest of that session is therefore **not** a valid trial: restart before continuing.
 
 **Session:** four trials, in the order **A, B, B, A**. This balances drift over time.
 
@@ -63,6 +62,15 @@ This matters because after GPU-process crashes Chrome appears to fall back from 
 1. Open `report.html` on the same site, press **Kopjo raportin**, and paste the report into the conversation.
 2. Note the *GPU process crash count* again.
 3. If it rose, copy the *Log Messages* section of `chrome://gpu` as well.
+
+**Amendment, 2026-10-01 after session 1 (declared before any further session; the decision rules below are unchanged):** a session may also cycle **all four designs** (Classic, Modern, B&W, Neumorphic) with drags of about 15 s each, repeated three times. That is what the owner did in session 1, and it balances exposure between the designs at least as well as A B B A. The comparison is made per minute of drag in each design. Repeated Shift ×3 marks within 60 s count as **one** blackout.
+
+**Amendment 2, 2026-10-01 after `chrome://gpu` linked session 1 (it supersedes the four-design cycle; declared before session 2):** after the first crash Chrome falls back to Ganesh for the session, so **each session can yield at most one blackout**. So:
+- run **one design per session**: `chrome://restart`, choose the design, and drag `professional-desc` for up to **3 minutes** of drag time, or until a blackout;
+- alternate the designs across sessions: N, C, C, N, N, C, … (N = Neumorphic, C = Classic);
+- after 5 sessions per design, Neumorphic ≥ 4/5 with Classic 0/5 means Design 4 is a *condition* of the crash; Classic ≥ 2/5 means the design is *not required*; anything else means continue to 10 per design.
+
+The decision rules below were the original ones, kept for the record.
 
 **Decision rules, written now:**
 - Interpret only after **≥ 10 sessions** or **≥ 5 blackouts**.
