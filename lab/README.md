@@ -1,6 +1,8 @@
 # BUG-017 lab — observation only
 
-> **Concluded 2026-10-01.** The blackout is a GPU-process crash in Chrome's **Skia Graphite** backend: the CVFrame stalls start 1–5 ms from the logged crashes. Dragging a card triggers it. Heavy blur (Neumorphic) makes it about 4–5× more frequent than in Black & White, which also crashed. With `chrome://flags/#skia-graphite` set to **Disabled** it does not occur at all, and with Default/Enabled it returns (owner's test). The app is unchanged. Session data: `sessions/`.
+> **Concluded 2026-10-01.** The blackout is a GPU-process crash in Chrome's **Skia Graphite** backend: the CVFrame stalls start 1–5 ms from the logged crashes. Dragging a card triggers it. Heavy blur (Neumorphic) makes it about 4–5× more frequent than in Black & White, which also crashed. That rate rests on small numbers and unequal exposure (Classic 36 s, Modern 23 s), so Design 4 is a strong signal, not a proven condition. With `chrome://flags/#skia-graphite` set to **Disabled** it does not occur at all, and with Default/Enabled it returns. That is the owner's diagnostic observation; see *Out of scope*. The app is unchanged. Session data: `sessions/`.
+>
+> In a second Chromium (152, scripted drag to the top), the WebGL context was lost after 10.1 s in Neumorphic only: `sessions/2026-10-01-claude-browser.json`. `chrome://gpu` was not reachable there, so it is not confirmed that this was the same Graphite signature.
 >
 > The app has no defect of its own. It supplies the rendering workload that exposes the browser's failure: a card dragged to the top, with heavy blur. The log shows *where* Graphite fails: the `RasterPathAtlas` proxy is uninstantiated. *Why* it fails is for Chromium to determine.
 >
@@ -78,7 +80,7 @@ Choose the design with the app's own design button. Nothing else is changed.
 
 The decision rules below were the original ones, kept for the record.
 
-**Decision rules, written now:**
+**Historical decision rules** (written before session 1). They are **superseded by Amendment 2** and no longer apply:
 - Interpret only after **≥ 10 sessions** or **≥ 5 blackouts**.
 - Blackouts only in B, none in A, with comparable drag time: Design 4's paint load is a **condition** of the blackout. That supports the paint-triggered hypothesis; the mechanism remains unproven.
 - Blackouts in A and B at similar rates per minute of dragging: **the design is not the variable.**
