@@ -87,3 +87,4 @@ The decision rules below were the original ones, kept for the record.
 **Out of scope for this lab:**
 - any change to the design, the shadows, the drag code or its timing;
 - a "GPU off" or "Skia Graphite off" (`chrome://flags`) arm. That is a change to the owner's browser and is not decided. It would be the decisive test of whether the failure lives in Graphite.
+  - **Later the same day (2026-10-01), the owner did set Skia Graphite to Disabled.** That is a **diagnostic observation outside this protocol**, not a timed A/B arm. Its result: no blackout in normal use with Disabled, and the blackout back with Default/Enabled. The conclusion at the top relies on it in that sense only.
