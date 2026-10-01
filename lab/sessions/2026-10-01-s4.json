@@ -1,0 +1,16 @@
+{
+ "session": "2026-10-01-s4",
+ "intended": "Classic",
+ "actual": "Black & White (minimal) first, then Neumorphic. The owner calls Black & White 'Classic'; the app labels the designs Classic (default), Modern, Black & White (minimal), Neumorphic",
+ "window_utc": "11:10:27 - 11:14:51",
+ "drags": [
+  ["11:10:27.4Z","minimal",21.1],["11:11:05.2Z","minimal",0.7,"resize-handle"],["11:11:08.5Z","minimal",23.4],["11:11:33.5Z","minimal",3.0],
+  ["11:11:40.1Z","neumorphic",17.1],["11:12:22.6Z","minimal",14.9,"after the crash: not a valid trial"],["11:14:30.7Z","minimal",0.7,"resize, after the crash"],["11:14:33.6Z","minimal",17.2,"after the crash: not a valid trial"]
+ ],
+ "black_and_white_before_crash_s": 47.5,
+ "black_and_white_result": "no blackout",
+ "neumorphic_result": "blackout 9.6 s into its first drag (stalls 213 ms at 11:11:49.697Z and 191 ms at 11:11:52.749Z; main thread free, heartbeat max 8.9 ms)",
+ "marks_shift3": ["11:11:53.628Z","11:11:54.234Z","11:11:55.182Z","11:11:55.834Z"],
+ "owner_report": "nothing happened in 'Classic' (= Black & White), only in Design 4",
+ "chrome_gpu_after_session": "not read; the stall shape matches the logged crashes of sessions 1 and 3"
+}

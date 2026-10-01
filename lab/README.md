@@ -1,5 +1,11 @@
 # BUG-017 lab — observation only
 
+> **Concluded 2026-10-01.** The blackout is a GPU-process crash in Chrome's **Skia Graphite** backend: the CVFrame stalls start 1–5 ms from the logged crashes. Dragging a card triggers it. Heavy blur (Neumorphic) makes it about 4–5× more frequent than in Black & White, which also crashed. With `chrome://flags/#skia-graphite` set to **Disabled** it does not occur at all, and with Default/Enabled it returns (owner's test). The app is unchanged. Session data: `sessions/`.
+>
+> The app has no defect of its own. It supplies the rendering workload that exposes the browser's failure: a card dragged to the top, with heavy blur. The log shows *where* Graphite fails: the `RasterPathAtlas` proxy is uninstantiated. *Why* it fails is for Chromium to determine.
+>
+> **Reported to Chromium on 2026-10-01** as issue [567972098](https://issues.chromium.org/issues/567972098). The results matrix is comment #2. While the issue is open, `bug017.html` here is its reproduction page, so do not move or delete this folder.
+
 All personal data here is fictitious, as in the rest of this mirror. Production is not touched. The private project is not touched either.
 
 ## What this is

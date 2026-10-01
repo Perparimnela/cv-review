@@ -1,0 +1,13 @@
+{
+ "session": "2026-10-01-claude-browser",
+ "requested_by": "owner: test it in your browser, not Chrome; Reset Default before every test; also designs 3 and 4; lift the card higher, not halfway",
+ "browser": "Claude desktop app built-in browser: Chromium 152.0.7977.130 (UA 'Claude/2.16120.0'), WebGL renderer ANGLE Metal, Intel UHD Graphics 630, DPR 2, viewport 1157x1034. chrome://gpu is not reachable in this browser",
+ "page": "cv-review/lab/bug017.html (V550 public mirror plus observer)",
+ "method": "Scripted drag of professional-desc: a pointerdown on the card frame (not the text), then one pointermove per animation frame through the app's own document-level handlers (DragSystem rAF path), then pointerup. GPU-crash detector: a 1x1 WebGL probe canvas (webglcontextlost). Frame gaps measured with requestAnimationFrame",
+ "batch_mid": {"motion": "oscillation ±140 px around the start position, period 2 s",
+  "runs": [["default",60,"no reset",45.1,"no gaps","no loss"],["modern",60,"no reset",41.6,"no gaps","no loss"],["default",60,"Reset Default",40.1,"no gaps","no loss"],["modern",60,"Reset Default",36.0,"no gaps","no loss"],["minimal",60,"Reset Default",37.8,"no gaps","no loss"],["neumorphic",60,"Reset Default",29.8,"no gaps","no loss"]]},
+ "batch_high": {"motion": "from the start position up to the top of the window (card top reaching 9 px), 1.5 s up, 0.6 s hold, 1.5 s down, repeated",
+  "runs": [["default",60,"Reset Default",54.7,"no gaps","no loss"],["modern",60,"Reset Default",53.2,"no gaps","no loss"],["minimal",60,"Reset Default",52.9,"no gaps","no loss"],
+           ["neumorphic",60,"Reset Default",49.7,"gaps 307,266 ms at 10.1 s; 234,266 at 39 s; 235,666 at 50 s; 234,233 at 54 s","WebGL context LOST at 10.108 s (first stall began 6 ms later)"]]},
+ "reading": "Reproduced in a second, independent Chromium (152) on the same Intel GPU: Neumorphic plus dragging the card up to the top crashes the GPU process within 10 s, while Classic, Modern and Black & White under the identical motion do not in 60 s. Mid-height motion crashed no design, including Neumorphic. The probe cannot survive the first loss, so the later stalls (39, 50, 54 s) are consistent with further GPU restarts but are not counted"
+}

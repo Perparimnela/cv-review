@@ -1,0 +1,20 @@
+{
+ "session": "2026-10-01-s2",
+ "protocol": "amendment 2: one design per session (Neumorphic), after chrome://restart",
+ "window_utc": "10:44:41 - 10:47:09",
+ "drags": [
+  ["10:44:41.5Z","neumorphic",0.84,"resize-handle"],["10:45:37.8Z","neumorphic",13.5,"professional-desc"],
+  ["10:45:52.1Z","neumorphic",0.7,"profile image (click)"],["10:45:54.7Z","neumorphic",65.4,"professional-desc"],
+  ["10:47:02.0Z","neumorphic",7.2,"professional-desc"]
+ ],
+ "blackout": "YES",
+ "owner_report": "it happened twice; could not always press Shift three times",
+ "marks_shift3": ["10:46:10.143Z (held 15.4 s)","10:46:13.128Z (held 18.4 s)"],
+ "cvframe_stalls_utc": [["10:46:08.886","216 ms"],["10:46:09.152","117 ms"],["10:46:12.164","179 ms"],["10:46:12.397","100 ms"]],
+ "first_stall_into_drag_s": 14.1,
+ "drag_time_before_first_stall_s": 29.2,
+ "heartbeat_max_ms": 4.5,
+ "loaf": "4 entries 109-217 ms, blockingDuration 0, scripts [] in all",
+ "shadow_census_page": {"elements": 139, "layers": 290, "blurSum": 2517},
+ "chrome_gpu_after_session": "not read; the stall shape matches session 1, where the stalls began 1-5 ms after logged GPU-process crashes"
+}
