@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BUG-017 Lab Report</title>
+<style>
+  :root { --bg:#f6f7f9; --fg:#1b1d22; --muted:#5b6170; --card:#ffffff; --line:#d9dce3; --accent:#1f6feb; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#121417; --fg:#e7e9ee; --muted:#9aa1ae; --card:#1b1e23; --line:#2c3038; --accent:#4c8dff; } }
+  :root[data-theme="dark"] { --bg:#121417; --fg:#e7e9ee; --muted:#9aa1ae; --card:#1b1e23; --line:#2c3038; --accent:#4c8dff; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  main { max-width:860px; margin:0 auto; padding:20px 16px 40px; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  p.lead { color:var(--muted); margin:0 0 16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin:0 0 14px; }
+  table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:600; font-size:13px; }
+  button { font:inherit; padding:9px 14px; border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:#fff; cursor:pointer; }
+  textarea { width:100%; box-sizing:border-box; min-height:260px; font:12px/1.4 ui-monospace, Menlo, monospace; background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:10px; }
+  .ok { color:var(--muted); margin-left:10px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>BUG-017 · Raporti i provës</h1>
+  <p class="lead">Lexon vetëm të dhënat e ruajtura nga <code>bug017.html</code> në këtë shfletues (tërheqjet, rastet me Shift×3 dhe rastet e CVFrame). Nuk ndryshon asgjë.</p>
+
+  <div class="card">
+    <table id="summary"><thead><tr><th>Dizajni</th><th>Tërheqje</th><th>Kohë gjithsej</th><th>Raste (Shift×3)</th></tr></thead><tbody></tbody></table>
+  </div>
+
+  <div class="card">
+    <button id="copy" type="button">Kopjo raportin</button><span class="ok" id="status"></span>
+    <p class="lead" style="margin-top:10px">Pastaj ngjite te biseda me Claude-in.</p>
+    <textarea id="out" readonly></textarea>
+  </div>
+</main>
+<script>
+(function(){
+  function read(k, dflt){ try{ return JSON.parse(localStorage.getItem(k)||'null') || dflt; }catch(_){ return dflt; } }
+  var drags=read('cv_lab_bug017_drags', []), ctx=read('cv_lab_bug017_context', []), frames=read('cv_bug017_frames', null);
+  var by={};
+  drags.forEach(function(d){ var k=d.design||'?'; by[k]=by[k]||{n:0, ms:0, inc:0}; by[k].n++; by[k].ms+=d.durMs||0; });
+  ctx.forEach(function(c){ if(c.trigger!=='shift3') return; var k=c.design||'?'; by[k]=by[k]||{n:0, ms:0, inc:0}; by[k].inc++; });
+  var tb=document.querySelector('#summary tbody');
+  Object.keys(by).sort().forEach(function(k){
+    var r=by[k], tr=document.createElement('tr');
+    [k, r.n, (r.ms/1000).toFixed(0)+' s', r.inc].forEach(function(v){ var td=document.createElement('td'); td.textContent=v; tr.appendChild(td); });
+    tb.appendChild(tr);
+  });
+  if(!tb.children.length){ var tr=document.createElement('tr'), td=document.createElement('td'); td.colSpan=4; td.textContent='Ende asnjë tërheqje e regjistruar në këtë shfletues.'; tr.appendChild(td); tb.appendChild(tr); }
+  var report={ generated:new Date().toISOString(), page:location.href, summary:by, contexts:ctx, cvframe:frames, drags:drags };
+  var out=document.getElementById('out'); out.value=JSON.stringify(report, null, 1);
+  document.getElementById('copy').addEventListener('click', function(){
+    var s=document.getElementById('status');
+    (navigator.clipboard ? navigator.clipboard.writeText(out.value) : Promise.reject())
+      .then(function(){ s.textContent='U kopjua.'; })
+      .catch(function(){ out.focus(); out.select(); s.textContent='Zgjidhe tekstin dhe kopjoje me dorë.'; });
+  });
+})();
+</script>
+</body>
+</html>

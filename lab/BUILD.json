@@ -1,0 +1,7 @@
+{
+ "build": "V550",
+ "public_index_md5": "311494aad4778a3ef4868d1c51b7a1db",
+ "observer_md5": "7724c6323560c93b444ffb544bf221c3",
+ "bug017_html_md5": "88e949670adbb44c1aca530004012df5",
+ "rule": "bug017.html = public index.html + one observer block; nothing else differs"
+}
