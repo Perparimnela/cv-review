@@ -26,9 +26,9 @@
 
 | | Artifact | Hash (md5) | Bytes | Date |
 |---|---|---|---|---|
-| **PRODUCTION** | `index.html` | `792082b887fa3e2c4cebd7a4f73443e6` | 1,324,414 | 2026-09-30 |
-| **Release snapshot** | `550.html` | `792082b887fa3e2c4cebd7a4f73443e6` | 1,324,414 | 2026-09-30 |
-| **Rollback point** | `index.html.bak-pre-v550-20260930-152856` | `ba88f1ef186a52993719834109cdfa8a` (V548) | 1,319,906 | 2026-09-30 |
+| **PRODUCTION** | `index.html` | `b461676d82a2826ec66d7f2f54fd289b` | 1,346,255 | 2026-10-02 |
+| **Release snapshot** | `565.html` | `b461676d82a2826ec66d7f2f54fd289b` | 1,346,255 | 2026-10-02 |
+| **Rollback point** | `index.html.bak-pre-v565-20261002-141510` | `792082b887fa3e2c4cebd7a4f73443e6` (V550) | 1,324,414 | 2026-10-02 |
 
 > ### ⚠️ The rollback point is a Release Snapshot, not a backup — corrected 2026-08-29
 >
@@ -54,14 +54,14 @@ artifact, tracked separately, and it changes nothing here: **identity is the has
 CVQualify apparatus `VERSION` = **V482s** (unchanged — ADR-031 is a product change and must not bump
 the apparatus; see "Two versions" below).
 
-**V550 is the reference point for every future audit.** A future delta-audit compares against
-`792082b8`. (V548 = `ba88f1ef` is the rollback target; V546 = `e3a635da` is two back.)
+**V565 is the reference point for every future audit.** A future delta-audit compares against
+`b461676d`. (V550 = `792082b8` is the rollback target; V548 = `ba88f1ef` is two back.)
 
-`window.CV.build` reports **`V550`** in production — measured from the artifact. Since V509 the label
+`window.CV.build` reports **`V565`** in production — measured from the artifact. Since V509 the label
 is bumped with every version, which is why it can be trusted again; **identity is still the hash.**
 
 ```bash
-cp "index.html.bak-pre-v550-20260930-152856" "index.html"
+cp "index.html.bak-pre-v565-20261002-141510" "index.html"
 ```
 
 ## Quality gate (`tools/verify.py`) and observatory (`tools/observatory.js`)
@@ -219,8 +219,9 @@ The owner chose that it is **updated after every production release** and carrie
 | 2026-09-30 | V542 (`929e8b2c…`) | `d952a89f…` | all 7 public files byte-identical to the package; leak scan clean; Pages serving V542 |
 | 2026-09-30 | V546 (`e3a635da…`) | `8830d1a6…` | public commit `97321a2`: all 7 files byte-identical to the package (raw files fetched by commit hash); known-token and generic leak scans clean; Pages serving V546, byte-identical |
 | 2026-09-30 | V548 (`ba88f1ef…`) | `fd20814b…` | public commit `ee68690`: all 7 files byte-identical to the package; leak scans clean. **New for V548:** the PDFs made from the public copy were checked too, because they now carry text. All 9 PDFs contain "Max Mustermann", 0 real tokens and 0 leak patterns. Pages serving V548, byte-identical |
+| 2026-09-30 (verified 2026-10-01) | V550 (`792082b8…`) | `311494aa…` | public commit `e6d5400`: all 7 files byte-identical to the package; leak scans clean; PDFs from the public copy, **certificate included** (3805 characters), contain only fictitious values ("MAX MUSTERMANN", X00000000X) and 0 of the 30 real tokens; Pages serving V550, byte-identical |
 
-## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V550 since 2026-09-30)
+## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V550 since 2026-09-30; photo-series rows added at V565, 2026-10-02)
 
 > Added after the external review (point 9). The phrase "device gate passed" had read broader than the evidence behind it. This table is what each capability has actually been exercised on.
 >
@@ -254,6 +255,7 @@ The owner chose that it is **updated after every production release** and carrie
 | Hidden notification fully off-screen (V545) | ✅ observatory geometry | ✅ top-right crop clean (V544 showed the sliver) | ✅ owner, V545: "po eshte ne rregull tani" | ⬜ |
 | PDF text layer: search, select and copy (V547/V548) | ✅ pdf_check TEXT/ORDER/UNICODE, VISUAL pixel-identical | ✅ WebKit PDF via Save to Files: 75/75; Apple PDFKit search, word selection and copy exact | ✅ owner, 2026-09-30: e-mail copied to Notes exactly, "Elektro" found, ü/– correct, appearance unchanged | ⬜ |
 | Certificate text layer, 2 A4 pages, Φ via Symbol (V549/V550) | ✅ pdf_check ALL PASS, VISUAL pixel-identical | ✅ WebKit PDF 41/41, UNICODE 32/32; PDFKit finds text on both pages, copies "MAX" and "Φ240" exactly | ✅ owner, 2026-09-30: name copied, "DEKLARATË" on page 2, "Φ240" found and copied, both pages unchanged | ⬜ |
+| Photo series V551–V564: save/format/link messages, crop presets, touch handles, Adjust and proportions in the PDF, balloon photos, profile photo not stored (V565) | ✅ headless Chrome harnesses (storage, formats, links, crop, handles, balloon, filters, proportions), golden 0.000 %, pdf_check ALL PASS | ✅ WebKit (`WKWebView`): formats, profile photo, decode-or-message | ✅ owner, 2026-10-02: V560 list (9/11, the other 2 now intended), V561 handles, V564 handles + balloon + profile | ⬜ |
 
 **HTTPS share, verified on the real iPhone (2026-09-30).**
 - The owner enabled GitHub Pages on the public, anonymised review copy: `https://<owner>.github.io/cv-review/`, served with HSTS.
@@ -921,6 +923,527 @@ Production was V548 (`ba88f1ef…`).
 | **Apple PDFKit** on that PDF | "VËRTETIM PUNE", "MAX MUSTERMANN" and "Elektroteknik" found on page 1; "Φ25mm", "Φ240 mm", "DEKLARATË" and "Firma dhe Vula" on page 2. Word selection and drag-copy give exactly "MAX" and "Φ240" |
 
 **Device gate (Neni 72): passed on the owner's iPhone.** See *Release record — V550*.
+
+#### Sandbox ahead of production — V551–V564 (2026-10-02) — CLOSED by the V565 promotion
+
+**Closed on 2026-10-02:** `index-test.html` = `index.html` = `565.html`.
+
+Production is V550 (`792082b8…`).
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V551 | `551.html` | `713365e099926fe4b735c3e5a2f27080` | 1,326,713 | `index-test.html.bak-pre-v551-20261002-002307` (= V550, `792082b8…`) |
+| V552 | `552.html` | `b5540524bbfb5f608ec76bea8c567e5b` | 1,327,170 | `index-test.html.bak-pre-v552-20261002-004054` (= V551, `713365e0…`) |
+| V553 | `553.html` | `8ef04d04f40e08bb0f81b12a41559306` | 1,328,963 | `index-test.html.bak-pre-v553-20261002-004916` (= V552, `b5540524…`) |
+| V554 | `554.html` | `638375501a6a293b697f9088d2de7455` | 1,330,174 | `index-test.html.bak-pre-v554-20261002-010113` (= V553, `8ef04d04…`) |
+| V555 | `555.html` | `75cf6f94e8f18dc1c42298cedbad17eb` | 1,333,048 | `index-test.html.bak-pre-v555-20261002-011409` (= V554, `63837550…`) |
+| V556 | `556.html` | `337d3cdcdce2146735b18069302d14b4` | 1,333,520 | `index-test.html.bak-pre-v556-20261002-012337` (= V555, `75cf6f94…`) |
+| V557 | `557.html` | `a31a135273e05cfd9e0581fbfa054cde` | 1,333,162 | `index-test.html.bak-pre-v557-20261002-013154` (= V556, `337d3cdc…`) |
+| V558 | `558.html` | `69e9368426e89878f8c33ff502b39b6d` | 1,338,963 | `index-test.html.bak-pre-v558-20261002-020233` (= V557, `a31a1352…`) |
+| V559 | `559.html` | `bb32affdc40318fbca690fcdac2102b2` | 1,339,462 | `index-test.html.bak-pre-v559-20261002-021617` (= V558, `69e93684…`) |
+| V560 | `560.html` | `073afe16d56e4472e95d2adf4f1b639c` | 1,340,466 | `index-test.html.bak-pre-v560-20261002-022931` (= V559, `bb32affd…`) |
+| V561 | `561.html` | `1d64ba881fff010a2c14d9e0650e502d` | 1,341,624 | `index-test.html.bak-pre-v561-20261002-115759` (= V560, `073afe16…`) |
+| V562 | `562.html` | `341ae1373899fc3be1ea13b6f59ef976` | 1,345,766 | `index-test.html.bak-pre-v562-20261002-122544` (= V561, `1d64ba88…`) |
+| V563 | `563.html` | `d4507bb465c39aa55562d3fe32064939` | 1,345,548 | `index-test.html.bak-pre-v563-20261002-124300` (= V562, `341ae137…`) |
+| V564 | `564.html` | `85acedf32aa001399e27a31864893312` | 1,346,147 | `index-test.html.bak-pre-v564-20261002-131744` (= V563, `d4507bb4…`) |
+
+**The photo series (external review #4, 2026-10-02).** ChatGPT audited the public mirror, and the audit was then checked against the code. The agreed order is:
+- A (storage-failure message), B (message for unsupported files), C (photos from a link: downscale, no remote-URL fallback);
+- then D (crop presets) and E (larger touch handles);
+- then F (remove the "Reflection — coming soon" button);
+- G (photos in IndexedDB) as a release of its own.
+
+The owner set the rules for this phase:
+- no visual change apart from the new messages;
+- no change in behaviour outside A–F;
+- no IndexedDB yet, and no migration or reformatting of stored data;
+- every step tested before the next.
+
+**V551 = step A: a failed local save of a photo is announced, no longer swallowed.**
+
+**Defect, proven first on V550** (headless Chrome, fresh browser context per scenario; file in `scratchpad/v551/storagetest.mjs`, not in the repo):
+- Four call sites wrote photos to `localStorage` and caught the error with an empty `catch{}`:
+  - the personal terminal T1;
+  - the other terminals inside the iframe;
+  - the A4 certificate;
+  - the profile photo.
+- The photo stayed on screen and was gone after a reload, with no message.
+- For the profile photo it was worse: the app said "Foto erfolgreich hochgeladen!" although nothing had been stored.
+
+| Scenario | V550 | V551 |
+|---|---|---|
+| Profile photo 3.7 MB after one floating photo (does not fit) | "uploaded successfully"; gone after reload | **error message, no success message**; gone after reload (expected) |
+| Floating photo, T1, storage almost full | no message; gone after reload | **error message** |
+| Floating photo, iframe terminal (`skills`), storage almost full | no message; not stored | **error message** |
+| Photo on the A4 certificate, storage almost full | no message; not stored | **error message** |
+| Controls: profile 3.7 MB and 170 KB into empty storage; T1, `skills` and A4 photo into empty storage | stored, restored, success / no message | **identical** |
+
+**Mechanism:**
+- One authority, `CVPhotoEngine.saveFailed(err)`, in the engine. All four call sites now call it from their `catch`.
+- It tells the quota case (`QuotaExceededError`, codes 22/1014, Firefox's `NS_ERROR_DOM_QUOTA_REACHED`) apart from any other failure:
+  - `photoStorageFull`: "Photo NOT saved — the browser storage is full. It will be gone after a reload. Remove photos or use smaller ones.";
+  - `photoNotSaved`: "Photo NOT saved — it will be gone after a reload."
+- Both keys exist in de/en/sq, and the text follows the language flag (V530).
+- It shows at most one message every 4 s, so repeated moves do not stack messages.
+- The profile handler keeps the error in `_cvPhotoBytesWrite.lastError`. When the write fails it shows the error and skips the success message.
+
+**Unchanged:** the photo stays on screen, nothing is deleted, the storage format and the keys are the same, and no other path is touched. Measured 2026-10-02 in Chrome: a 3.7 MB profile photo still fits into empty storage, so the limit is reached by the sum of photos, not by one typical photo.
+
+**Verification (code `713365e0`):**
+
+| Check | Result |
+|---|---|
+| `verify.py` | RELEASE CANDIDATE: YES. 59/59 msg keys in all three languages, every key referenced, no hard-coded notification. The only WARNs are the missing 551 snapshot (created afterwards) and the old `langChanged` |
+| Golden image export | 6/6 at 0.000 % |
+| `pdf_check` desktop and `--mobile` | ALL PASS 9/9 on TEXT, ORDER, UNICODE and VISUAL (pixel-identical) |
+| Storage scenarios | see the table above: 4/4 failure paths now announced, 6/6 controls identical |
+
+**V553 = step B: an image the browser cannot open is announced, and is never shown broken or stored.**
+
+**Defect, proven first on V552.** In Chrome (headless):
+- **Floating photo:**
+  - a HEIC file or a non-image was ignored without a word;
+  - a TIFF or a damaged ".jpg" appeared as a **broken** photo.
+- **Profile photo:** a TIFF, HEIC or damaged file gave "Foto erfolgreich hochgeladen!", a broken picture, **and was stored** (a TIFF took 1 MB).
+- **"Replace photo":** swapped a good photo for a broken one, with no message.
+
+**Mechanism:**
+- **One authority**, `CVPhotoEngine.unsupported()`. It shows at most one message every 2 s, so a batch of files gives one message. The new key `photoUnsupported` exists in de/en/sq: "This image cannot be opened here — the format is not supported (e.g. HEIC) or the file is damaged. Please use JPG, PNG or WebP."
+- **`downscale(dataUrl, cb, onFail)`:** when the browser cannot decode the image, it calls `onFail` instead of continuing with the undecodable data. Its two callers both pass `unsupported`:
+  - `addFiles`, which also reports a file that `isImg` rejects;
+  - "Replace", which keeps the old photo.
+- **Profile photo:** an `Image` probe decodes the file before it is shown or stored. If the probe fails, the photo and the storage stay as they were, and the status text and the message say why. The "not an image" (`pickImage`) and "over 5 MB" checks are unchanged.
+- **Acceptance rules are unchanged:**
+  - `isImg` still accepts JPEG/PNG/TIFF/WebP for floating photos;
+  - the profile still accepts any `image/*`.
+  - Only what the browser cannot open is now refused, so where a browser decodes a format (Safari: HEIC, TIFF), the path is the same as before.
+
+| Case | Chrome V552 | Chrome V553 | WebKit V552 | WebKit V553 |
+|---|---|---|---|---|
+| Profile JPG / PNG / WebP | success, stored | **same** | success, stored (JPG) | **same** |
+| Profile HEIC | success, broken, stored | **message, not stored** | success, shown, stored | **same (unchanged)** |
+| Profile TIFF | success, broken, stored 1 MB | **message, not stored** | success, shown, stored | **same (unchanged)** |
+| Profile damaged ".jpg" | success, broken, stored | **message** | success, broken, stored | **message** |
+| Floating JPG / PNG / WebP | added, stored | **same** | added (JPG) | **same** |
+| Floating HEIC | silent | **message** | silent | **message** |
+| Floating TIFF | broken photo | **message, nothing added** | added, shown | **same (unchanged)** |
+| Floating damaged ".jpg" | broken photo | **message, nothing added** | broken photo | **message, nothing added** |
+| Floating non-image (`.txt`) | silent | **message** | — | — |
+| Replace with JPG | replaced | **same** | — | — |
+| Replace with TIFF / HEIC / damaged | replaced by a broken photo | **message, old photo kept** | — | — |
+
+The WebKit runs used the macOS `WKWebView`, a non-persistent store per case, with the file handed over through `DataTransfer` (harness `wk.swift`). The Chrome runs used `formattest.mjs`.
+
+**Regression checks on V553:**
+- All step A scenarios (`storagetest.mjs`) and step A.1 scenarios (`storagetest4.mjs`) give the same results as on V551/V552.
+- `verify.py`: YES (msg keys 60/60).
+- Golden image export: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
+
+**Not in B, recorded as B.1 for later (owner and external review, 2026-10-02):**
+- Allow browser-decodable HEIC/HEIF in *floating* photos. Today `isImg` refuses it, as it did before V553, while the profile photo accepts HEIC in Safari.
+- It is safe now, because the decode check stops Chrome from adding a broken photo, but it is a feature of its own and is not mixed into C.
+- `photoUnsupported` means "this input cannot be used here", not "this format is unsupported everywhere": TIFF, for example, opens in WebKit.
+
+**V554 = step C: a photo from a link becomes a downscaled local asset. When the fetch fails, nothing is added and no remote URL is stored.**
+
+The external review asked for C1 (normalise) and C2 (no remote fallback) as one patch. Otherwise a failed fetch could still leave the remote dependency that C removes.
+
+**Defect, proven first on V553.**
+- **Test setup:** headless Chrome, with a synthetic drop of a link onto Terminal 1 (harness `urltest.mjs`).
+- **The proxy was simulated:** CDP `Fetch` intercepted every request to images.weserv.nl and answered it locally, so no request left the machine.
+
+| Case | V553 | V554 |
+|---|---|---|
+| Link to a 2400×1800 photo, proxy delivers it | stored at **2400×1800, 4,964,131 chars** (almost the whole storage) | **1100×825, 541,171 chars**; identical after reload |
+| Link, proxy fails (network) | the **remote URL** is stored as the photo; after reload it still depends on that server | **"The photo from the link could not be loaded…"**; nothing added; nothing after reload |
+| Link, proxy answers with a non-image | remote URL stored | same message; nothing added |
+| `data:` URL of a 600×450 photo | added, 226,519 chars | **identical** (below the cap) |
+| `data:` URL of a 1400×1050 photo | added at full size, 1,358,391 chars | **1100×825, 695,643 chars** |
+
+**Mechanism:**
+- `addUrlPhoto` now sends every result, `data:` URLs and fetched blobs alike, through the same `downscale(…, add, unsupported)` as files.
+- The old `.catch(create(…, u))` is gone. A failed fetch, a non-image answer or a read error calls `linkFailed()`.
+- `linkFailed()` shows `photoLinkFailed` in de/en/sq, at most once every 2 s.
+- A fetched image that the browser cannot decode gets `photoUnsupported`.
+
+**Unchanged:**
+- the proxy and its URL format;
+- `serialize()`, the storage keys and the format;
+- photos already stored, including any remote URL saved before V554: no migration.
+
+**Privacy (external review P1), still open:** a link is still sent to images.weserv.nl. C removes only the remote fallback; the choice of proxy is a separate decision.
+
+**Regression on V554:**
+- The step A scenarios give 9/9 results identical to V551, and the step B format scenarios 18/18 identical to V553. Step A.1 (`storagetest4.mjs`) is unchanged.
+- `verify.py`: YES (msg keys 61/61).
+- Golden image export: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
+
+**The owner's decision, 2026-10-02:** carry on with D, E and F now and run the iPhone test once, at the end, for all steps. The device gate (Neni 72) stays open until then.
+
+**V555 = step D: crop presets.**
+- **New buttons** in the Crop group: *Lirë* (free, as before), *1:1*, *3:4* (classic CV portrait), *4:5* and *Rreth* (round). They sit between Cancel and Reset/Apply, behind a separator, in the toolbar's own button style; the ratio buttons show the ratio as text. They have tooltips in the toolbar's existing tip language, and the active preset is highlighted with the existing `.obj-tb.active` style.
+- **Choosing a ratio** sets the largest crop window of that ratio inside the photo, centred on the current window, and locks the aspect.
+- **Corner drags** keep the ratio: the opposite corner is fixed, and the window is limited by the photo and by the 24 px minimum.
+- **Rreth** is 1:1 with a round preview (`border-radius:50%` on the crop window). On Apply it also sets the existing round-corner style (`radius:'half'`) in the same undo step.
+- **Entering Crop** starts at *Lirë*, and **Reset** returns to *Lirë*.
+- **Untouched:** the non-destructive crop model (`st.crop`), `serialize()` and the storage format. `rd:'half'` already existed (Style → round corners).
+
+| Test (headless Chrome, `dtest.mjs`) | Result |
+|---|---|
+| Enter Crop | window = full photo 240×180, *Lirë* active |
+| 3:4 | window 135×180 (0.75), centred |
+| Drag the bottom-right corner, then the top-left corner | ratio stays 0.75 (131.25×175, then 101.25×135) |
+| Apply | photo 101.25×135 with `crop {x .344, y .222, w .422, h .75}`, stored |
+| Rreth, then Apply | 101.25×101.25, `radius:'half'`, shown with a computed `border-radius` of 50 %, stored `rd:'half'` |
+| One undo | back to 101.25×135, radius 0, stored the same |
+| 1:1, then Lirë, then drag | aspect free again (0.56) |
+| Reset crop | the full photo again, *Lirë* |
+
+**Regression on V555:**
+- The step A, B and C scenarios are identical to V551, V553 and V554 (9/9, 18/18, 5/5).
+- Golden image export: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS.
+- `verify.py`: YES.
+
+**V556 = step E: larger touch areas for the handles, on touch screens only.**
+- **Mechanism:** one CSS rule in the engine's injected stylesheet (`ensureCss`), so it reaches both the main document and the iframe:
+  ```css
+  @media (pointer:coarse) {
+    .mph-crop-grip::before { content: ""; position: absolute; inset: -15px }
+    .mot-photo .mph-grip::before { inset: -16px }
+  }
+  ```
+- **Effect on touch screens:**
+  - The crop handles had **no** extended area (14 px). They now have 44 px; the part outside the photo is clipped by the crop overlay's `overflow:hidden`, so about 29 px remain inside the photo.
+  - The photo's resize handles go from 30 px to 44 px.
+  - The visible handles are unchanged, because the `::before` boxes carry no paint.
+- **On desktop (`pointer:fine`) nothing changes.** The toolbar buttons (30 px, side by side) are not changed, because enlarging their touch areas would make them overlap.
+
+| Test (`etest.mjs`, touch through CDP touch emulation) | V555 | V556 |
+|---|---|---|
+| Desktop: crop handle, point 22 px inside the corner | the crop window (not the handle) | **same** |
+| Desktop: photo handle, point 19 px from its centre | not the handle | **same** |
+| Touch: crop handle, point 22 px inside the corner | the crop window; a drag from there does not resize | **the handle**; a drag from there resizes (240×180 → 210×160) |
+| Touch: photo handle, point 19 px from its centre | not the handle | **the handle** |
+
+**Regression on V556:**
+- The step A, B and C scenarios are identical (9/9, 18/18, 5/5), and the step D scenario is identical to V555 (17/17).
+- Golden image export: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS.
+- `verify.py`: YES.
+
+**V557 = step F: the "Reflection — coming soon" button is removed.**
+- **What it was:** a control that looked like a feature but only announced "coming soon". The external review and the owner agreed to remove it.
+- **Removed:** the `sReflect` button and its click handler, the `SVG_REFLECT` icon, its tooltip entry, and the `reflectionSoon` message key in de/en/sq. Nothing else referenced them.
+- **Result:** the Style group is now *Kthehu, Border, Qoshe të rrumbullakta, Hije*. Border, corners and shadow cycle exactly as on V556 (2 px, 12 px, soft): same messages, same stored `bd/rd/sh`.
+
+**Final regression on V557, the whole series:**
+- **Step A:** 9/9 identical to V551, plus 5/5 for the follow-up tests.
+- **Step A.1:** same-file recovery stores and survives a reload; the "> 5 MB" message shows both times; floating photos give 2 photos.
+- **Step B:** 18/18 identical to V553, and the WebKit runs are identical to V553.
+- **Step C:** 5/5 identical to V554.
+- **Step D:** 17/17 identical to V555.
+- **Step E:** desktop unchanged, touch handles hit.
+- **Gates:** golden image export 6/6 at 0.000 %; `pdf_check` desktop and `--mobile` ALL PASS; `verify.py` YES (60/60 msg keys).
+
+**Pre-test checks asked for by the external review, and the owner's PDF report (2026-10-02).** None of these is caused by A–F; each was measured on V550 (production) as well.
+
+| Check | Result |
+|---|---|
+| Round photo (Rreth) in the CV PDF, desktop and phone path | **round**: the photo region fills 0.785 of its box (a circle is 0.785, a square 1.0) |
+| Floating photo proportions in the PDF | **pre-existing defect:** a 240×180 photo (1.333) comes out 1.425 in the PDF, about 7 % wider, on V550 and V557 alike. A round photo therefore becomes a slightly wide oval (1.069) |
+| Reset Default after profile, T1 and A4 photos | the T1 and A4 photos and their keys are cleared. **Pre-existing gap:** the profile photo's bytes (`cv_profile_photo`, 226,519 chars) stay in storage on V550 and V557 alike. The photo is gone from the CV after a reload, but its bytes still use space |
+| **Owner's report: the PDF colours differ from the screen** | **pre-existing defect, proven on V550:** the photo *Adjust* settings (brightness, contrast, saturation, blur) are CSS `filter`s, which the export renderer ignores. A teal test photo with saturation 200 and brightness 60 shows as (0, 96, 108) on screen but (32, 136, 144) in the PDF, which is the unadjusted original |
+| Other differences in the owner's screenshot | Terminal 1 text is Fira Mono on screen but sans-serif in the export (export stylesheet `font-family:"Segoe UI",system-ui,sans-serif`). The pills' neon rims are not drawn by html2canvas (see V522, withdrawn). Both are long-standing, and both are already in the V546 golden and PDF baselines |
+
+**The owner's decision (with the external review), 2026-10-02:**
+- H1, H2 and H3 are fixed in this series, in that order, before the single iPhone test.
+- H4 (Fira Mono in the PDF) stays out of this cycle, and so do the neon rims.
+- Order: H1 → H2 → H3 → regression A–F → iPhone → promotion.
+
+**V558 = H1: photo *Adjust* settings are baked into the photo pixels for every export.**
+- **Single pipeline**, `CVPhotoEngine.bakeExportFilters(root)`. It runs on the export clone just before capture, so the live page is never touched.
+- **Every export path calls it:**
+  - `renderToCanvas`, for the CV, the letter and "Save as Image" (desktop, phone and neumorphic engines alike);
+  - `renderDocToCanvas` and `renderDocToA4Pdf`, for the certificate.
+- **Per photo whose filter is not neutral:**
+  - It decodes the photo's own source, at most 2000 px.
+  - It applies the CSS Filter Effects formulas in the order of `applyFilter()`: brightness, then contrast, then saturate (the standard luminance matrix), clamping to [0,1] after each step; then a Gaussian blur (three box passes, premultiplied alpha, transparent outside), with σ equal to the CSS radius in the photo's own pixels. The on-screen width comes from a temporary `data-cv-sw` attribute that `pctize` sets and `unpctize` removes.
+  - It swaps the clone's `src` for the baked bitmap and sets `filter:none`.
+- **Photos with neutral filters and photos that cannot be read are left as they are.** `bakeExportFilters` never throws.
+
+| Adjust (teal photo 40,140,150; headless Chrome, CV PDF) | Screen | PDF V557 | PDF V558 |
+|---|---|---|---|
+| none | (39,140,150) | identical | identical |
+| saturation 200 + brightness 60 | (0,96,108) | ≥ 26 off (the unadjusted photo) | **(0,96,108)** |
+| contrast 150 | (0,146,161) | ≥ 38 off | **(0,146,161)** |
+| saturation 0 | (119,119,119) | — | **(119,119,119)** |
+| brightness 140 + contrast 80 | (69,182,193) | ≥ 24 off | **(70,182,194)** |
+| blur 6 px (edge fade, share of the width) | 3.75 % | 0.13 % (no blur) | **4.03 %** |
+| A4 certificate photo, saturation 200 + brightness 60 | (0,96,108) | 34 off | **(0,96,108)** |
+
+**Regression on V558:**
+- Golden image export: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS (states without photos are untouched).
+- The round-photo PDF test is unchanged.
+- `verify.py`: YES.
+
+**V559 = H2: exported photos keep their on-screen proportions.**
+- **Cause, at the source:** `pctize` (the CV, letter and image export) expressed the photo's width as a % of the layer *width* and its height as a % of the layer *height*. The export renders the terminals at 1200 px with reflowed text, so the layer's aspect changes and every photo came out about 7 % wider; a round photo became an oval.
+- **Fix:** the width stays a % of the layer width, and the height is `auto` with `aspect-ratio: w / h` from the on-screen box, so it follows the width. No compensating scale anywhere. The position (left/top %) and the inner crop geometry (% of the photo box) are unchanged, and so is the A4 path, which clones at its own width and was already exact.
+
+| Photo (magenta; CV PDF; aspect = width/height of the photo box, or of its bounding box when rotated) | Screen | PDF V558 | PDF V559 |
+|---|---|---|---|
+| normal 240×180 | 1.333 | 1.421 (+6.6 %) | **1.335 (+0.1 %)** |
+| resized 300×120 | 2.500 | 2.682 (+7.3 %) | **2.508 (+0.3 %)** |
+| rotated 30° (bounding box) | 1.080 | 1.100 (+1.9 %) | **1.080 (0.0 %)** |
+| crop 3:4 | 0.750 | 0.801 (+6.8 %) | **0.749 (−0.1 %)** |
+| round (Rreth) | 1.000 | 1.069 (+6.9 %) | **1.004 (+0.4 %)**, fill 0.786 (a circle) |
+| tall photo 450×600 | 0.750 | 0.800 (+6.6 %) | **0.748 (−0.3 %)** |
+| phone path: normal / round | — | 1.425 / 1.069 | **1.338 / 1.004**, round fill 0.787 |
+| A4 certificate photo | 1.333 | — | **1.333** |
+
+**Regression on V559:**
+- Golden image export: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS.
+- `verify.py`: YES.
+
+**V560 = H3: Reset Default also removes the profile photo's stored bytes, and shows the default picture at once.**
+- `_CV_PROFILE_DEFAULT_SRC` keeps the profile image's `src` as it comes in the HTML. It is read when the script runs, before any restore from storage.
+- The Reset handler, right after clearing the terminal and A4 photos, calls `_cvPhotoBytesWrite(null)` (removes `cv_profile_photo`) and sets the image back to that default.
+- Until V559 the bytes stayed in storage, and the uploaded picture stayed on screen until a reload.
+
+| Reset test (`h3test.mjs`) | V559 | V560 |
+|---|---|---|
+| Before Reset (profile, T1 and A4 photos) | key present (226,519 chars), 2 floating photos | same |
+| Right after Reset | **key still there**; the uploaded picture still shown; floating photos gone | **key removed; default picture shown at once**; floating photos gone |
+| After a reload | key still there (orphaned bytes); default picture | key absent; default picture |
+| Choose a photo again | success; stored | **success; stored (226,519); still there after a reload** |
+
+**Final regression on V560, the whole series:**
+
+| Area | Result |
+|---|---|
+| A: storage failure messages (9 scenarios), plus recovery, non-quota error and message-limit tests (5) | identical to V551, 9/9 and 5/5 |
+| A.1: same file again | recovery stores 4,964,131 chars; A → A → B processed; the "> 5 MB" message shows both times; floating photos give 2 photos |
+| B: formats, Chrome (18) and WebKit (8) | identical to V553 |
+| C: link photos (5) | identical to V554 |
+| D: crop presets (17 checks) | identical to V555 |
+| E: touch areas | desktop unchanged; touch handles hit and resize |
+| F: Style group | Kthehu, Border, Qoshe të rrumbullakta, Hije; cycles unchanged |
+| H1: Adjust colours, CV PDF and A4 | screen and PDF identical (largest difference 1/255) |
+| H2: proportions, 6 cases | within ±0.4 % |
+| H3: Reset | as in the table above |
+| Golden image export | 6/6 at 0.000 % |
+| `pdf_check` desktop and `--mobile` | ALL PASS 9/9 on TEXT, ORDER, UNICODE and VISUAL |
+| `verify.py` | RELEASE CANDIDATE: YES (60/60 msg keys) |
+
+**Device gate (Neni 72): the owner's iPhone, V560 over the LAN, 2026-10-02:**
+
+| # | Check | Owner's result |
+|---|---|---|
+| 1 | Profile photo, then a reload | the photo does **not** stay after the reload. The owner wants it that way |
+| 2 | The same photo again | ✅ |
+| 3 | The new Crop buttons | ✅ |
+| 4 | 3:4, corner drag with a finger | ✅ |
+| 5 | Round, and Undo | ✅ |
+| 6 | Style without Reflection | ✅ |
+| 7 | PDF colours and round shape after Adjust | ✅ |
+| 8 | Storage full, Albanian flag, 10–15 photos | ✅ the red message appears |
+| 9 | Reset Default | ✅ the photos are cleared and the profile photo is gone |
+| 10 | Profile photo after Reset, then a reload | does **not** stay. The owner wants it that way |
+| 11 | HEIC from Files | ✅ |
+
+**On items 1 and 10:**
+- In Chrome and in macOS WebKit (`WKWebView`; profile photos of 165 KB, 1 MB, 3.7 MB and a 3,000×2,250 photo of 3.8 MB), the photo is stored and restored after a reload, on V550 and V560 alike.
+- Why the iPhone differs is not established. It may be the iPhone's smaller storage for full-size camera photos (the profile photo, unlike floating photos, is not downscaled), in which case the V551 message should appear.
+- Whether the red message appeared on the iPhone is the open question.
+- The owner's stated preference is that the profile photo should not persist. That is a decision still to be made explicitly, for all devices.
+
+**Owner's request after the test:** when a photo is enlarged beyond the terminal, the four small corner squares disappear under the terminal's contour. They should stay visible and usable inside it, like the toolbar.
+
+**V561 = the corner handles stay visible and usable inside the terminal.**
+- **Placement:** `apply()` places the four `.mph-grip` handles at the photo's corners, each clamped to the terminal's layer with a 14 px margin, which is clear of the 16 px rounded corners. This is the same layer-space rule as the toolbar (V439). The handles still rotate with the photo; there is no counter-rotation, so the look is unchanged.
+- **Dragging:** a corner drag now follows the pointer's *movement*. The offset between the pointer and the real corner is recorded at the start of the drag, so a clamped handle does not make the photo jump to the pointer. As a side effect, the up-to-1 px snap of normal handles is gone (+60/+40 now gives exactly +60/+40; V560 gave +61/+41).
+- **Touch areas:** the 44 px areas (V556) still apply.
+
+| Test (`griptest.mjs`, `griptouch.mjs`) | V560 | V561 |
+|---|---|---|
+| Normal photo: handle centres | 1 px outside the corners | **exactly on the corners** |
+| Normal photo: drag the bottom-right handle +60/+40 | 240×180 → 301×221 | **→ 300×220** |
+| Photo 1,278×786 on a 1,158×706 layer | all four handles **outside the layer, not hittable** | all four **inside (14 px from the edges), hittable** |
+| Same photo: drag the bottom-right handle −100/−80 | — (not reachable) | **1,278×786 → 1,178×706**, the opposite corner fixed, no jump |
+| Rotated 20°, partly outside | 2 of 4 handles outside | **4 of 4 inside and hittable** |
+| Touch (`pointer:coarse`): a point 15 px diagonally inside each handle, normal and enlarged photo | — | **4/4 hit** in both cases |
+
+**Regression on V561:**
+- Golden image export: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
+- `verify.py`: YES.
+- The handles are `no-print`, so no export changes.
+
+**The owner's decisions after the V561 handle check (2026-10-02):**
+- The handles were tested on the iPhone and approved.
+- On iPhone test item 1, the profile photo showed "uploaded successfully" and was gone after a reload; there was no red message. The owner wants the profile photo **never** stored, on every device.
+- Before promoting, the owner asked for "balloon" photos, choosing a toggle per photo with a 📌 to edit it again.
+- Everything is promoted together after a short iPhone check.
+
+**V562 = balloon photos: a photo can let every tap through to the terminal underneath.**
+- **Problem:** the photo layer sits above the terminal content (`z-index:4`), so a photo enlarged over the terminal blocked its buttons, its text editing and its drag and drop.
+- **Toggle:** *Tullumbace*, in the photo toolbar's main group. It is one undo step and is stored as `pt:1` in the photo's record. The new field is optional: older versions ignore it, and older records read as off. With it on, `.mot-photo.pt:not(.selected){pointer-events:none}`, so every tap, click, text edit and drag reaches what is underneath, and the photo itself never changes.
+- **📌 pin:** a small badge (`.mph-pin`, no-print) near the photo's top-left corner, clamped inside the terminal and kept upright. It is the only part that catches a tap. A first tap selects the photo for editing (move, resize, toolbar); a second tap returns it to balloon mode.
+- **Hidden in preview and never exported:** the pin is removed with the other no-print chrome.
+- **After a reload:** a restored balloon photo starts unselected, so it lets taps through at once.
+- **Messages:** `photoBalloonOn` and `photoBalloonOff`, in de/en/sq.
+
+| Test (`balloontest.mjs`, a photo covering the whole Terminal 1) | Result |
+|---|---|
+| Before: a text field and the 📷 button under the photo | the photo catches the tap |
+| Balloon on | message; photo deselected; 📌 visible inside the terminal |
+| After: the text field / the 📷 button / "Berufliche Beschreibung" under the photo | each element itself is hit |
+| Real click on the text field, then typing | it gets focus; "Ω" is typed into it |
+| Drag "Berufliche Beschreibung" under the photo | it moves, top 452 → 392 px |
+| Tap 📌 | the photo is selected and catches taps; dragging it moves it (+30 px) |
+| Tap 📌 again | balloon again; the text field is reachable |
+| Stored, then a reload | `pt:1` stored; after the reload the photo is unselected and the text is reachable |
+| Balloon off, then one undo | off: the photo catches taps; undo: back on |
+| Preview mode | 📌 hidden |
+| CV PDF with a balloon photo vs the same photo without | **pixel-identical** |
+
+**Regression on V562:**
+- The V561 handle tests are unchanged.
+- Golden image export: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS.
+- `verify.py`: YES (62/62 msg keys).
+
+**V563 = the profile photo is never stored (the owner's decision, 2026-10-02).**
+- **What it does now:** the uploaded profile photo lives only in the open page. It is shown, and it is in the PDF and image exports of that session. Nothing is written: neither the bytes (`cv_profile_photo`) nor the reference in the state. After a reload the default picture shows, on every device.
+- **Leftover bytes:** anything left by earlier versions is removed when the script loads, before any restore, so an old photo neither reappears nor uses space.
+- **What it replaces:** the ADR-038 C7-B persistence of the profile photo, and the V551-A failure branch on that path, which no longer has anything to write. Floating photos are unchanged: they are still stored, still announced on failure, and still cleared by Reset.
+- **Background:** the iPhone already behaved like this (test item 1: "uploaded successfully", then gone after a reload, with no red message; cause not established). V563 makes it deliberate and the same everywhere.
+
+| Test | V562 | V563 |
+|---|---|---|
+| Chrome: upload a profile photo | success; stored; state reference set | success; **nothing stored**; no reference |
+| Chrome: same, after a reload | photo restored | **default picture** |
+| Chrome: CV PDF during the session | — | **the photo is in the PDF** (30,676 magenta pixels of the test photo) |
+| Chrome: bytes left by an earlier version, then a reload | the old photo reappears | **bytes removed; default picture** |
+| WebKit (`WKWebView`): 165 KB and 3.8 MB photos, then a reload | stored, restored | **stored 0; default picture after the reload** |
+
+**Regression on V563:**
+- The balloon tests are unchanged.
+- Golden image export: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS.
+- `verify.py`: YES.
+
+**V564 = the handle being dragged stays under the pointer (owner's report on V563).**
+- **Owner's report:** "when I try to enlarge the photo it lets go of the mouse, and it does things I don't understand".
+- **Reproduced, step by step:**
+  - In V561–V563, as soon as the dragged corner crossed the terminal's edge, its handle stopped at the edge (1144, 692). The pointer went on to (1438, 881).
+  - The photo's geometry followed the pointer correctly, but the handle visibly let go of the cursor.
+  - In V560 the handle followed the pointer, but it was hidden outside the terminal.
+- **Fix:** while a corner handle is being dragged, it is drawn at the pointer, without the clamp. When it is released, it returns inside the terminal (V561's clamp), where it can be grabbed again. The resize maths is unchanged.
+
+| Step-by-step drag (`dragfar.mjs`; bottom-right handle pulled 400/280 px past the terminal) | V563 | V564 |
+|---|---|---|
+| Handle position during the drag, past the edge | stuck at (1144, 692) | **= the pointer at every step** (up to 1438, 881) |
+| Photo corner during the drag | = the pointer | = the pointer (unchanged) |
+| After release | — | the handle is back inside at (1144, 692), and hittable |
+
+**Regression on V564:**
+- The handle tests (in/outside, rotated, touch areas) and the balloon tests are unchanged.
+- Golden image export: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS.
+- `verify.py`: YES.
+
+**Promotion:** on the owner's instruction ("Promovoje"), as **V565**. See *Release record — V565*.
+- **The owner's iPhone test of A–F (Neni 72)**, run once for the series as the owner decided, and an explicit OK.
+- **Then G (IndexedDB)**, as a release of its own. B.1 (HEIC for floating photos) and the weserv privacy question remain separate decisions.
+
+
+**Follow-up tests asked for by the external review (2026-10-02, same code `713365e0`):**
+
+| Test | Result |
+|---|---|
+| Every caller passes the caught error object | yes, by code: `catch(_s)` → `saveFailed(_s)`, `catch(_sp)` → `saveFailed(_sp)`, profile → `_cvPhotoBytesWrite.lastError` |
+| The 4 s limit affects only the message, never the save | yes, by code (`saveFailed` runs after the failed write). Q1: two failures 1.5 s apart give one message; a third failure 4.5 s later gives a new one |
+| **Recovery, T1:** fail, free the storage, move the photo, reload | after the move the photo is stored at the new position (520, 115) and is restored there after the reload, so no error state is latched |
+| **Recovery, profile:** fail, free the storage, choose a smaller photo, reload | success message, stored (226,519 chars), still there after the reload |
+| **Non-quota error** (the harness makes `setItem` throw `new Error('test write failure')`; the app is not modified), T1 and profile, language sq | "Fotoja NUK u ruajt — pas rifreskimit do të mungojë." in both. Not "storage full", and no success message. The profile status text says the same |
+
+**Found by the recovery test, pre-existing (V550 behaves the same):** choosing the **same** file again in the profile-photo picker does nothing, because the input's value is never cleared and no `change` event fires. Floating photos are not affected, because the engine clears its input. So after a failure, re-choosing the same profile photo once space is free would do nothing. The fix is one line (clear the input after reading). It changes behaviour outside the agreed step A, so it waited for the owner's decision. The owner chose to fix it as A.1, and it is V552 below.
+
+**V552 = step A.1: the profile-photo picker accepts the same file again.**
+- **What changed:** in the profile handler, `e.target.value=''` runs as soon as the `File` has been taken from the input. The `File` reference stays valid, and every path after it, including the early "not an image" and "over 5 MB" messages, now sees a fresh input next time.
+- **Untouched:** floating photos, which already cleared their input. Nothing else changes; the diff is this line, its comment and the label.
+
+| Test (headless Chrome, harness `storagetest4.mjs`) | V551 | V552 |
+|---|---|---|
+| Recovery with the **same** file: fail, free the storage, choose the same 3.7 MB photo, reload | nothing happens; gone after reload | **success; stored (4,964,131 chars); still there after reload** |
+| Regression: photo A, A again, then B, no failure | the second A is ignored | **A is processed again**; B works; B restored after reload |
+| A file over 5 MB chosen twice | message only the first time | **"Maximal 5 MB!" both times** |
+| Floating photo T1: the same file twice | 2 photos | 2 photos (unchanged) |
+
+**Verification (code `b5540524`):**
+- `verify.py`: YES.
+- Golden image export: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
+
+### Release record — V565 (2026-10-02) — the photo series (V551–V564)
+
+**Promoted on the owner's explicit instruction** ("Promovoje"), after the owner's iPhone tests of V560, V561 and V564, and their checks on the Mac. V565 is V564 plus the build label only; a byte comparison confirmed that nothing else differs.
+
+**What it carries, V550 → V565.** The full evidence is in *Sandbox ahead of production — V551–V564*.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V551 (A) | A failed photo save is announced (`photoStorageFull` / `photoNotSaved`); one authority, `CVPhotoEngine.saveFailed` | Functional, messages | none (format unchanged) |
+| V552 (A.1) | The profile picker accepts the same file again | Functional | none |
+| V553 (B) | An image the browser cannot open is announced, never shown broken or stored | Functional, messages | none |
+| V554 (C) | Link photos become downscaled local assets; a failed fetch stores no remote URL | Functional | none (format unchanged) |
+| V555 (D) | Crop presets: free, 1:1, 3:4, 4:5, round | Feature | none (existing `crop`, `rd`) |
+| V556 (E) | 44 px touch areas for the crop and photo handles (touch screens only) | UX | none |
+| V557 (F) | "Reflection — coming soon" button removed | UI | none |
+| V558 (H1) | Photo Adjust settings baked into the pixels for every export: PDF colours = screen | Export fidelity | none |
+| V559 (H2) | Exported photos keep their proportions (`aspect-ratio`) | Export fidelity | none |
+| V560 (H3) | Reset Default also removes the profile photo's bytes | Functional | **removes a key on Reset** |
+| V561 | The corner handles stay inside the terminal; a drag follows the pointer's movement | UX | none |
+| V562 | Balloon photos: taps go through to the terminal; a 📌 to edit | Feature | **new optional field `pt`** in photo records (older versions ignore it) |
+| V563 | The profile photo is never stored; leftover bytes are removed at load | Functional (owner's decision) | **`cv_profile_photo` removed at load; never written** |
+| V564 | The handle being dragged stays under the pointer | UX | none |
+
+**Device gate (Neni 72): exercised on the owner's iPhone, over the LAN (HTTP).**
+- **Phones seen in the server log:** `192.168.1.84` loaded `?v560` at 10:52; `192.168.1.107` loaded `?v561` at 12:06. The Mac (`192.168.1.138`) loaded V560, V561 and V564.
+- **V560, the 11-item list:** items 2–9 and 11 ✅. Items 1 and 10 (the profile photo was not kept after a reload) became the owner's deliberate choice, made universal in V563.
+- **V561:** "katrorët janë super, shkëlqyer".
+- **V564:** "funksionon perfekt", apart from a slight lag in fast circular moves. The owner rated it "significantly improved" against V550 and chose to promote. Smoothness (moving through `transform` during a drag) is a possible separate item.
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v565-20261002-141510` (= V550, `792082b8…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v565-20261002-141510` (= V564, `85acedf3…`).
+- **Identity:** after the copy, `md5 -q index.html index-test.html 565.html | sort -u | wc -l` printed 1.
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `python3 tools/verify.py --file index.html` | PASS, WARN 1 (`ui.langChanged`), FAIL 0 → YES |
+| `python3 tools/verify.py --release` (after this record) | PASS 28, WARN 1, FAIL 0 → YES (baseline = production md5; 105 manifest rows match the files; production = sandbox) |
+| `pdf_check` on `index.html`, desktop | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
+| `pdf_check --mobile` on `index.html` | **ALL PASS: 9/9 each** |
+| Golden image export | 0.000 % in all six cases |
+| Observatory on production, isolated origin 127.0.0.1:8901 | 7 terminals, 0 duplicate ids, sources agree, msg 62/62 in each language, **`PROBLEMS: none`** |
+
+**Reference images stay V546.** States without photos render pixel-identically, so no `--accept` was run.
+
+**Still open, as separate decisions:**
+- G: photos in IndexedDB;
+- B.1: HEIC for floating photos;
+- the weserv proxy's privacy;
+- H4: Fira Mono in the PDF;
+- the drag smoothness.
+
+**Rollback:** production returns to V550 by copying `index.html.bak-pre-v565-20261002-141510` over `index.html` (the command is in *Current baseline*).
 
 ### Release record — V550 (2026-09-30) — the certificate's text layer (V549)
 
