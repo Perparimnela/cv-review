@@ -26,9 +26,9 @@
 
 | | Artifact | Hash (md5) | Bytes | Date |
 |---|---|---|---|---|
-| **PRODUCTION** | `index.html` | `b461676d82a2826ec66d7f2f54fd289b` | 1,346,255 | 2026-10-02 |
-| **Release snapshot** | `565.html` | `b461676d82a2826ec66d7f2f54fd289b` | 1,346,255 | 2026-10-02 |
-| **Rollback point** | `index.html.bak-pre-v565-20261002-141510` | `792082b887fa3e2c4cebd7a4f73443e6` (V550) | 1,324,414 | 2026-10-02 |
+| **PRODUCTION** | `index.html` | `344981559f698fad6ae07ba749973803` | 1,335,625 | 2026-10-02 |
+| **Release snapshot** | `567.html` | `344981559f698fad6ae07ba749973803` | 1,335,625 | 2026-10-02 |
+| **Rollback point** | `index.html.bak-pre-v567-20261002-151841` | `b461676d82a2826ec66d7f2f54fd289b` (V565) | 1,346,255 | 2026-10-02 |
 
 > ### ⚠️ The rollback point is a Release Snapshot, not a backup — corrected 2026-08-29
 >
@@ -54,14 +54,14 @@ artifact, tracked separately, and it changes nothing here: **identity is the has
 CVQualify apparatus `VERSION` = **V482s** (unchanged — ADR-031 is a product change and must not bump
 the apparatus; see "Two versions" below).
 
-**V565 is the reference point for every future audit.** A future delta-audit compares against
-`b461676d`. (V550 = `792082b8` is the rollback target; V548 = `ba88f1ef` is two back.)
+**V567 is the reference point for every future audit.** A future delta-audit compares against
+`34498155`. (V565 = `b461676d` is the rollback target; V550 = `792082b8` is two back.)
 
-`window.CV.build` reports **`V565`** in production — measured from the artifact. Since V509 the label
+`window.CV.build` reports **`V567`** in production — measured from the artifact. Since V509 the label
 is bumped with every version, which is why it can be trusted again; **identity is still the hash.**
 
 ```bash
-cp "index.html.bak-pre-v565-20261002-141510" "index.html"
+cp "index.html.bak-pre-v567-20261002-151841" "index.html"
 ```
 
 ## Quality gate (`tools/verify.py`) and observatory (`tools/observatory.js`)
@@ -220,6 +220,7 @@ The owner chose that it is **updated after every production release** and carrie
 | 2026-09-30 | V546 (`e3a635da…`) | `8830d1a6…` | public commit `97321a2`: all 7 files byte-identical to the package (raw files fetched by commit hash); known-token and generic leak scans clean; Pages serving V546, byte-identical |
 | 2026-09-30 | V548 (`ba88f1ef…`) | `fd20814b…` | public commit `ee68690`: all 7 files byte-identical to the package; leak scans clean. **New for V548:** the PDFs made from the public copy were checked too, because they now carry text. All 9 PDFs contain "Max Mustermann", 0 real tokens and 0 leak patterns. Pages serving V548, byte-identical |
 | 2026-09-30 (verified 2026-10-01) | V550 (`792082b8…`) | `311494aa…` | public commit `e6d5400`: all 7 files byte-identical to the package; leak scans clean; PDFs from the public copy, **certificate included** (3805 characters), contain only fictitious values ("MAX MUSTERMANN", X00000000X) and 0 of the 30 real tokens; Pages serving V550, byte-identical |
+| 2026-10-02 | V565 (`b461676d…`) | `e83b49b3…` | public commit `bdbbda8`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory PROBLEMS: none); its 9 PDFs contain only fictitious values ("Max Mustermann") and 0 real tokens; Pages serving V565, byte-identical. `lab/` left at V550 on purpose: `bug017.html` is the reproduction page of Chromium issue 567972098. The old package went to the Trash with `mv`, because the Finder AppleEvent of `public_copy.py` timed out (-1712) |
 
 ## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V550 since 2026-09-30; photo-series rows added at V565, 2026-10-02)
 
@@ -1391,6 +1392,81 @@ The external review asked for C1 (normalise) and C2 (no remote fallback) as one 
 - Golden image export: 6/6 at 0.000 %.
 - `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
 
+#### Sandbox ahead of production — V566 (2026-10-02) — CLOSED by the V567 promotion
+
+**Closed on 2026-10-02:** `index-test.html` = `index.html` = `567.html`.
+
+Production is V565 (`b461676d…`).
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V566 | `566.html` | `23fe731715bbc29118d458723f656c11` | 1,335,517 | `index-test.html.bak-pre-v566-20261002-144704` (= V565, `b461676d…`) |
+
+**V566 = C.1: unreachable legacy photo code is removed, with no change in behaviour.** The owner asked for it ("C1"), after the external review of V565 recorded it.
+
+**What was there:** the iframe app's `CVCreator` still held the pre-V459 photo implementation.
+- **The tail of `_initMotivationPhotos`:**
+  - its own `addFiles`;
+  - `addUrlPhoto`, with the remote-URL fallback `self._createPhoto(layer,sec,u)`;
+  - drag-and-drop and deselect handlers.
+- **`_createPhoto`:** about 5 KB, a second photo object with its own toolbar.
+- **`_makePhotoInteractive`:** about 3 KB.
+
+**Why it was dead:**
+- Both branches of `_initMotivationPhotos` `return;` before the old code: either delegation to `CVPhotoEngine.attachUpload`, or a poll for it.
+- `_createPhoto` was called only from that dead tail.
+- `_makePhotoInteractive` was called only from `_createPhoto`.
+
+Two implementations of one function go against Neni 9.1. The live path was always `CVPhotoEngine`.
+
+**Removed:**
+- the dead tail;
+- both methods;
+- the two message keys that only the dead code used, `dropImageNotLink` and `fetchingLogo`, in de/en/sq. `verify.py` flagged them as unreferenced once the code was gone.
+
+`CVPhotoEngine` is now the only photo implementation. The V459 comment now records the removal.
+
+**No behaviour change: V565 against V566** (`c1test.mjs`, headless Chrome).
+
+| Scenario | V565 | V566 |
+|---|---|---|
+| Motivation letter: add a photo through its button | 1 photo, decoded | **identical** |
+| Motivation letter: drop a `data:` image | 1 photo, decoded | **identical** |
+| Iframe terminal (skills): add a photo | 1 photo; stored 1 | **identical** |
+| Iframe terminal (skills): a damaged file | 0 photos; "cannot be opened" message | **identical** |
+| Motivation letter: drop a page link | 0 photos; "drop an IMAGE" message (engine's `dropImage`) | **identical** |
+
+**Regression on V566:**
+- The handle and balloon tests pass.
+- Golden image export: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS.
+- `verify.py`: YES (msg keys 60/60, all referenced).
+- The file is 10,342 bytes smaller (1,346,255 → 1,335,517).
+
+### Release record — V567 (2026-10-02) — C.1, legacy photo code removed (V566)
+
+**Promoted on the owner's explicit instruction** ("po bëje"). V567 is V566 plus the build label only; a byte comparison confirmed that nothing else differs.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V566 | C.1: the unreachable legacy photo implementation in the iframe app (`_initMotivationPhotos` tail, `_createPhoto`, `_makePhotoInteractive`) and two message keys only it used are removed; `CVPhotoEngine` is the only photo implementation (Neni 9.1) | Cleanup, no behaviour change | none |
+
+**Device gate (Neni 72): not exercised on a device, by the owner's choice.** The change removes unreachable code only. Behaviour was proven identical against V565 in five iframe and motivation-letter scenarios (`c1test.mjs`), and the handle and balloon tests pass. The owner was offered a device check and chose to promote.
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v567-20261002-151841` (= V565, `b461676d…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v567-20261002-151841` (= V566, `23fe7317…`).
+- **Identity:** after the copy, `md5 -q index.html index-test.html 567.html | sort -u` printed one hash.
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `python3 tools/verify.py --file index.html` | WARN 1 (`ui.langChanged`), FAIL 0 → YES |
+| `pdf_check` on `index.html`, desktop and `--mobile` | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
+| Golden image export | 0.000 % in all six cases |
+| Observatory on production, isolated origin | `V567`; 7 terminals; 0 duplicate ids; msg 60/60 in each language; **`PROBLEMS: none`** |
+
+**Rollback:** production returns to V565 by copying `index.html.bak-pre-v567-20261002-151841` over `index.html` (the command is in *Current baseline*).
+
 ### Release record — V565 (2026-10-02) — the photo series (V551–V564)
 
 **Promoted on the owner's explicit instruction** ("Promovoje"), after the owner's iPhone tests of V560, V561 and V564, and their checks on the Mac. V565 is V564 plus the build label only; a byte comparison confirmed that nothing else differs.
@@ -1442,6 +1518,13 @@ The external review asked for C1 (normalise) and C2 (no remote fallback) as one 
 - the weserv proxy's privacy;
 - H4: Fira Mono in the PDF;
 - the drag smoothness.
+
+**External review of V565 (ChatGPT, 2026-10-02): no blocker found.**
+- **Confirmed:** H1 (filters baked on the export clone) and H2 (`aspect-ratio`) are in the right place. H3 is consistent with the new profile-photo contract.
+- **V563 was first flagged as a regression.** The reviewer withdrew this once told it was the owner's decision. The contract is: shown for the session, in the exports, never stored; Reset and reload give the default.
+- **Also recorded for later, without blocking:**
+  - **C.1, a cleanup with no behaviour change.** `_initMotivationPhotos` still holds the old link-photo code with the remote-URL fallback (`self._createPhoto(layer,sec,u)`, 2×). It is unreachable: both branches `return;` before it, and `_createPhoto` delegates to `CVPhotoEngine` on its first line. Still, two implementations of one function go against Neni 9.1, so the dead code should be removed.
+  - **`downscale()` is a compression heuristic, not a hard pixel cap.** Images up to 1100 px are kept as they are. A re-encode that comes out larger keeps the original. This was already noted in the first audit; it is not changed in V565, because it affects storage, quality and the PDF.
 
 **Rollback:** production returns to V550 by copying `index.html.bak-pre-v565-20261002-141510` over `index.html` (the command is in *Current baseline*).
 

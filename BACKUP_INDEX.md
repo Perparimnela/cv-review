@@ -13,14 +13,14 @@ edits is gone. Every capability and every decision the project holds today is no
 
 ---
 
-## Manifest — what the folder holds now (2026-10-02, after the V565 promotion)
+## Manifest — what the folder holds now (2026-10-02, after the V567 promotion)
 
 > A lean inventory, added after the external review (point 8). It is generated from the files themselves and their hashes. The narrative sections below remain the forensic history; this table is the operational list. Roles: **production** (live), **sandbox** (work in progress), **release snapshot** (immutable, Neni 6.5), **rollback** (production backup taken before a promotion, immutable), **sandbox iteration** (may be cleared by the owner, Neni 6.5).
 
 | File | Holds | md5 | Role |
 |---|---|---|---|
-| `index.html` | V565 | `b461676d` | production |
-| `index-test.html` | V565 | `b461676d` | sandbox |
+| `index.html` | V567 | `34498155` | production |
+| `index-test.html` | V567 | `34498155` | sandbox |
 | `486.html` | V486 | `b2c238c6` | release snapshot |
 | `487.html` | V487 | `d0962600` | release snapshot |
 | `488.html` | V488 | `deaeb3b1` | release snapshot |
@@ -72,6 +72,8 @@ edits is gone. Every capability and every decision the project holds today is no
 | `563.html` | V563 | `d4507bb4` | sandbox iteration |
 | `564.html` | V564 | `85acedf3` | sandbox iteration |
 | `565.html` | V565 | `b461676d` | release snapshot |
+| `566.html` | V566 | `23fe7317` | sandbox iteration |
+| `567.html` | V567 | `34498155` | release snapshot |
 | `index.html.bak-pre-v482u` | V479 | `27e9d4cc` | rollback |
 | `index.html.bak-pre-v483` | V482u | `01f22f35` | rollback |
 | `index.html.bak-pre-v493-20260829-014817` | V492 | `56b0c307` | rollback |
@@ -91,7 +93,8 @@ edits is gone. Every capability and every decision the project holds today is no
 | `index.html.bak-pre-v546-20260930-113924` | V542 | `929e8b2c` | rollback |
 | `index.html.bak-pre-v548-20260930-144638` | V546 | `e3a635da` | rollback |
 | `index.html.bak-pre-v550-20260930-152856` | V548 | `ba88f1ef` | rollback |
-| `index.html.bak-pre-v565-20261002-141510` | V550 | `792082b8` | rollback — **operational** (one release back) |
+| `index.html.bak-pre-v565-20261002-141510` | V550 | `792082b8` | rollback |
+| `index.html.bak-pre-v567-20261002-151841` | V565 | `b461676d` | rollback — **operational** (one release back) |
 | `index.html.bak-v483-baseline` | V483 | `b2ece1ae` | rollback |
 | `index.html.bak-v484-baseline` | V484 | `6fc7d00a` | rollback |
 | `index.html.bak-v485-baseline` | V485 | `99e0f10d` | rollback |
@@ -124,10 +127,17 @@ edits is gone. Every capability and every decision the project holds today is no
 | `index-test.html.bak-pre-v563-20261002-124300` | V562 | `341ae137` | sandbox iteration |
 | `index-test.html.bak-pre-v564-20261002-131744` | V563 | `d4507bb4` | sandbox iteration |
 | `index-test.html.bak-pre-v565-20261002-141510` | V564 | `85acedf3` | sandbox iteration |
+| `index-test.html.bak-pre-v566-20261002-144704` | V565 | `b461676d` | sandbox iteration |
+| `index-test.html.bak-pre-v567-20261002-151841` | V566 | `23fe7317` | sandbox iteration |
 
-51 snapshots, 23 production backups, 29 sandbox backups. Verify any row with `md5 -q <file>`.
+53 snapshots, 24 production backups, 31 sandbox backups. Verify any row with `md5 -q <file>`.
 
 ---
+
+> **Sandbox deviation (named, 2026-10-02, after V565) — CLOSED the same day by the V567 promotion:**
+> `index-test.html` = `index.html` = `567.html` = V567 (`34498155…`). The sandbox had run ahead as V566.
+> Sandbox backup: `index-test.html.bak-pre-v566-20261002-144704` (= V565).
+> V566 is C.1, the removal of unreachable legacy photo code. The details are in `RELEASE_PROCESS.md` → *Sandbox ahead of production — V566*.
 
 > **Sandbox deviation (named, 2026-10-02, after V550) — CLOSED the same day by the V565 promotion:**
 > `index-test.html` = `index.html` = `565.html` = V565 (`b461676d…`). The sandbox had run ahead as V551–V564.
@@ -242,6 +252,22 @@ edits is gone. Every capability and every decision the project holds today is no
 > | `index-test.html.bak-pre-v518-20260927-162722` | V517 (= `517.html`) | `1c254fef…` |
 > | `index-test.html.bak-pre-v519-20260927-164542` | V518 (= `518.html`) | `8c55cd79…` |
 
+## `index.html.bak-pre-v567-20261002-151841`
+
+| | |
+|---|---|
+| **Version** | V565 |
+| **Hash (md5)** | `b461676d82a2826ec66d7f2f54fd289b` |
+| **Size** | 1,346,255 bytes |
+
+**Purpose.** **The operational rollback for V567**, promoted 2026-10-02. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It is the last production artifact that still holds the unreachable legacy photo code.
+
+Byte-identical to `565.html`.
+
+```bash
+cp "index.html.bak-pre-v567-20261002-151841" "index.html"
+```
+
 ## `index.html.bak-pre-v565-20261002-141510`
 
 | | |
@@ -250,7 +276,7 @@ edits is gone. Every capability and every decision the project holds today is no
 | **Hash (md5)** | `792082b887fa3e2c4cebd7a4f73443e6` |
 | **Size** | 1,324,414 bytes |
 
-**Purpose.** **The operational rollback for V565**, promoted 2026-10-02. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It is the last production artifact before the photo series (V551–V564).
+**Purpose.** The rollback for V565 (operational until the V567 promotion, the same day), promoted 2026-10-02. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It is the last production artifact before the photo series (V551–V564).
 
 Byte-identical to `550.html`.
 
@@ -825,14 +851,14 @@ was written to stop without attempting automatic recovery.
 
 ## Restoring
 
-**Production is V565 (`b461676d…`). To roll back one release, to V550:**
+**Production is V567 (`34498155…`). To roll back one release, to V565:**
 
 ```bash
-cp "index.html.bak-pre-v565-20261002-141510" "index.html"
+cp "index.html.bak-pre-v567-20261002-151841" "index.html"
 ```
 
-Two releases back, to V548: `cp "index.html.bak-pre-v550-20260930-152856" "index.html"`.
-Three back, to V546: `cp "index.html.bak-pre-v548-20260930-144638" "index.html"`.
+Two releases back, to V550: `cp "index.html.bak-pre-v565-20261002-141510" "index.html"`.
+Three back, to V548: `cp "index.html.bak-pre-v550-20260930-152856" "index.html"`.
 
 > **Corrected 2026-09-11 at the V507 promotion.** This line still read *"Production is V498 … roll
 > back to V497"* — it was not updated when V501 shipped on 2026-09-02, the exact drift the note
