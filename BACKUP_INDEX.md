@@ -13,14 +13,14 @@ edits is gone. Every capability and every decision the project holds today is no
 
 ---
 
-## Manifest — what the folder holds now (2026-10-02, after the V567 promotion)
+## Manifest — what the folder holds now (2026-10-04, after the V581 promotion)
 
 > A lean inventory, added after the external review (point 8). It is generated from the files themselves and their hashes. The narrative sections below remain the forensic history; this table is the operational list. Roles: **production** (live), **sandbox** (work in progress), **release snapshot** (immutable, Neni 6.5), **rollback** (production backup taken before a promotion, immutable), **sandbox iteration** (may be cleared by the owner, Neni 6.5).
 
 | File | Holds | md5 | Role |
 |---|---|---|---|
-| `index.html` | V567 | `34498155` | production |
-| `index-test.html` | V567 | `34498155` | sandbox |
+| `index.html` | V581 | `2e19374c` | production |
+| `index-test.html` | V581 | `2e19374c` | sandbox |
 | `486.html` | V486 | `b2c238c6` | release snapshot |
 | `487.html` | V487 | `d0962600` | release snapshot |
 | `488.html` | V488 | `deaeb3b1` | release snapshot |
@@ -74,6 +74,20 @@ edits is gone. Every capability and every decision the project holds today is no
 | `565.html` | V565 | `b461676d` | release snapshot |
 | `566.html` | V566 | `23fe7317` | sandbox iteration |
 | `567.html` | V567 | `34498155` | release snapshot |
+| `568.html` | V568 | `8baefe40` | sandbox iteration |
+| `569.html` | V569 | `947c48b6` | sandbox iteration |
+| `570.html` | V570 | `86d94494` | sandbox iteration |
+| `571.html` | V571 | `9efbf9e4` | sandbox iteration |
+| `572.html` | V572 | `553ed541` | sandbox iteration |
+| `573.html` | V573 | `91abe8b1` | sandbox iteration |
+| `574.html` | V574 | `498b730b` | sandbox iteration |
+| `575.html` | V575 | `de4247c0` | sandbox iteration |
+| `576.html` | V576 | `98d05617` | sandbox iteration |
+| `577.html` | V577 | `db06e5eb` | sandbox iteration |
+| `578.html` | V578 | `82c419e4` | sandbox iteration |
+| `579.html` | V579 | `7c11d922` | sandbox iteration |
+| `580.html` | V580 | `7bca052d` | sandbox iteration |
+| `581.html` | V581 | `2e19374c` | release snapshot |
 | `index.html.bak-pre-v482u` | V479 | `27e9d4cc` | rollback |
 | `index.html.bak-pre-v483` | V482u | `01f22f35` | rollback |
 | `index.html.bak-pre-v493-20260829-014817` | V492 | `56b0c307` | rollback |
@@ -94,7 +108,8 @@ edits is gone. Every capability and every decision the project holds today is no
 | `index.html.bak-pre-v548-20260930-144638` | V546 | `e3a635da` | rollback |
 | `index.html.bak-pre-v550-20260930-152856` | V548 | `ba88f1ef` | rollback |
 | `index.html.bak-pre-v565-20261002-141510` | V550 | `792082b8` | rollback |
-| `index.html.bak-pre-v567-20261002-151841` | V565 | `b461676d` | rollback — **operational** (one release back) |
+| `index.html.bak-pre-v567-20261002-151841` | V565 | `b461676d` | rollback |
+| `index.html.bak-pre-v581-20261004-012945` | V567 | `34498155` | rollback — **operational** (one release back) |
 | `index.html.bak-v483-baseline` | V483 | `b2ece1ae` | rollback |
 | `index.html.bak-v484-baseline` | V484 | `6fc7d00a` | rollback |
 | `index.html.bak-v485-baseline` | V485 | `99e0f10d` | rollback |
@@ -129,10 +144,29 @@ edits is gone. Every capability and every decision the project holds today is no
 | `index-test.html.bak-pre-v565-20261002-141510` | V564 | `85acedf3` | sandbox iteration |
 | `index-test.html.bak-pre-v566-20261002-144704` | V565 | `b461676d` | sandbox iteration |
 | `index-test.html.bak-pre-v567-20261002-151841` | V566 | `23fe7317` | sandbox iteration |
+| `index-test.html.bak-pre-v568-20261003-135233` | V567 | `34498155` | sandbox iteration |
+| `index-test.html.bak-pre-v569-20261003-141135` | V568 | `8baefe40` | sandbox iteration |
+| `index-test.html.bak-pre-v570-20261003-151520` | V569 | `947c48b6` | sandbox iteration |
+| `index-test.html.bak-pre-v571-20261003-151807` | V570 | `86d94494` | sandbox iteration |
+| `index-test.html.bak-pre-v572-20261003-151948` | V571 | `9efbf9e4` | sandbox iteration |
+| `index-test.html.bak-pre-v573-20261003-152233` | V572 | `553ed541` | sandbox iteration |
+| `index-test.html.bak-pre-v574-20261003-152722` | V573 | `91abe8b1` | sandbox iteration |
+| `index-test.html.bak-pre-v575-20261003-155927` | V574 | `498b730b` | sandbox iteration |
+| `index-test.html.bak-pre-v576-20261003-160513` | V575 | `de4247c0` | sandbox iteration |
+| `index-test.html.bak-pre-v577-20261003-160952` | V576 | `98d05617` | sandbox iteration |
+| `index-test.html.bak-pre-v578-20261003-161618` | V577 | `db06e5eb` | sandbox iteration |
+| `index-test.html.bak-pre-v579-20261003-163136` | V578 | `82c419e4` | sandbox iteration |
+| `index-test.html.bak-pre-v580-20261004-000059` | V579 | `7c11d922` | sandbox iteration |
+| `index-test.html.bak-pre-v581-20261004-012945` | V580 | `7bca052d` | sandbox iteration |
 
-53 snapshots, 24 production backups, 31 sandbox backups. Verify any row with `md5 -q <file>`.
+67 snapshots, 25 production backups, 45 sandbox backups. Verify any row with `md5 -q <file>`.
 
 ---
+
+> **Sandbox deviation (named, 2026-10-03, after V567) — CLOSED on 2026-10-04 by the V581 promotion:**
+> `index-test.html` = `index.html` = `581.html` = V581 (`2e19374c…`). The sandbox had run ahead as V568–V580.
+> Sandbox backups: `index-test.html.bak-pre-v568-20261003-135233` (= V567), `index-test.html.bak-pre-v569-20261003-141135` (= V568), `index-test.html.bak-pre-v570-20261003-151520` (= V569), `index-test.html.bak-pre-v571-20261003-151807` (= V570), `index-test.html.bak-pre-v572-20261003-151948` (= V571), `index-test.html.bak-pre-v573-20261003-152233` (= V572), `index-test.html.bak-pre-v574-20261003-152722` (= V573), `index-test.html.bak-pre-v575-20261003-155927` (= V574), `index-test.html.bak-pre-v576-20261003-160513` (= V575), `index-test.html.bak-pre-v577-20261003-160952` (= V576), `index-test.html.bak-pre-v578-20261003-161618` (= V577), `index-test.html.bak-pre-v579-20261003-163136` (= V578) and `index-test.html.bak-pre-v580-20261004-000059` (= V579).
+> V568 fixes design 4 (Neumorphic) export in desktop WebKit (Safari on the Mac, the Mac app) and restores the cards' left accent line in the painted-shadow path. V569 adds the native-host export bridge for the Mac app (`window.CVHost`), with no effect on the web. The details are in `RELEASE_PROCESS.md` → *Sandbox ahead of production — V568–V580*.
 
 > **Sandbox deviation (named, 2026-10-02, after V565) — CLOSED the same day by the V567 promotion:**
 > `index-test.html` = `index.html` = `567.html` = V567 (`34498155…`). The sandbox had run ahead as V566.
@@ -252,6 +286,22 @@ edits is gone. Every capability and every decision the project holds today is no
 > | `index-test.html.bak-pre-v518-20260927-162722` | V517 (= `517.html`) | `1c254fef…` |
 > | `index-test.html.bak-pre-v519-20260927-164542` | V518 (= `518.html`) | `8c55cd79…` |
 
+## `index.html.bak-pre-v581-20261004-012945`
+
+| | |
+|---|---|
+| **Version** | V567 |
+| **Hash (md5)** | `344981559f698fad6ae07ba749973803` |
+| **Size** | 1,335,625 bytes |
+
+**Purpose.** **The operational rollback for V581**, promoted 2026-10-04. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It is the last production artifact that stores floating photos inline in `localStorage` (before V574).
+
+Byte-identical to `567.html`.
+
+```bash
+cp "index.html.bak-pre-v581-20261004-012945" "index.html"
+```
+
 ## `index.html.bak-pre-v567-20261002-151841`
 
 | | |
@@ -260,7 +310,7 @@ edits is gone. Every capability and every decision the project holds today is no
 | **Hash (md5)** | `b461676d82a2826ec66d7f2f54fd289b` |
 | **Size** | 1,346,255 bytes |
 
-**Purpose.** **The operational rollback for V567**, promoted 2026-10-02. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It is the last production artifact that still holds the unreachable legacy photo code.
+**Purpose.** The rollback for V567 (operational until the V581 promotion on 2026-10-04), promoted 2026-10-02. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It is the last production artifact that still holds the unreachable legacy photo code.
 
 Byte-identical to `565.html`.
 
@@ -851,14 +901,16 @@ was written to stop without attempting automatic recovery.
 
 ## Restoring
 
-**Production is V567 (`34498155…`). To roll back one release, to V565:**
+**Production is V581 (`2e19374c…`). To roll back one release, to V567:**
 
 ```bash
-cp "index.html.bak-pre-v567-20261002-151841" "index.html"
+cp "index.html.bak-pre-v581-20261004-012945" "index.html"
 ```
 
-Two releases back, to V550: `cp "index.html.bak-pre-v565-20261002-141510" "index.html"`.
-Three back, to V548: `cp "index.html.bak-pre-v550-20260930-152856" "index.html"`.
+Two releases back, to V565: `cp "index.html.bak-pre-v567-20261002-151841" "index.html"`.
+Three back, to V550: `cp "index.html.bak-pre-v565-20261002-141510" "index.html"`.
+
+> **After a rollback below V574,** floating photos are hidden, not lost (IndexedDB + `cv_photos2_*`); see *Release record — V581* in `RELEASE_PROCESS.md`.
 
 > **Corrected 2026-09-11 at the V507 promotion.** This line still read *"Production is V498 … roll
 > back to V497"* — it was not updated when V501 shipped on 2026-09-02, the exact drift the note

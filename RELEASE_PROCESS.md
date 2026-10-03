@@ -26,9 +26,9 @@
 
 | | Artifact | Hash (md5) | Bytes | Date |
 |---|---|---|---|---|
-| **PRODUCTION** | `index.html` | `344981559f698fad6ae07ba749973803` | 1,335,625 | 2026-10-02 |
-| **Release snapshot** | `567.html` | `344981559f698fad6ae07ba749973803` | 1,335,625 | 2026-10-02 |
-| **Rollback point** | `index.html.bak-pre-v567-20261002-151841` | `b461676d82a2826ec66d7f2f54fd289b` (V565) | 1,346,255 | 2026-10-02 |
+| **PRODUCTION** | `index.html` | `2e19374c8994f0276968252ab3e1af5b` | 1,379,015 | 2026-10-04 |
+| **Release snapshot** | `581.html` | `2e19374c8994f0276968252ab3e1af5b` | 1,379,015 | 2026-10-04 |
+| **Rollback point** | `index.html.bak-pre-v581-20261004-012945` | `344981559f698fad6ae07ba749973803` (V567) | 1,335,625 | 2026-10-04 |
 
 > ### ⚠️ The rollback point is a Release Snapshot, not a backup — corrected 2026-08-29
 >
@@ -54,14 +54,14 @@ artifact, tracked separately, and it changes nothing here: **identity is the has
 CVQualify apparatus `VERSION` = **V482s** (unchanged — ADR-031 is a product change and must not bump
 the apparatus; see "Two versions" below).
 
-**V567 is the reference point for every future audit.** A future delta-audit compares against
-`34498155`. (V565 = `b461676d` is the rollback target; V550 = `792082b8` is two back.)
+**V581 is the reference point for every future audit.** A future delta-audit compares against
+`2e19374c`. (V567 = `34498155` is the rollback target; V565 = `b461676d` is two back.)
 
-`window.CV.build` reports **`V567`** in production — measured from the artifact. Since V509 the label
+`window.CV.build` reports **`V581`** in production — measured from the artifact. Since V509 the label
 is bumped with every version, which is why it can be trusted again; **identity is still the hash.**
 
 ```bash
-cp "index.html.bak-pre-v567-20261002-151841" "index.html"
+cp "index.html.bak-pre-v581-20261004-012945" "index.html"
 ```
 
 ## Quality gate (`tools/verify.py`) and observatory (`tools/observatory.js`)
@@ -221,6 +221,7 @@ The owner chose that it is **updated after every production release** and carrie
 | 2026-09-30 | V548 (`ba88f1ef…`) | `fd20814b…` | public commit `ee68690`: all 7 files byte-identical to the package; leak scans clean. **New for V548:** the PDFs made from the public copy were checked too, because they now carry text. All 9 PDFs contain "Max Mustermann", 0 real tokens and 0 leak patterns. Pages serving V548, byte-identical |
 | 2026-09-30 (verified 2026-10-01) | V550 (`792082b8…`) | `311494aa…` | public commit `e6d5400`: all 7 files byte-identical to the package; leak scans clean; PDFs from the public copy, **certificate included** (3805 characters), contain only fictitious values ("MAX MUSTERMANN", X00000000X) and 0 of the 30 real tokens; Pages serving V550, byte-identical |
 | 2026-10-02 | V565 (`b461676d…`) | `e83b49b3…` | public commit `bdbbda8`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory PROBLEMS: none); its 9 PDFs contain only fictitious values ("Max Mustermann") and 0 real tokens; Pages serving V565, byte-identical. `lab/` left at V550 on purpose: `bug017.html` is the reproduction page of Chromium issue 567972098. The old package went to the Trash with `mv`, because the Finder AppleEvent of `public_copy.py` timed out (-1712) |
+| 2026-10-02 | V567 (`34498155…`) | `fb8e024d…` | public commit `4b1984a`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory PROBLEMS: none); its 9 PDFs contain only fictitious values and 0 real tokens; Pages serving V567, byte-identical. `lab/` (11 files) untouched, still the Chromium-issue repro |
 
 ## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V550 since 2026-09-30; photo-series rows added at V565, 2026-10-02)
 
@@ -1392,6 +1393,430 @@ The external review asked for C1 (normalise) and C2 (no remote fallback) as one 
 - Golden image export: 6/6 at 0.000 %.
 - `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
 
+#### Sandbox ahead of production — V568–V580 (2026-10-03) — CLOSED by the V581 promotion
+
+**Closed on 2026-10-04:** `index-test.html` = `index.html` = `581.html`.
+
+Production is V567 (`34498155…`).
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V568 | `568.html` | `8baefe408c3d749249cc382114964102` | 1,338,673 | `index-test.html.bak-pre-v568-20261003-135233` (= V567, `34498155…`) |
+| V569 | `569.html` | `947c48b6b6a67d8f22c46f38e5b70aae` | 1,340,898 | `index-test.html.bak-pre-v569-20261003-141135` (= V568, `8baefe40…`) |
+| V570 | `570.html` | `86d94494e5dec62b94564add2381fa11` | 1,343,102 | `index-test.html.bak-pre-v570-20261003-151520` (= V569, `947c48b6…`) |
+| V571 | `571.html` | `9efbf9e41e312a405d93571ef87623d7` | 1,344,854 | `index-test.html.bak-pre-v571-20261003-151807` (= V570, `86d94494…`) |
+| V572 | `572.html` | `553ed541b5dcd01ca180e0ba6b8e8040` | 1,346,624 | `index-test.html.bak-pre-v572-20261003-151948` (= V571, `9efbf9e4…`) |
+| V573 | `573.html` | `91abe8b1c73d4dad7bd632ac1e72a8d1` | 1,348,462 | `index-test.html.bak-pre-v573-20261003-152233` (= V572, `553ed541…`) |
+| V574 | `574.html` | `498b730b098733e6c7c832669c4caa78` | 1,359,777 | `index-test.html.bak-pre-v574-20261003-152722` (= V573, `91abe8b1…`) |
+| V575 | `575.html` | `de4247c0184319bc927d78fddaf51351` | 1,363,024 | `index-test.html.bak-pre-v575-20261003-155927` (= V574, `498b730b…`) |
+| V576 | `576.html` | `98d0561727bc804891d0947511e7da3d` | 1,363,964 | `index-test.html.bak-pre-v576-20261003-160513` (= V575, `de4247c0…`) |
+| V577 | `577.html` | `db06e5eb8e904c917d9c9d4845011b02` | 1,365,848 | `index-test.html.bak-pre-v577-20261003-160952` (= V576, `98d05617…`) |
+| V578 | `578.html` | `82c419e48af90a028066d5c90211de6f` | 1,374,014 | `index-test.html.bak-pre-v578-20261003-161618` (= V577, `db06e5eb…`) |
+| V579 | `579.html` | `7c11d9228a200fb314693973f755c22b` | 1,377,593 | `index-test.html.bak-pre-v579-20261003-163136` (= V578, `82c419e4…`) |
+| V580 | `580.html` | `7bca052db5e18101e0a58a6afd994d2f` | 1,378,692 | `index-test.html.bak-pre-v580-20261004-000059` (= V579, `7c11d922…`) |
+
+**V568 = design 4 (Neumorphic) export in desktop WebKit.** The owner exported design 4 from the Mac app (`13.pdf`): grey-blue blocks offset right and down instead of the soft shadows, and duplicated window dots.
+
+**Cause.** On a computer, `renderToCanvas` takes the desktop path (verbatim V440). For design 4 that path uses `html-to-image` (SVG `foreignObject`). In WebKit this does not throw; it returns a wrong canvas, so the `catch` fallback never runs. Safari on the Mac had the same defect; only Chrome was ever tested on the desktop. The iPhone already avoids `foreignObject` (Neni 75(c)) with the V442 painted-shadow path.
+
+**Change (Neni 73: only design 4, only desktop WebKit).**
+- **`Utils.isDesktopWebKit()`**, next to `isMobileDevice()`: `AppleWebKit` in the UA, no `Chrome`/`Chromium`/`CriOS`/`FxiOS`/`EdgiOS`/`Android`, and not a phone or iPad.
+- **Router:** `_neuWebKit = isNeumorphic && !_isMobile && Utils.isDesktopWebKit()`. When it is true, the export takes the existing V442 branch (flat `html2canvas` render plus real shadows painted on the canvas). The iOS 16 MP cap stays phone-only (`if(_isMobile)`), so the Mac keeps scale 3, as Chrome does.
+- **Accent line (V442 path, phone and Mac).** The V442 export rule `border: 1px …` overwrote the cards' left accent (`border-left: 4px/3px var(--tpl-accent)` on `.skill-category`, `.experience-item`, `.education-item`), so the blue line was missing in every iPhone export of design 4. Each card's computed `border-left` (resolved colour, no `var`) is now read before the override and restored inline `!important` on the export document, only where it is an accent (> 1.5 px).
+- **Untouched:** Chrome, Edge and Firefox on the desktop (V440 path); designs 1–3 everywhere; the iPhone path apart from the accent line.
+
+**New permanent test: `tools/webkit_export.swift`** (lesson F-9: harnesses live in the repo). It opens a file in the system's real WebKit (on-screen window at 1 % opacity, because WebKit stops `requestAnimationFrame` in hidden windows), selects the design, and saves the image (`saveimage`) and the CV PDF from the user's path. `--ua app|safari|iphone`. Output goes to `tools/webkit/current/` (ignored by git).
+
+**Evidence, design 4, de, real WebKit.**
+
+| Run | Engine (toast) | Result |
+|---|---|---|
+| V567, `--ua app` (Mac app) | `html-to-image` | **reproduces `13.pdf`:** grey-blue blocks, duplicated dots |
+| V568, `--ua app` | `html2canvas-neu-realshadow` | soft shadows, accent lines, no blocks; image 3600×8727, PDF 1 page 1800×4363.5 pt |
+| V568, `--ua safari` | `html2canvas-neu-realshadow` | the same as `app` |
+| V567 vs V568, `--ua iphone` | `html2canvas-neu-realshadow` (both) | only the accent line differs (card content moves 3 px right, as in the live page); image 2569×6227 in both |
+
+Compared side by side with the Chrome golden `neumorphic-de.png`, the V568 WebKit export matches apart from WebKit's own slightly taller text lines.
+
+**Regression (Chrome) on V568:**
+- Golden image export: 6/6 at 0.000 % (including `neumorphic-de`): the Chrome desktop path is unchanged.
+- `pdf_check` desktop and `--mobile`: ALL PASS (TEXT, ORDER, UNICODE, VISUAL 9/9 each).
+- `verify.py`: YES. WARN 2: the snapshot label (the label stays `V567` until promotion) and `ui.langChanged`, which production already has.
+
+**V569 = the native-host export bridge (Mac app, Phase 3).** No effect on the web.
+
+**What it does.** The Mac app declares `window.CVHost` with its own script; on the web it never exists. When it is present, `generatePdfExport` sends the CV and the motivation letter (modes `download` and `share`) to the host instead of rasterising them:
+- **The document is the same one the raster path photographs.** `renderToCanvas` with `config._native` returns `{html, width, height}` right after the final layout (`prepareForCapture`, baked filters, Text-Fill, `fullH`, rAF×2). Nothing after that point runs, and `finally` removes the host as always.
+- **The PDF properties come from `stampProperties`** (V544), called with a collector, so there is still one place for them.
+- **The host answers `{ok}` or `{cancelled}`.** Anything else (an error, no answer, an old app) falls back to the web path in the same call.
+- **Not routed:** the A4 certificate (`scope 'document'`), the image ("Save as Image"), and the mobile share files (`mode 'file'`).
+
+**On the Mac** the app prints that document with WebKit itself (`WKWebView.createPDF`). The result is a vector PDF with real, selectable text, real shadows, filters and CSS. In the app self-test (default design) it took 1.5 s and 172 KB with 2,794 text characters, against 14 s and 1.2 MB for the raster path, which still passes as the fallback.
+
+**Finding H4, refined.** Fira Mono is not lost in html2canvas: it is lost in the export document itself.
+- **Live page:** `.contact-item` and `.terminal-title` compute `"Fira Mono", monospace`.
+- **Export document (srcdoc):** they compute `"Segoe UI", system-ui, sans-serif`.
+
+So the native PDF does not bring Fira Mono back by itself. The fix belongs in the export document's CSS, which is a visible change to every export and needs the owner's decision (H4 was deferred).
+
+**Regression on V569 (Chrome and WebKit):**
+- Golden image export: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS.
+- `verify.py`: YES (the same WARN 2).
+- `tools/webkit_export.swift --ua app`, design 4: `html2canvas-neu-realshadow`, as on V568. There is no `CVHost` outside the Mac app, so the web path is used.
+
+**The photo audit's open items (owner, 2026-10-03: "take all of them, one by one, test at the end").** Each item gets its own sandbox version. In order:
+1. EXIF orientation (V570).
+2. The downscale size bound.
+3. HEIC/HEIF.
+4. Weserv privacy.
+5. IndexedDB photo storage, with the storage estimate.
+6. Measurements.
+7. The photo engine's internal structure.
+8. Background removal.
+
+The full gates and the owner's device tests run once at the end.
+
+**New permanent test: `tools/photo_test.mjs`** (headless Chrome, CDP).
+- It uploads through Terminal 1's real `<input type=file>` (`DOM.setFileInputFiles`), in a fresh browser context for each case. It checks what is shown and what is stored.
+- External network is intercepted.
+- The fixtures are synthetic, made by `tools/photo/make_fixtures.py` into `tools/photo/fixtures/` (ignored by git).
+
+**V570 = EXIF orientation normalisation.**
+- **Before (V569, measured):** every photo was shown upright, because the browser applies the EXIF Orientation tag itself (CSS `image-orientation: from-image`, also in `drawImage`). But photos ≤ 1100 px were stored untouched, still carrying the tag (stored orientation 6 and 3). Larger photos were already re-encoded and came out canonical.
+- **Change:**
+  - `jpegOrientation(dataUrl)` reads only the file header: APP1/Exif, IFD0, tag `0x0112`.
+  - In `downscale`, a JPEG with orientation 2…8 is re-encoded once with upright pixels (JPEG 0.92 at the same size, 0.85 when it is also reduced), and that version is always kept.
+  - This happens only where the browser applies orientation itself (`CSS.supports('image-orientation','from-image')`). An old browser without it keeps the photo as before: no double rotation.
+- **Not touched:** the profile photo. It is never stored (V563), and it is shown and exported through the browser's own orientation.
+
+| `photo_test.mjs --only exif` | V569 | V570 |
+|---|---|---|
+| Orientation 6, 400×200 → shown 200×400, red on top | PASS | PASS |
+| … stored canonical | **FAIL (6)** | PASS (0, 2 KB) |
+| Orientation 6, 2400×1200 → 550×1100 | PASS / PASS | PASS / PASS |
+| Orientation 3 (180°), 400×200 | PASS / **FAIL (3)** | PASS / PASS |
+| No EXIF, 600×400 (control) | PASS / PASS | PASS / PASS, unchanged (8 KB) |
+
+`verify.py`: YES.
+
+**V571 = a guaranteed size bound for stored photos** (audit P1: "1100 px is a dimension limit, not a storage limit").
+- **Before (V570, measured with `photo_test.mjs --only downscale`):**
+  - A photo within 1100 px passed through untouched, however heavy: a 1000×1000 PNG of 3 MB was stored as 3,913 KB.
+  - When the new encoding came out larger, the original was kept.
+  - A 1000×1000 PNG with transparency (5.2 MB as base64) was not stored at all, because local storage was full.
+- **Change (`downscale`, the single path for files, links and Replace):** every stored photo is at most `PHOTO_BUDGET` = 700,000 characters (about 512 KB of bytes).
+  1. A small, light photo with no EXIF orientation still passes through untouched, as before.
+  2. Otherwise it is drawn at ≤ 1100 px. Without transparency it becomes JPEG (0.85 when reduced, 0.92 when not); with transparency it becomes PNG.
+  3. The smaller of the original and the new encoding is chosen, as before, but only if it is within the budget. A photo with EXIF orientation keeps the upright encoding (V570).
+  4. If it is still over the budget, JPEG quality drops to 0.75 and then 0.65, and the size shrinks by ×0.85 in steps (PNG: size only) until it fits, or until the longest side is 240 px. Transparency is never lost.
+
+| `photo_test.mjs --only downscale` | V570 | V571 |
+|---|---|---|
+| 1000×1000 PNG noise, 3 MB, no alpha | **FAIL**: stored 3,913 KB PNG | PASS: 632 KB JPEG, 1000×1000 |
+| 1600×1600 PNG noise, 7.7 MB | **FAIL**: 967 KB | PASS: 594 KB JPEG, 1100×1100 |
+| 1000×1000 PNG noise with alpha, 5.2 MB | **FAIL**: not stored (quota) | PASS: 567 KB PNG with alpha, 378×378 |
+| 600×600 small PNG with alpha | PASS, untouched | PASS, untouched |
+| 600×400 small JPEG | PASS, untouched | PASS, untouched |
+
+The noise images are the worst case on purpose. Real photos at 1100 px come to about 100–300 KB as JPEG 0.85, well inside the budget. The EXIF cases still pass (8/8). `verify.py`: YES.
+
+**V572 = HEIC/HEIF photos (B.1)** (audit P1: "HEIC is not accepted").
+- **Before (V571):**
+  - The engine's filter (`okType`/`okExt`) had no HEIC/HEIF, so a `.heic` from Files was refused with the general message, even in Safari, which can open it.
+  - Other formats were stored in their own format when they were small: TIFF would only open in some browsers.
+- **Change:**
+  - HEIC/HEIF (and `-sequence`) are accepted by the filter, and by link recognition.
+  - `downscale` re-encodes every photo that is not JPEG/PNG/WebP/GIF (`canon`), so a HEIC or TIFF is never stored in its own format.
+  - Where the browser cannot open it, `unsupported(f)` shows the new message `photoHeicUnsupported` (de/en/sq) for HEIC files. It tells the user to pick from the Photo Library, which makes a JPG, or to use Safari, or to save as JPG.
+  - The same message is used on all four paths: Terminal 1, the iframe terminals, A4 and Replace. The profile photo shows it too, through the exported `CVPhotoEngine.isHeic`.
+  - On iPhone, the Photo Library picker with `accept="image/*"` already hands over JPEG; HEIC arrives mainly from Files.
+
+**New permanent test: `tools/webkit_photo.swift`.** In the system's real WebKit, it puts each fixture into Terminal 1's input (`DataTransfer` → `input.files` → `change`) and checks what is shown and what is stored. It takes `--ua app|safari|iphone`.
+
+| Case | V571 | V572 |
+|---|---|---|
+| WebKit: HEIC 600×400 | **FAIL**: refused, general message | PASS: shown 600×400, stored JPEG 8 KB |
+| WebKit: TIFF 600×400 | PASS (re-encoded only because it was over the budget) | PASS: always JPEG |
+| WebKit: EXIF 6 small / large | PASS | PASS, upright and canonical (orientation 0) |
+| WebKit: plain JPEG | PASS, untouched | PASS, untouched |
+| Chrome: HEIC | general message | PASS: no photo, `photoHeicUnsupported` |
+| Chrome: TIFF | general message | PASS: no photo, general message |
+
+- `webkit_photo --ua iphone`: ALL PASS.
+- `photo_test.mjs` (exif, downscale, heic): 15/15.
+- `verify.py`: YES, msg keys 61/61, all referenced.
+
+**V573 = privacy of photo links (Weserv)** (audit P1).
+- **Before (V572, measured):** every dropped link was sent at once to the external service `images.weserv.nl`, with the full address including any query parameters or tokens, and without the user knowing. Only local files never left the device. This held even when the photo's own server allows a direct fetch.
+- **Change (`addUrlPhoto`):**
+  1. First a **direct** fetch from the photo's server (`mode:'cors'`, `credentials:'omit'`, `referrerPolicy:'no-referrer'`), with no third party.
+  2. Only when that server does not allow it, the user is **asked** (`photoProxyConfirm`, de/en/sq, naming the server) before the address goes to Weserv.
+  3. **Cancel** sends nothing and adds nothing. The message tells the user to download the photo and add it from the device.
+  4. The result is the same local asset as before (`downscale`). No remote URL is ever stored (V554).
+- This is the first use of `window.confirm` in the core. The Mac app already turns JS confirm into an NSAlert, and iOS Safari shows its own dialog.
+
+**Test: `photo_test.mjs --only links`.** All external network is intercepted. The link carries `?token=SECRET123`.
+
+| Case | V572 | V573 |
+|---|---|---|
+| Server allows a direct fetch | **FAIL**: sent to Weserv (1 request), never fetched directly | PASS: 1 direct request, **0 to Weserv**, no question |
+| Direct fetch blocked, user answers **No** | **FAIL**: sent to Weserv, no question | PASS: **0 to Weserv**, no photo; the question names `photos.example.test` and `images.weserv.nl` |
+| Direct fetch blocked, user answers **Yes** | (sent without asking) | PASS: via Weserv, stored as a local `data:image/jpeg` |
+
+`verify.py`: YES, msg keys 62/62.
+
+**V574 = floating photos stored in IndexedDB (audit P0, item G).** This is a **persistence change** (Release Checklist §4): it was tested with migration, rollback and failure cases.
+
+**Before (V573):** every floating photo was stored as a data URL inside `localStorage` (`cv_term_photos_*`, `cv_a4_photos`).
+- The whole app has about 5 MB there, shared with the CV, so a few photos filled it.
+- Every move rewrote all the bytes again.
+
+**Change (one place, the engine: `CVPhotoEngine.persist`, `load`, `gc`).** The three writers now call it: Terminal 1, the iframe terminals and A4.
+- **Bytes:**
+  - Each photo's bytes are stored **once** in IndexedDB: database `cv_photo_assets`, store `assets`, `{id, src, n, t}`.
+  - The id comes from the content: `aid` = length + a 53-bit hash. The same photo is never stored twice, and a move never touches the bytes.
+- **Metadata:**
+  - `localStorage` keeps only the small metadata (position, crop, filters … plus `aid`), under **new keys** `cv_photos2_*`, for example `cv_photos2_term_photos_personal` and `cv_photos2_a4_photos`.
+  - The old keys are no longer written, so an older version cannot overwrite the new references.
+- **Migration:**
+  - On load, photos still in an old key (src inline) are merged with the new ones and saved in the new format.
+  - The old key is removed **only after** the new save succeeded.
+  - If both keys hold the same object (`oid`), the old key wins, because it is written only after the new one.
+- **Saving always goes forward:**
+  - Without IndexedDB (or when it fails without being full), saving falls back to the old format, as in V573. In that fallback the new key keeps only the references that could not be read, so nothing is duplicated.
+  - When IndexedDB is full, `saveFailed` shows the quota message.
+- **Never silent:**
+  - A missing asset shows `photoMissing`.
+  - A failed read shows `photoLoadFailed`, and its references are **carried forward** in every later save, never deleted.
+  - Storage above 90 % (`navigator.storage.estimate`) shows `photoStorageNearlyFull`.
+  - Messages raised during start-up wait until translations and notifications are ready (`notifyKey`; `notify` retries). The test found that such a message was lost before.
+- **Clean-up (`gc`):**
+  - It deletes only bytes that no `cv_photos2_*` key mentions. If a key cannot be read, it deletes nothing.
+  - It runs 15 s after start and never touches bytes added in the current session.
+  - Reset Default and the A4 photo clear remove the new keys and call `gc(true)`, so the bytes are deleted too (privacy).
+- **Unchanged:** the DOM, the export, the history (undo) and the Mac native PDF still use data URLs.
+
+**Rollback impact (recorded for the operator):** a version before V574 does not read the new keys. After a rollback, floating photos are **not shown, but not lost**: they stay in IndexedDB and in the new keys. Photos added under the old version are merged back on the next V574+ load. This is proven by test case C below.
+
+**Test: `photo_test.mjs --only storage`** (Chrome; "old version" = `573.html` in the same origin).
+
+| Case | Result |
+|---|---|
+| New photo → bytes in IndexedDB, metadata 216 B, no old key | PASS |
+| Reload → the same photo (same pixels) | PASS |
+| Move → metadata updated, still 1 asset | PASS |
+| The same photo twice → 2 photos, 1 asset | PASS |
+| Migration: a 7 KB old-format entry → shown, moved, old key removed | PASS |
+| Rollback to V573 (shows 0), a photo added there, back to V574 → **both** photos | PASS |
+| No IndexedDB → old format, the reload shows the photo | PASS / PASS |
+| Asset missing (database deleted) → `photoMissing`, no crash | PASS |
+| Read fails → `photoLoadFailed`, reference kept, new photo saved; storage back → **both** photos | PASS / PASS |
+| iframe terminal (skills) → new format | PASS |
+| Reset Default → photo keys and bytes removed | PASS |
+| Storage > 90 % → warning | PASS |
+
+**Also checked:**
+- **WebKit (`webkit_photo.swift`):** all 5 cases are stored in format `indexeddb`. The Mac app's self-test confirms IndexedDB under `uicv://`.
+- **Earlier checks still pass:** the full `photo_test.mjs` (EXIF, downscale, HEIC, links, storage) is ALL PASS.
+- **`verify.py`:** YES, msg keys 65/65.
+
+**Item 6, measurements: new permanent tool `tools/measure.mjs`.**
+- Two profiles in headless Chrome:
+  - desktop;
+  - phone (iPhone UA, 402×874, DPR 3, CPU ×4 slower: an approximation, never a device test).
+- **Start-up:** FCP, DCL, load, "ready" (curtain removed), script/task/layout/style time, listeners, nodes, heap.
+- **CV PDF export:** Classic and Neumorphic, with 0/1/3 photos (`portrait.jpg` → 1100 px). It records time, PDF size and heap peak, split into html2canvas / image encoding / jsPDF.
+- Flag `--boot-only`.
+
+**Results on V574** (localhost, so network transfer is not included):
+
+| | Desktop | Phone (CPU ×4) |
+|---|---|---|
+| Start-up: FCP / DCL / ready | 108 / 138 / 197 ms | 232 / 662 / 773 ms |
+| Script / tasks / layout / style | 46 / 334 / 40 / 46 ms | 182 / 1,203 / 151 / 147 ms |
+| Listeners / nodes / heap | 1,005 / 2,843 / 2.3 MB | 986 / 2,571 / 1.8 MB |
+| CV export, Classic, 0 → 3 photos | 11.8 → 13.8 s; PDF 1.3 → 1.6 MB | 34.3 → 38.2 s; PDF 0.9 → 1.1 MB |
+| CV export, Neumorphic, 0 → 3 photos | 15.4 → 16.1 s; PDF 1.7 → 1.9 MB | 33.3 → 37.1 s; PDF 1.1 → 1.4 MB |
+| **…of which jsPDF** | **9.3–12.7 s** | **27.9–30.1 s** |
+
+**Conclusions:**
+- **The 1.3 MB single file is not the bottleneck.** Start-up is about 0.2 s on the desktop and 0.8 s on the slowed phone. V567 measures the same (223 / 796 ms), so no refactor is justified by start-up.
+- **Photos add little to the PDF:** about 0.1 MB and 0.5–1 s each. The page is one raster anyway.
+- **Export was dominated by jsPDF**, at about 75 %. That is the V575 fix below.
+- **The JS heap peak (16–66 MB) does not include canvas memory**, which is native. The real peak is higher and is bounded by the iOS 16 MP cap on phones.
+
+**V575 = the PDF page image without re-processing in JavaScript.**
+- **Cause, measured on the real export image (3600×8727):**
+  - `pdf.addImage(canvas.toDataURL('image/png'),'PNG',…,'SLOW')` makes jsPDF decode the browser's RGBA PNG in JavaScript (3.8 s) and deflate it again: 10.8 s in total for 1.31 MB.
+  - PNG compression is lossless at every level. `'SLOW'` (V329) never gave a better pixel, only a smaller file.
+  - Alternatives measured: `'FAST'` 5.2 s / 1.50 MB; raw RGBA 1.0 s, but jsPDF 2.5.1 does not compress it (94 MB); JPEG 0.5 s / 2.0 MB, but lossy.
+- **Change:**
+  - One helper, `PdfPipeline.pngForPdf(canvas)`, for both PDF writers: `canvasToPdf` (CV and letter, now `async`) and `renderDocToA4Pdf` (the certificate).
+  - It builds an **RGB PNG** with the browser's own native compressor (`CompressionStream('deflate')`), strip by strip (~4 MB, so memory stays low on iPhone).
+  - jsPDF embeds it **as is**, with no decode.
+  - The old path (`toDataURL` PNG + `'SLOW'`) stays as the fallback: no `CompressionStream` (iOS < 16.4), a canvas with transparency, or any error. `config._pdfImg` records which path was used.
+- **On the real image:** 11.2 s → **1.1 s**, PDF 1.31 → **1.21 MB**, **0 bytes different** in the pixels.
+
+| `measure.mjs` | V574 | V575 |
+|---|---|---|
+| Desktop, Classic, 0 / 1 / 3 photos | 11.8 / 12.9 / 13.8 s | **4.9 / 3.3 / 4.0 s** |
+| Desktop, Neumorphic (html-to-image) | 15.4 / 16.8 / 16.1 s | **7.1 / 5.9 / 5.5 s** |
+| Phone ×4, Classic | 34.3 / 35.2 / 38.2 s | **13.0 / 16.1 / 11.7 s** |
+| Phone ×4, Neumorphic | 33.3 / 33.8 / 37.1 s | **8.6 / 8.7 / 8.7 s** |
+| jsPDF share | 9–30 s | **0.03–0.2 s** |
+
+**Gates:**
+- `pdf_check` desktop and `--mobile`: **ALL PASS, VISUAL 9/9 pixel-identical**. The files are smaller: CV 1,144 KB, letter 281 KB, certificate 429 KB (was 537).
+- WebKit (`webkit_export`): app 3.0 s / 1.26 MB, Neumorphic 2.8 s, iPhone UA 2.4 s; the PDFs render correctly.
+- `verify.py`: YES.
+
+**Found while checking (not caused by V575, present in production V567):** in WebKit (Safari on iPhone and Mac), the default profile placeholder comes out off-centre in the PDF for designs 1–3, as a grey half-circle at the edge. V442 fixed it only in the Neumorphic branch. → V576.
+
+**V576 = the profile placeholder in WebKit for all designs** (found during the V575 checks; present in production V567).
+- **Defect:** in WebKit, html2canvas draws an SVG `<img>` at the SVG's own width/height, so the default profile silhouette lands off-centre as a grey half-circle at the edge.
+  - V442 fixed this for the iPhone, but only in the Neumorphic branch.
+  - Measured with `webkit_export.swift` on V567: designs 1–3, iPhone UA and Mac app, both showed it.
+  - Since V563 the profile photo is never stored, so every Safari export after a reload showed it unless a photo had been chosen in that session.
+- **Change:**
+  - The V442 code moves unchanged into `PdfPipeline.fixSvgPlaceholder(d)`, so there is one place for it.
+  - It is called in the Neumorphic branch (as before), in the phone's other branch, and on the desktop **only in WebKit** (`Utils.isDesktopWebKit()`).
+  - Chrome on the desktop stays V440. Only the export document is touched, and real photos are untouched.
+- **Result (WebKit):** the silhouette is centred, as in the Chrome golden, both on the iPhone path and in the Mac app.
+- **Gates:**
+  - Golden (Chrome desktop): 6/6 at 0.000 %.
+  - `pdf_check` desktop: ALL PASS.
+  - `pdf_check --mobile` (Chrome with the iPhone profile, so the phone path) showed VISUAL 6/9: **375 pixels** differ in the three CV PDFs. That is only the edge smoothing of the placeholder SVG, now drawn at the box size, and it looks the same.
+  - **The mobile reference was accepted** (`--accept`, md5 `98d05617`): an intended change. The re-check gives ALL PASS.
+  - The mobile reference files also change in bytes because of V575; their pixels are identical.
+  - `verify.py`: YES.
+
+**V577 = the photo engine's internal structure (audit P2: "PhotoEngine has too many responsibilities").**
+- **Choice:** one engine and one authority stay (Neni 9.1; the audit itself warns against parallel systems). The engine gets a **role map** at its top and **eight titled sections**, in this order:
+  1. UI;
+  2. messages;
+  3. export;
+  4. input;
+  5. history;
+  6. model + interaction;
+  7. storage;
+  8. public API.
+- **What moved** (whole statements only):
+  - `linkFailed` back under its own V554-C comment, which had drifted away from it;
+  - `fireChange` into History;
+  - the file intake (`okType`, `isImg`, `extractImgUrl`, `attachUpload`) from after `create` into Input, next to `downscale`.
+- **Proof that nothing else changed:** the multiset of the engine's 419 lines is identical before and after; only the titles and the map were added.
+  - Function declarations are hoisted.
+  - Every `var` that runs during start-up (`autoOrient`, `PhotoAssets`, the `gc` timer) keeps its order relative to the wiring at the end.
+- **Not done, on purpose:** splitting into separate objects (PhotoInput, PhotoStore …). It would change every call inside and outside the engine, and it is worth doing only when a role has to be replaced. It is recorded for the Mac roadmap P5.
+- **Full regression, all green:**
+  - `photo_test.mjs`: ALL PASS.
+  - `webkit_photo.swift`: ALL PASS.
+  - Golden: 6/6 at 0.000 %.
+  - `pdf_check` desktop and `--mobile`: ALL PASS.
+  - `verify.py`: YES.
+
+**V578 = background removal (audit: "big benefit, much bigger risk, not first"; the owner: "all of them, in order").**
+- **Where:** a new button **"Hiq sfondin"** in the photo toolbar's Adjust group, with a tooltip. While it works, the photo is dimmed (`.bg-busy`). The result is **one Undo step** ("Hiq sfondin"), like Replace (`__replacing` keeps position and size).
+- **Privacy: the photo never leaves the device.**
+  - **In the Mac app:** the core asks the host, `window.CVHost.removeBackground(src)` → Apple Vision (`VNGenerateForegroundInstanceMaskRequest`), native and offline. Contract D-005 is extended in the Mac repository.
+  - **In the browser:** MediaPipe Tasks Vision 1.0.1 (Google, Apache-2.0), on the device, with the `selfie_segmenter` model (float16, 250 KB, for portraits of people).
+  - If the host fails, the web path is used. "No subject" is respected.
+- **Security: everything downloaded is pinned and verified before use.**
+  - The JS bundle `vision_bundle.js` loads with **SRI** (sha256), like the export libraries (V524).
+  - The WASM loader, the WASM binary (SIMD or not) and the model are fetched without credentials or referrer and checked with **SHA-256** (`crypto.subtle`). They are then handed to MediaPipe as blob URLs and a buffer.
+  - A changed file is refused.
+  - Nothing loads at start-up, only when the button is pressed.
+- **Result:**
+  - A PNG with transparency. The edges are softened with smoothstep 0.30–0.70 over the person-confidence.
+  - It goes through `downscale` (the budget, V571) and is stored in IndexedDB (V574).
+  - Fewer than 1 % person pixels → no change and the message `photoBgNoPerson`.
+  - Any failure → `photoBgFailed`, and the photo is unchanged.
+- **New messages:** `photoBgWorking`, `photoBgFailed`, `photoBgNoPerson` (de/en/sq). The engine map gains section **8 · SFONDI**, and the API becomes 9.
+
+**Tests.** The fixture `person.jpg` is a drawn figure, not a real person.
+
+| Case | Result |
+|---|---|
+| Chrome, `photo_test.mjs --only background`: person → transparent background (corner α 0), person opaque (face/shirt α 255) | PASS, 2.9 s the first time, including the download |
+| Stored as PNG with transparency (139 KB) | PASS |
+| Undo → original back, in one step; Redo → removed again | PASS / PASS |
+| Second removal in the same session (model cached) | PASS, 1.4 s |
+| No person (`plain.jpg`) → unchanged, `photoBgNoPerson` | PASS |
+| Model with one byte changed → refused (SHA-256), unchanged, `photoBgFailed` | PASS |
+| WebKit (`webkit_photo.swift --bg`), Mac app UA / iPhone UA | PASS, 2.9 s / 2.3 s |
+| Mac app (Vision), self-test `backgroundRemoval` | PASS, 3.3 s, corner α 0, face α 255 |
+
+- `photo_test.mjs` (all scenarios): ALL PASS.
+- `verify.py`: YES, msg keys 68/68.
+- **Real-photo quality** (hair, edges) can only be judged on the owner's own photo. It is on the device-test list.
+
+**V579 = design 3 (black and white) in the painted-shadow path: real colours instead of fixed ones** (found in the final WebKit gate on V578).
+- **Defect:** the V442 path fixed the colours of design 4:
+  - panels `#e0e5ec` with a `rgba(40,50,70,0.12)` outline;
+  - cards `#e0e5ec`;
+  - a 1px dark outline on every card.
+
+  Design 3 (`tpl-neumorphic tpl-bw`: black panels, white outline, black cards with a white glow) takes the same path. That means the **iPhone since V442**, and Safari/Mac since V568. It came out with **light panels**, so the white titles could not be read.
+- **Change:** the colours are read from each element's computed style **before** the override:
+  - the panel's background and outline;
+  - the card's background;
+  - the card's **visible** outline, restored inline `!important` before the accent line (V568);
+  - the inner surface `.contacts-wrapper` (Terminal 1's contact box, `rgb(26,26,26)` in design 3), painted with its own per-corner radii.
+
+  Transparent outlines still get the 1px outline as before. The fallback shadows for Terminal 1 apply only to design 4.
+- **Proof for design 4:** its measured values are exactly the old fixed ones (`rgb(224,229,236)`, `1px rgba(40,50,70,0.12)`, contact box `rgb(224,229,236)`). The WebKit PDFs of design 4 against V578 show **0 pixels differing by more than 8 levels**, with the Mac app UA and the iPhone UA.
+- **Design 3 in WebKit:** it now matches the Chrome golden `minimal-de.png`: black panels, white outlines, the grey contact box, readable titles.
+- **Gates:**
+  - Golden (Chrome desktop, html-to-image path, untouched): 6/6 at 0.000 %.
+  - `pdf_check` desktop and `--mobile`: ALL PASS.
+  - `verify.py`: YES.
+
+**V580 = the A4 certificate with design 3 (black and white) is no longer blank** (found in the owner-requested Mac test pass, 2026-10-04; present in production V567 in **every** browser).
+- **Defect:**
+  - V496 isolated the A4 document from the designs **on screen** (`#a4DocView .a4-page X{color:…!important}`, specificity (1,2,1)).
+  - `renderDocToA4Pdf` and `renderDocToCanvas` place their clone in a host **outside** `#a4DocView`, inside `body.tpl-bw`.
+  - So `.tpl-neumorphic.tpl-bw *{color:#fff!important}` painted the clone's text white: the certificate PDF came out with only lines and bullets.
+  - Measured on V567: Chrome 68 KB and WebKit 67 KB, against 428 KB for the other designs.
+- **Change:**
+  - Both export hosts get the class `a4-export-host`.
+  - Each of the seven isolation rules becomes one selector list, `#a4DocView .a4-page X,.a4-export-host .a4-page X`. That is specificity (0,3,1) over (0,2,0), with the same values and no copy of the palette.
+- **Result:** the design 3 certificate shows its full text in Chrome (439 KB) and in WebKit (428 KB), identical to the other designs.
+- **Gates:**
+  - Golden: 6/6 at 0.000 %.
+  - `pdf_check` desktop and `--mobile`: ALL PASS. The certificate under the default design is unchanged.
+  - `verify.py`: YES.
+
+**Mac test pass on V580** (the owner asked me to run the Mac tests; the iPhone stays manual). It used the Safari engine with the Safari UA, from the user's path:
+- **12 PDFs** (4 designs × CV, letter, certificate) were exported, rendered and checked by eye. All are correct after V580.
+- **Photos:**
+  - HEIC, TIFF, EXIF 6 small and large, plain JPEG: ALL PASS.
+  - After a **page reload**, 5/5 photos come back (IndexedDB) and decode.
+  - Background removal: PASS.
+
+**Mac app** (test build with core V580; the Mac repository records the details):
+- **`--selftest --full`:** PASS. The native vector PDF for 4 designs × CV and letter is 8/8 at 0.9–1.7 s, with real text, checked by eye. Vision background removal takes 2.0 s. The web fallback and IndexedDB are OK.
+- **`--selftest-persist write` → `read` in a new launch:** the photo is back after the app restarts, and the separate test store is removed afterwards.
+
+**Device gate (Neni 72): passed** (see *Release record — V581*). These were the checks before the promotion:
+
+**Safari on the Mac** (`index-test.html`):
+- Designs 3 and 4: download the CV and compare the PDF with the screen. Expected: no grey blocks, a readable title, the blue line on the cards.
+
+**iPhone over LAN** (`index-test.html`):
+- Designs 3 and 4: export the CV. Expected: the accent line, design 3 dark and readable, the placeholder silhouette centred.
+- A HEIC photo from Files: it should be accepted.
+- A photo from the Photo Library, in portrait orientation: it should stay upright after a reload.
+- Remove the background on a real photo of a person: judge the edges and hair. Undo should restore it.
+- Drop a photo link: either it is fetched directly, or the question naming Weserv appears.
+- A reload: floating photos stay. This is the IndexedDB path.
+- Export time: it should feel faster.
+
+**Mac test app** (`~/Library/Developer/UltraInstinctCV/test-build/`, core V579):
+- Download the CV and the letter: a vector PDF, sharp, with searchable text.
+- Remove the background (Apple Vision).
+- Floating photos survive a relaunch.
+
 #### Sandbox ahead of production — V566 (2026-10-02) — CLOSED by the V567 promotion
 
 **Closed on 2026-10-02:** `index-test.html` = `index.html` = `567.html`.
@@ -1442,6 +1867,52 @@ Two implementations of one function go against Neni 9.1. The live path was alway
 - `pdf_check` desktop and `--mobile`: ALL PASS.
 - `verify.py`: YES (msg keys 60/60, all referenced).
 - The file is 10,342 bytes smaller (1,346,255 → 1,335,517).
+
+### Release record — V581 (2026-10-04) — WebKit designs, the Mac bridge, the photo series, faster PDF (V568–V580)
+
+**Promoted on the owner's explicit instruction** ("i testova dhe mendoj ti promovsh"), after the owner's own iPhone tests over LAN. At the owner's request, I ran the Mac tests: the Safari engine and the Mac test app. V581 is V580 plus the build label only; a byte comparison confirmed that nothing else differs.
+
+**What it carries, V567 → V581.** The full evidence is in *Sandbox ahead of production — V568–V580*.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V568 | Design 4 in desktop WebKit takes the V442 painted-shadow path; the cards' accent line is kept (phone too) | Export fidelity (Safari Mac / Mac app; iPhone accent) | none |
+| V569 | `window.CVHost` bridge: the Mac app prints the export document as a vector PDF | Native-host hook; no effect on the web | none |
+| V570 | EXIF orientation normalised (canonical upright JPEG) | Photo input | new photos only |
+| V571 | Guaranteed size budget for stored photos (700k chars), transparency kept | Photo input | new photos only |
+| V572 | HEIC/HEIF accepted (JPEG where the browser decodes it); clear HEIC message elsewhere | Photo input | new photos only |
+| V573 | Photo links fetched directly first; Weserv only after the user agrees | Privacy | none |
+| V574 | **Floating photos in IndexedDB** (`cv_photo_assets` + metadata in `cv_photos2_*`), with migration, rollback safety, fallback, no silent loss | **Persistence change** | **yes**: migrates `cv_term_photos_*` / `cv_a4_photos` on load |
+| V575 | PDF export 3–4× faster: the page PNG is built natively (`CompressionStream`); lossless, pixel-identical, smaller | Performance | none |
+| V576 | Profile placeholder centred in WebKit exports for all designs | Export fidelity | none |
+| V577 | Photo engine organised into titled role sections (identical lines) | Structure | none |
+| V578 | Background removal on the device (Apple Vision in the Mac app; MediaPipe with SRI + SHA-256 in the browser) | Feature | none |
+| V579 | Design 3 (black and white) in the painted-shadow path uses the real panel and card colours | Export fidelity | none |
+| V580 | The A4 certificate is no longer blank with design 3 (the export clone gets the V496 isolation) | Export fidelity (all browsers) | none |
+
+**Device gate (Neni 72): passed.**
+- **iPhone:** the owner's own tests over LAN.
+- **Mac:**
+  - Safari engine: 12 PDFs (4 designs × 3 documents) checked by eye; photos and reload 5/5; background removal.
+  - Mac app: 8/8 native PDFs, Vision, relaunch persistence.
+
+**Rollback note (V574).** A version before V574 does not read the new photo keys. After a rollback to V567, floating photos are **hidden, not lost**: the bytes stay in IndexedDB and the metadata in `cv_photos2_*`. Photos added under V567 are merged back on the next V574+ load (proven by `photo_test.mjs --only storage`, case C).
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v581-20261004-012945` (= V567, `34498155…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v581-20261004-012945` (= V580, `7bca052d…`).
+- **Identity:** after the copy, `md5 -q index.html index-test.html 581.html | sort -u` printed one hash (`2e19374c…`).
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `python3 tools/verify.py --file index.html` | WARN 1 (`ui.langChanged`), FAIL 0 → YES |
+| Golden image export | 0.000 % in all six cases |
+| `pdf_check` on `index.html`, desktop and `--mobile` | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
+| `photo_test.mjs` on `index.html` | ALL PASS (EXIF, downscale, HEIC, links, storage, background) |
+| `webkit_photo.swift` (`--reload`, `--bg --ua iphone`) | ALL PASS / PASS |
+| Observatory on production, isolated origin (`tools/observatory_run.mjs`, new) | `V581`; 7 terminals; 0 duplicate ids; msg 68/68 in each language; **`PROBLEMS: none`** |
+
+**Rollback:** production returns to V567 by copying `index.html.bak-pre-v581-20261004-012945` over `index.html` (the command is in *Current baseline*).
 
 ### Release record — V567 (2026-10-02) — C.1, legacy photo code removed (V566)
 
