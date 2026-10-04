@@ -26,9 +26,9 @@
 
 | | Artifact | Hash (md5) | Bytes | Date |
 |---|---|---|---|---|
-| **PRODUCTION** | `index.html` | `2e19374c8994f0276968252ab3e1af5b` | 1,379,015 | 2026-10-04 |
-| **Release snapshot** | `581.html` | `2e19374c8994f0276968252ab3e1af5b` | 1,379,015 | 2026-10-04 |
-| **Rollback point** | `index.html.bak-pre-v581-20261004-012945` | `344981559f698fad6ae07ba749973803` (V567) | 1,335,625 | 2026-10-04 |
+| **PRODUCTION** | `index.html` | `3bd91f3a4be8842032a28aee057c908c` | 1,387,101 | 2026-10-04 |
+| **Release snapshot** | `588.html` | `3bd91f3a4be8842032a28aee057c908c` | 1,387,101 | 2026-10-04 |
+| **Rollback point** | `index.html.bak-pre-v588-20261004-172630` | `2e19374c8994f0276968252ab3e1af5b` (V581) | 1,379,015 | 2026-10-04 |
 
 > ### ⚠️ The rollback point is a Release Snapshot, not a backup — corrected 2026-08-29
 >
@@ -54,14 +54,14 @@ artifact, tracked separately, and it changes nothing here: **identity is the has
 CVQualify apparatus `VERSION` = **V482s** (unchanged — ADR-031 is a product change and must not bump
 the apparatus; see "Two versions" below).
 
-**V581 is the reference point for every future audit.** A future delta-audit compares against
-`2e19374c`. (V567 = `34498155` is the rollback target; V565 = `b461676d` is two back.)
+**V588 is the reference point for every future audit.** A future delta-audit compares against
+`3bd91f3a`. (V581 = `2e19374c` is the rollback target; V567 = `34498155` is two back.)
 
-`window.CV.build` reports **`V581`** in production — measured from the artifact. Since V509 the label
+`window.CV.build` reports **`V588`** in production — measured from the artifact. Since V509 the label
 is bumped with every version, which is why it can be trusted again; **identity is still the hash.**
 
 ```bash
-cp "index.html.bak-pre-v581-20261004-012945" "index.html"
+cp "index.html.bak-pre-v588-20261004-172630" "index.html"
 ```
 
 ## Quality gate (`tools/verify.py`) and observatory (`tools/observatory.js`)
@@ -222,6 +222,7 @@ The owner chose that it is **updated after every production release** and carrie
 | 2026-09-30 (verified 2026-10-01) | V550 (`792082b8…`) | `311494aa…` | public commit `e6d5400`: all 7 files byte-identical to the package; leak scans clean; PDFs from the public copy, **certificate included** (3805 characters), contain only fictitious values ("MAX MUSTERMANN", X00000000X) and 0 of the 30 real tokens; Pages serving V550, byte-identical |
 | 2026-10-02 | V565 (`b461676d…`) | `e83b49b3…` | public commit `bdbbda8`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory PROBLEMS: none); its 9 PDFs contain only fictitious values ("Max Mustermann") and 0 real tokens; Pages serving V565, byte-identical. `lab/` left at V550 on purpose: `bug017.html` is the reproduction page of Chromium issue 567972098. The old package went to the Trash with `mv`, because the Finder AppleEvent of `public_copy.py` timed out (-1712) |
 | 2026-10-02 | V567 (`34498155…`) | `fb8e024d…` | public commit `4b1984a`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory PROBLEMS: none); its 9 PDFs contain only fictitious values and 0 real tokens; Pages serving V567, byte-identical. `lab/` (11 files) untouched, still the Chromium-issue repro |
+| 2026-10-04 | V581 (`2e19374c…`) | `57d271b9…` | public commit `a62dd75`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory PROBLEMS: none); its 9 PDFs contain 0 private tokens (27 pairs + 3 words checked); Pages serving V581, byte-identical. `lab/` untouched (`bug017.html` serving), still the Chromium-issue repro |
 
 ## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V550 since 2026-09-30; photo-series rows added at V565, 2026-10-02)
 
@@ -1393,6 +1394,139 @@ The external review asked for C1 (normalise) and C2 (no remote fallback) as one 
 - Golden image export: 6/6 at 0.000 %.
 - `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
 
+#### Sandbox ahead of production — V582–V587 (2026-10-04) — CLOSED by the V588 promotion
+
+**Closed on 2026-10-04:** `index-test.html` = `index.html` = `588.html`.
+
+Production is V581 (`2e19374c…`).
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V582 | `582.html` | `bde0a1e38fd7e562e5d026bcd9af6e27` | 1,384,271 | `index-test.html.bak-pre-v582-20261004-095657` (= V581, `2e19374c…`) |
+| V583 | `583.html` | `7b6edfe72e1cdf6c69e6a4bd07c7ecc5` | 1,385,904 | `index-test.html.bak-pre-v583-20261004-103107` (= V582, `bde0a1e3…`) |
+| V584 | `584.html` | `fcd94894fcbaf699f81db8cfbb1c7075` | 1,386,373 | `index-test.html.bak-pre-v584-20261004-164155` (= V583, `7b6edfe7…`) |
+| V585 | `585.html` | `66f737c29d101ce9591aaf260a018ce0` | 1,390,658 | `index-test.html.bak-pre-v585-20261004-165538` (= V584, `fcd94894…`) |
+| V586 | `586.html` | `40b6237b413628fadd7bfac0e342261a` | 1,383,936 | `index-test.html.bak-pre-v586-20261004-171042` (= V585, `66f737c2…`) |
+| V587 | `587.html` | `e24afa6a4b89e5b8bf3eb7854af50306` | 1,386,812 | `index-test.html.bak-pre-v587-20261004-172129` (= V586, `40b6237b…`) |
+
+**V582 = A4 pages and host variants for the Mac app (Mac Phase 3: A4 CV, print, PNG, Share).** The owner asked to continue with Phase 3.
+- **`PdfPipeline.cvPageBreaks(d, pageH)`** (F-4). It works on the laid-out export document and returns `[0, y1, …, H]`, where each A4 page is cut. A4 height at the export width is `round(1200 × 841.89 / 595.28)` = 1697 px.
+  - **Never cut:** the cards, the floating photos, the images, the text elements, and **every text line**. Lines are measured with `Range.getClientRects`, so this covers the letter too, which has no per-line elements.
+  - **Kept whole:** Terminal 1.
+  - **No orphaned title:** each terminal header stays on the same page as its first card.
+  - **Choice of cut:** the lowest allowed cut that fits the page, but not above 40 % of it. A block taller than a page is cut where it must be.
+- **The native-host document** (`config._native`) now also carries `pageHeight`, `breaks` and `background` (the document colour, for the rest of a page).
+- **`config.hostVariant`** (`single` | `a4` | `print` | `png` | `share`) is passed to `CVHost.exportPdf` as `variant`. A host answer with `toast:false` suppresses the "PDF downloaded" toast, for print, share and PNG.
+- **`window.CVApi.exportForHost({variant, doc})`** (version 1, frozen). It is the entry for the Mac app's menus and takes the same path as the sheet's download button.
+  - `doc` is `'cv'` (the default) or `'letter'`.
+  - On the web, without `CVHost`, it simply downloads as usual. Nothing in the page calls it.
+
+**New permanent test: `tools/cvhost_test.mjs`.** It plays the Mac app in Chrome with a fake `CVHost` that records the request, and checks the breaks independently on the request's own document.
+
+| Case | Result |
+|---|---|
+| `CVApi` present, version 1 | PASS |
+| 4 designs × CV: A4 breaks | PASS: 2 pages each, about 110 blocks with text lines, **0 cut**, no orphaned header |
+| 4 designs × letter | PASS: 1 page |
+| Long letter (body × 5): 2,593 px | PASS: 2 pages, **0 lines cut** |
+| The variant passes through (`png`) | PASS |
+| No host → normal web download | PASS: 1.22 MB PDF |
+
+**Gates:**
+- Golden: 6/6 at 0.000 %.
+- `pdf_check` desktop and `--mobile`: ALL PASS.
+- `photo_test.mjs`: ALL PASS.
+- `verify.py`: YES.
+
+**V583 = the A4 certificate for the host (the owner: "⌘P works for the CV, it must also work for VËRTETIM PUNE DHE REFERENCË PROFESIONALE").**
+- **Change:** for `scope 'document'`, when the host asks with a variant (`CVApi.exportForHost({variant, doc:'document'})`), the core sends the **finished PDF** from `renderDocToA4Pdf` to `CVHost.exportPdf` as `pdf` (base64). This is exactly the PDF that downloads today: A4 pages laid out by the editor's engine, the text layer (V549) and the properties (V544).
+- **The host only delivers it:** print, share, save, or PNG.
+- **Unchanged:** the sheet's download stays the usual path. A failing host falls back to it.
+- **`CVApi`:** `doc: 'document'` is added.
+- **`cvhost_test.mjs`:** 4 new cases (print, share, png, a4 for the certificate), each a finished PDF with 2 A4 pages (429 KB). ALL PASS, and the CV/letter cases are unchanged.
+- **Gates:** golden 6/6 at 0.000 %; `pdf_check` desktop and `--mobile` ALL PASS; `verify.py` YES.
+- **Mac app (dev build with this core):** `--selftest --full` covers 9 variants: CV A4/PNG/print/share, letter A4, and the certificate print/share/PNG/A4. All PASS. The certificate is 2 pages, 595×842, 3,762 text characters; its PNG at 2× is 1191×3368 with the pages stacked.
+
+**V584 = printing what is on screen** (the owner: "in the A4 document, ⌘P gives me the CV, not the A4 document").
+- **Change:** `CVApi.exportForHost` accepts `doc: 'current'`, the view the user is looking at. The A4 view (`body.a4-mode`, button `#blankDocBtn`) gives the certificate; otherwise the CV.
+- **New: `CVApi.currentDoc()`** reports the view without exporting. `version` stays 1, because the change is additive.
+- **Mac app:**
+  - The shortcuts follow the current view: ⌘P "Printo…", ⌘E "PDF (pamja aktuale)", ⇧⌘E "PDF në faqe A4 (pamja aktuale)", plus PNG and Share for the current view.
+  - The named items (CV / letter / certificate) always give that document.
+- **`cvhost_test.mjs`:**
+  - In the CV view, `current` gives the CV.
+  - After clicking the real `#blankDocBtn`, `current` gives the certificate (the finished PDF).
+  - ALL PASS.
+- **Gates:** golden 6/6 at 0.000 %; `pdf_check` ALL PASS; `verify.py` YES.
+
+**V587 = the end of Terminal 1's collapse without stutter** (the owner on V586: "a slight stutter at the moment it is near the end of folding in").
+- **Measured in WebKit:**
+  - After the content disappears at once (706 → `min-height` 200 px), the visible part of the collapse is the CSS transition of `min-height` from 200 to 59 px.
+  - Every frame recomputed style and layout of the main page: frames of 52–65 ms in the second half, 8 irregular steps.
+  - A graphics layer (`will-change`) on the content below **did not help**: frames stayed at 40–80 ms.
+- **Change (T1 only; T2–T6 untouched; restore stays instant):**
+  - `minimizeGlide`: the final layout is applied at once.
+  - What is below T1 slides those 141 px up with `transform` over .3 s ease.
+  - It respects `prefers-reduced-motion`.
+  - A restore click during the slide ends it at once (`__cvGlideStop`).
+- **Look:** checked by frames captured in Chrome (lesson from V585). T1 is the header right away and the gap below closes softly; no overlap. Almost identical to V586.
+- **Results (WebKit, `tools/terminal_glide.js`, new):**
+  - The slide now has 16 steps of 16–17 ms after the first frame (the instant change, as before).
+  - Interrupting with restore: everything back in place at once, no leftover transform.
+- **Gates:**
+  - Golden: 6/6 at 0.000 %.
+  - `pdf_check` desktop and `--mobile`: ALL PASS.
+  - `cvhost_test`: ALL PASS.
+  - `verify.py`: YES.
+
+**V586 = Terminal 1 behaves like the other five; V585 is withdrawn.**
+- **The owner on V585:** "It doesn't look good at all. The last 5 terminals were better before, except 1; now it isn't good at all."
+- **Why V585 looked bad:** the frames captured mid-animation (Chrome, `scratchpad/shots.mjs`) showed it. The content below slid **over** the neon frame of the terminal that was rolling up, so content was mixed inside the frame. Frame times were good; the picture was not.
+- **What the owner liked:** at V584, T2–T6 used `minimize`/`restore`/`closeTerm` with their CSS transition, a quick collapse to the header and an instant restore. Only Terminal 1 had its own animation (height over .42 s with fade). That was the one that stuttered in WebKit.
+- **Change:**
+  - V585's FLIP code is removed.
+  - **T2–T6 are exactly as in V584.**
+  - **Terminal 1 now takes the same path** (`minimize`/`restore`).
+  - The separate T1 animation (`minimizeMainTerminal` / `restoreMainTerminal`, about 90 lines) is removed (Neni 9.1: one implementation).
+  - The diff against V584 is only those removals, the click handler and a comment.
+- **WebKit check (`terminal_anim`/`anim.js`):** T1 minimise collapses from 199 to 59 px like T2 (200 → 55); restore is instant, as for T2.
+- **Gates:**
+  - Golden: 6/6 at 0.000 %.
+  - `pdf_check` desktop and `--mobile`: ALL PASS.
+  - `cvhost_test`: ALL PASS.
+  - `photo_test`: ALL PASS.
+  - `verify.py`: YES.
+- **Kept from V585:** the tools `webkit_run.swift` and `terminal_anim.js`.
+
+**V585 (REJECTED by the owner, replaced by V586) = opening and closing the terminals without stutter** (the owner: "Terminal 1 seemed to stutter a bit", about the three window buttons).
+- **Measured on V584 in WebKit** (`tools/webkit_run.swift`, new, and `tools/terminal_anim.js`):
+  - **Terminal 1** animated its **height** (`height`/`min-height`/`max-height` over .42 s). Every frame re-laid out the whole page and moved the 3,150 px iframe below it: frames up to 121–127 ms, only 6 visible steps, jumps of 322–354 px.
+  - **T2–T6** did not animate at all; the CSS `transition: all .3s` made them jump in short steps.
+- **Change:** one animation for **every** terminal, in the macOS "window shade" style, using **FLIP**. The layout changes once; during the animation only `clip-path` (on the terminal) and `transform` (on everything below it) move.
+  - **Minimise:** the terminal rolls up to its header while what is below slides up. At the end the layout is committed and the transforms removed in the same frame.
+  - **Restore:** the layout is committed first, hidden by clip and transform, then it opens.
+  - **Close (T2–T6):** it rolls up and fades, then `display:none`.
+  - **The transition starts one frame after the starting state,** so the heavy frame shows an unchanged picture. Layers are prepared when the pointer enters the buttons.
+  - **Safety:** a 150 ms fallback if frames do not come; a click during an animation finishes it; `prefers-reduced-motion` means no animation.
+  - **Cleanup:** `minimizeMainTerminal`/`restoreMainTerminal` are removed (Neni 9.1: one implementation).
+- **Results:**
+
+| WebKit | V584 | V585 |
+|---|---|---|
+| T1 minimise | 6 steps, 322 px jumps, 121 ms frames | 22 steps, ≤ 134 px, max 33–38 ms |
+| T1 restore | 6 steps, 354 px, 127 ms | 22–23 steps, ≤ 111 px |
+| T2 minimise / close | instant jump | 21 smooth steps |
+| T2 restore | instant jump | 18 steps (one heavy frame while the iframe grows) |
+
+- **Chrome:** all four T1 animations (twice over) and T2 min/restore/close show 0 frames over 16.8 ms and 21–22 steps. V584 had frames of 516–999 ms in the same measurement.
+- **Final state is correct:** T1 is back to its full height with no leftover clip or transform; a closed terminal is hidden, and the next section moved up by exactly its height.
+- **Gates:**
+  - Golden: 6/6 at 0.000 %.
+  - `pdf_check` desktop and `--mobile`: ALL PASS.
+  - `photo_test`: ALL PASS.
+  - `cvhost_test`: ALL PASS.
+  - `verify.py`: YES.
+
 #### Sandbox ahead of production — V568–V580 (2026-10-03) — CLOSED by the V581 promotion
 
 **Closed on 2026-10-04:** `index-test.html` = `index.html` = `581.html`.
@@ -1867,6 +2001,39 @@ Two implementations of one function go against Neni 9.1. The live path was alway
 - `pdf_check` desktop and `--mobile`: ALL PASS.
 - `verify.py`: YES (msg keys 60/60, all referenced).
 - The file is 10,342 bytes smaller (1,346,255 → 1,335,517).
+
+### Release record — V588 (2026-10-04) — Mac Phase 3 (A4, print, PNG, Share), the certificate, Terminal 1's buttons (V582–V587)
+
+**Promoted on the owner's explicit instruction** ("ok promovoje"), after their checks in the Mac test app: A4, ⌘P on the view on screen, PNG, Share, the certificate, and Terminal 1's buttons. V588 is V587 plus the build label only; a byte comparison confirmed that nothing else differs.
+
+**What it carries, V581 → V588.** The full evidence is in *Sandbox ahead of production — V582–V587*.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V582 | A4 page breaks (`cvPageBreaks`: no card, text line or orphaned header cut), host variants, `window.CVApi.exportForHost` | Native-host hook (Mac); no effect on the web | none |
+| V583 | The A4 certificate goes to the host as the finished PDF (print, share, PNG, save) | Native-host hook | none |
+| V584 | `doc:'current'` + `currentDoc()`: the host prints or exports the view on screen | Native-host hook | none |
+| V585 | FLIP "window-shade" terminal animation | **Rejected by the owner; withdrawn by V586** | none |
+| V586 | Terminal 1's window buttons take the same path as T2–T6; its separate animation is removed | Behaviour (web too) | none |
+| V587 | The end of Terminal 1's collapse slides with `transform` (WebKit: 16 steps × 17 ms instead of 8 at 52–65 ms) | Smoothness (web too) | none |
+
+**Device gate (Neni 72): passed, by the owner on the Mac** (test build with core V587): menus, print, A4, PNG, Share, the certificate, T1's buttons. The web-visible changes (V586–V587) touch only Terminal 1's buttons. They were measured in WebKit (`terminal_glide.js`) and checked by frame captures.
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v588-20261004-172630` (= V581, `2e19374c…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v588-20261004-172630` (= V587, `e24afa6a…`).
+- **Identity:** `md5 -q index.html index-test.html 588.html | sort -u` printed one hash (`3bd91f3a…`).
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `python3 tools/verify.py --file index.html` | WARN 1 (`ui.langChanged`), FAIL 0 → YES |
+| Golden image export | 0.000 % in all six cases |
+| `pdf_check` on `index.html`, desktop and `--mobile` | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
+| `photo_test.mjs` / `cvhost_test.mjs` on `index.html` | ALL PASS / ALL PASS |
+| `webkit_photo.swift --ua safari --reload` | ALL PASS |
+| Observatory on production (`tools/observatory_run.mjs`) | `V588`; 7 terminals; 0 duplicate ids; msg 68/68; **`PROBLEMS: none`** |
+
+**Rollback:** production returns to V581 by copying `index.html.bak-pre-v588-20261004-172630` over `index.html` (the command is in *Current baseline*).
 
 ### Release record — V581 (2026-10-04) — WebKit designs, the Mac bridge, the photo series, faster PDF (V568–V580)
 

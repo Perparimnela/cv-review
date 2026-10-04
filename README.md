@@ -4,7 +4,7 @@
 
 | File | Content |
 |---|---|
-| `index.html` | The complete application (V581). The project's "Constitution" is at the top of the file. |
+| `index.html` | The complete application (V588). The project's "Constitution" is at the top of the file. |
 | `RELEASE_PROCESS.md` | Every change with its cause, fix, verification and promotion; device coverage matrix. |
 | `BACKUP_INDEX.md` | Manifest of kept artefacts, rollback chain, cleanup record. |
 | `ARCHITECTURE.md`, `ARCHITECTURE_DECISIONS.md` | Structure and architectural decisions. |
