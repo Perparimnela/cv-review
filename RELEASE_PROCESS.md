@@ -26,9 +26,9 @@
 
 | | Artifact | Hash (md5) | Bytes | Date |
 |---|---|---|---|---|
-| **PRODUCTION** | `index.html` | `3bd91f3a4be8842032a28aee057c908c` | 1,387,101 | 2026-10-04 |
-| **Release snapshot** | `588.html` | `3bd91f3a4be8842032a28aee057c908c` | 1,387,101 | 2026-10-04 |
-| **Rollback point** | `index.html.bak-pre-v588-20261004-172630` | `2e19374c8994f0276968252ab3e1af5b` (V581) | 1,379,015 | 2026-10-04 |
+| **PRODUCTION** | `index.html` | `f249aa6383ebace1720a28852404416d` | 1,397,370 | 2026-10-05 |
+| **Release snapshot** | `595.html` | `f249aa6383ebace1720a28852404416d` | 1,397,370 | 2026-10-05 |
+| **Rollback point** | `index.html.bak-pre-v595-20261005-102116` | `3bd91f3a4be8842032a28aee057c908c` (V588) | 1,387,101 | 2026-10-05 |
 
 > ### ⚠️ The rollback point is a Release Snapshot, not a backup — corrected 2026-08-29
 >
@@ -54,14 +54,14 @@ artifact, tracked separately, and it changes nothing here: **identity is the has
 CVQualify apparatus `VERSION` = **V482s** (unchanged — ADR-031 is a product change and must not bump
 the apparatus; see "Two versions" below).
 
-**V588 is the reference point for every future audit.** A future delta-audit compares against
-`3bd91f3a`. (V581 = `2e19374c` is the rollback target; V567 = `34498155` is two back.)
+**V595 is the reference point for every future audit.** A future delta-audit compares against
+`f249aa63`. (V588 = `3bd91f3a` is the rollback target; V581 = `2e19374c` is two back.)
 
-`window.CV.build` reports **`V588`** in production — measured from the artifact. Since V509 the label
+`window.CV.build` reports **`V595`** in production — measured from the artifact. Since V509 the label
 is bumped with every version, which is why it can be trusted again; **identity is still the hash.**
 
 ```bash
-cp "index.html.bak-pre-v588-20261004-172630" "index.html"
+cp "index.html.bak-pre-v595-20261005-102116" "index.html"
 ```
 
 ## Quality gate (`tools/verify.py`) and observatory (`tools/observatory.js`)
@@ -223,6 +223,7 @@ The owner chose that it is **updated after every production release** and carrie
 | 2026-10-02 | V565 (`b461676d…`) | `e83b49b3…` | public commit `bdbbda8`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory PROBLEMS: none); its 9 PDFs contain only fictitious values ("Max Mustermann") and 0 real tokens; Pages serving V565, byte-identical. `lab/` left at V550 on purpose: `bug017.html` is the reproduction page of Chromium issue 567972098. The old package went to the Trash with `mv`, because the Finder AppleEvent of `public_copy.py` timed out (-1712) |
 | 2026-10-02 | V567 (`34498155…`) | `fb8e024d…` | public commit `4b1984a`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory PROBLEMS: none); its 9 PDFs contain only fictitious values and 0 real tokens; Pages serving V567, byte-identical. `lab/` (11 files) untouched, still the Chromium-issue repro |
 | 2026-10-04 | V581 (`2e19374c…`) | `57d271b9…` | public commit `a62dd75`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory PROBLEMS: none); its 9 PDFs contain 0 private tokens (27 pairs + 3 words checked); Pages serving V581, byte-identical. `lab/` untouched (`bug017.html` serving), still the Chromium-issue repro |
+| 2026-10-04 | V588 (`3bd91f3a…`) | `e24a4826…` | public commit `0dd8aeb`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory: V588, PROBLEMS: none); its 9 PDFs contain 0 private tokens; Pages serving V588. `lab/` untouched (`bug017.html` serving), still the Chromium-issue repro |
 
 ## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V550 since 2026-09-30; photo-series rows added at V565, 2026-10-02)
 
@@ -1394,6 +1395,189 @@ The external review asked for C1 (normalise) and C2 (no remote fallback) as one 
 - Golden image export: 6/6 at 0.000 %.
 - `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
 
+#### Sandbox ahead of production — V589–V594 (2026-10-04 / 10-05) — Mac Phase 2, steps 1–2 — CLOSED by the V595 promotion
+
+**Closed on 2026-10-05:** `index-test.html` = `index.html` = `595.html`.
+
+Production is V588 (`3bd91f3a…`).
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V589 | `589.html` | `9c06db5e86738e7f5f28b4b1a0f3f316` | 1,388,807 | `index-test.html.bak-pre-v589-20261004-231205` (= V588, `3bd91f3a…`) |
+| V590 | `590.html` | `d9040c4f2b86d8e0985f85faf851122e` | 1,389,734 | `index-test.html.bak-pre-v590-20261004-233040` (= V589, `9c06db5e…`) |
+| V591 | `591.html` | `b1d0905b5b164c46dc8894e8e7945f76` | 1,391,004 | `index-test.html.bak-pre-v591-20261004-234305` (= V590, `d9040c4f…`) |
+| V592 | `592.html` | `493269032b71b2263485b1975fc99e37` | 1,391,951 | `index-test.html.bak-pre-v592-20261005-013037` (= V591, `b1d0905b…`) |
+| V593 | `593.html` | `872dd51c5c23230e3fef9e6652ce9c53` | 1,392,052 | `index-test.html.bak-pre-v593-20261005-013956` (= V592, `49326903…`) |
+| V594 | `594.html` | `7332dbba1cb482053702b063e14593eb` | 1,397,006 | `index-test.html.bak-pre-v594-20261005-015222` (= V593, `872dd51c…`) |
+
+**V589 = `window.CVStore`, the one door to the document's storage (Mac Phase 2, step 1).** The owner asked to start Phase 2: the CV as a `.uicv` document on disk, instead of browser storage.
+- **What it is.** A small object, defined in the first `<head>` script, with the `Storage` interface (`getItem` / `setItem` / `removeItem`) plus `keys()`. On the web it **is** `localStorage`: the same keys, values and order, and the same exceptions, which the callers still catch as before. In step 2 the Mac app gives it a different source (the `.uicv` file) without touching any caller.
+- **What goes through it now:** every read and write of the document's data.
+  - `cv_unified_app_state_v2`: `StorageManager` (load, save, clear, migrate), the boot read (`data-cv-boot`), the persisted state for the composer, and the 7 diagnostic oracles.
+  - `cv_a4_doc_html`: the A4 certificate.
+  - `cv_mot_firma`: the letter's signature.
+  - `cv_photos2_*`: the photos' small records, passed to the photo engine as its `LS`. That includes the iframe terminals, through `window.parent.CVStore`. The bytes stay in IndexedDB. Also the old keys `cv_term_photos_*` / `cv_a4_photos`, which are read for migration and removed.
+  - Reset Default and the photo cleanup (`gc`), which now list keys with `CVStore.keys()`.
+- **Left out on purpose, because they are not document data:**
+  - `cv_language`, an app preference;
+  - `cv_profile_photo`, removal only (V563);
+  - the legacy `cv_hyper_*` AI keys, a migration;
+  - `cv_bug017_frames`, the instrument;
+  - the editor's `sessionStorage`.
+- **No behaviour change.** Nothing visible, nothing in the data.
+
+**New permanent test: `tools/storage_trace.mjs`.** It records every `localStorage` and IndexedDB write in headless Chrome during one full session:
+- boot;
+- a Terminal 1 edit;
+- design;
+- language;
+- an A4 edit;
+- the letter's signature;
+- a photo in Terminal 1 and one in an iframe terminal;
+- a reload;
+- 35 s idle;
+- Reset Default.
+
+After each step it takes a snapshot of the storage (every key with its length and a hash of its value, plus the IndexedDB keys) and compares two files. The state's `timestamp` and each photo's random `oid` are normalised. V588 against itself: IDENTICAL after every step, so the test is deterministic.
+
+| Check | Result |
+|---|---|
+| `storage_trace.mjs index.html index-test.html` (V588 → V589) | **IDENTICAL after every step** (11 steps; the signature, A4, both photo paths, the reload and the reset included) |
+| Measured on the way (audit R-1, still open) | 35 s with no action → **1 write** of the whole CV state, in V588 and V589 alike; step 2 of the plan (write only on change) fixes it |
+| Golden image export | 6/6 at 0.000 % |
+| `pdf_check` desktop and `--mobile` | ALL PASS (TEXT, ORDER, UNICODE, VISUAL 9/9 each) |
+| `photo_test.mjs` / `cvhost_test.mjs` | ALL PASS / ALL PASS |
+| `webkit_photo.swift --ua safari --reload` | ALL PASS (5/5 photos back after the reload) |
+| Observatory | 7 terminals; 0 duplicate ids; msg 68/68; `PROBLEMS: none` |
+| `verify.py --file index-test.html` | YES (WARN 2: the label snapshot differs, as for every sandbox version; `langChanged`) |
+| Mac app, dev build with this core | `--selftest`, `--selftest --full`, `--selftest-persist write` and `read`: all PASS |
+
+**V590 = the CV state is written only when it changes (audit R-1 / F-2).**
+- **The defect, measured by V589's trace.** `StorageManager.save()` compared the new state with the last one *after* adding `timestamp: Date.now()`, which differs on every call. So every autosave (every 30 s, and after every edit) rewrote the whole state, even with nothing changed: 1 write in 35 s idle.
+- **Change:**
+  - The state is compared **without** the timestamp, and against **what is really stored**, not a copy in memory. So after Reset Default, another tab, or an outside removal, the next save writes again.
+  - A failed write is not remembered as saved, so the next save tries again.
+- **Unchanged:** the written format is byte for byte V589's: `{...state, version, timestamp}`, with the timestamp last.
+- **What the timestamp now means:** it is the time of the last real change. That makes ADR-038 C4's "stale snapshot" signal (`state.timestamp > snapshot.bakedFrom`) accurate; until now it fired after every autosave.
+- **Measured** (`storage_trace.mjs 589.html index-test.html`, 12 steps; a new step removes the state from outside):
+
+| Step | State writes V589 → V590 | Stored data |
+|---|---|---|
+| boot | 2 → 1 | IDENTICAL |
+| Terminal 1 edit / design / language | 3 / 1 / 2 → 1 / 1 / 1 | IDENTICAL |
+| A4 edit, signature, iframe photo | 1, 0, 0 → 1, 0, 0 | IDENTICAL |
+| Terminal 1 photo | 1 → 0 (the state did not change) | IDENTICAL |
+| reload | 2 → **0** | IDENTICAL |
+| state removed from outside, then an autosave | 1 → 1 (restored) | IDENTICAL |
+| **35 s idle** | 1 → **0** | IDENTICAL |
+| Reset Default | 1 → 1 | IDENTICAL |
+| **Whole session** | **15 → 7** | IDENTICAL after every step |
+
+- **Gates:**
+  - golden 6/6 at 0.000 %;
+  - `pdf_check` desktop and `--mobile`: ALL PASS;
+  - `photo_test.mjs`, `cvhost_test.mjs`, `webkit_photo.swift --reload`: ALL PASS;
+  - observatory `PROBLEMS: none`;
+  - `verify.py`: YES;
+  - Mac app, dev build with this core: `--selftest`, `--full`, `--selftest-persist write` and `read` all PASS.
+
+**V591 = a failed save of the CV state is announced, once (audit F-1).**
+- **The defect.** Since V356, a failed save of the main state showed nothing. The comment says "console diagnostic preserved via `Logger.error`", but `Logger`'s methods are empty, so nothing was recorded anywhere. Edits were lost after a reload without a word. Photos have announced their failures since V551.
+- **Change:** **one** message (`msg.stateNotSaved`, in de/en/sq) per run of failures:
+  - consecutive failures do not repeat it (V356's reason: autosave every 30 s in a WebView with blocked storage);
+  - after a successful save, a new failure is announced again.
+- **Trade-off, stated:** where storage is always blocked, the message appears once per page load. That is true there, because nothing is saved.
+- **Text (sq):** "Ndryshimet NUK u ruajtën — hapësira e shfletuesit është plot ose e bllokuar. Pas rifreskimit do të mungojnë."
+- **New mode `storage_trace.mjs --fail`.** Writing the state throws `QuotaExceededError` (simulated); then two edits, then storage works again, then a new failure:
+
+| File | 2 failed saves | storage back | new failure | old data kept / then written |
+|---|---|---|---|---|
+| V590 | 0 messages (silent) | 0 | 0 | yes / yes |
+| **V591** | **1** | **1** (no new message, data written) | **2** | yes / yes |
+
+- **Normal path unchanged:** `storage_trace.mjs 590.html index-test.html` IDENTICAL after every step.
+- **On screen:** a headless Chrome capture in sq shows the message in the existing notification, red text.
+- **Observation, not changed:** the notification's icon is always the green check, also for errors (photo errors too, since before V589). This is the owner's call, because it is a visual change.
+- **Gates:**
+  - golden 6/6 at 0.000 %;
+  - `pdf_check` desktop and `--mobile`: ALL PASS;
+  - `photo_test.mjs`, `cvhost_test.mjs`, `webkit_photo.swift --reload`: ALL PASS;
+  - observatory: msg **69/69** in de/en/sq, `PROBLEMS: none`;
+  - `verify.py`: YES;
+  - Mac dev build: `--selftest`, `--full`, `--selftest-persist write` and `read` all PASS.
+
+**V592 = error messages show a red ⚠ (the owner's decision D-006 D, 2026-10-05).** The owner chose it after seeing V591's message: "Ndryshimet NUK u ruajtën" appeared with the green ✓, the "all OK" sign.
+- **Cause:** the notification's icon was coloured by a fixed CSS rule (`.autosave-notification svg{color:#00ff00}`), whatever the message type.
+- **Change, in `Utils.showNotification` only.** All 41 page notifications go through it, the photo engine's included.
+  - `type 'error'`: the SVG path becomes a warning triangle (⚠), and the class `cv-note-error` colours it `#ff3b30`, the error frame's colour.
+  - `'success'` and `'info'`: the ✓ path and green, as before.
+  - Size, position and pulse are unchanged. The iframe editor's own notice has no icon and is untouched.
+- **Checked on screen** (headless Chrome, sq), in sequence:
+  - info "Modaliteti i redaktimit aktiv": ✓, `rgb(0,255,0)`;
+  - the simulated save failure: ⚠, `rgb(255,59,48)`;
+  - then success "Veprimi u kthye mbrapa": ✓, green again, so the icon resets.
+- **Gates:**
+  - golden 6/6 at 0.000 % (notifications never reach an export, V543);
+  - `pdf_check` desktop and `--mobile`: ALL PASS;
+  - `photo_test.mjs`, `cvhost_test.mjs`: ALL PASS;
+  - `storage_trace --fail`: 1 / 1 / 2 as V591;
+  - observatory `PROBLEMS: none`;
+  - `verify.py`: YES;
+  - Mac dev build `--selftest`: PASS.
+
+**V593 = the AI leftover leaves the CV data (the owner's decision D-006 C, 2026-10-05; audit R-8 / F-8).**
+- **What was there.** The core has no AI feature. V279 left `getAI` / `setAI`:
+  - `setAI` was never called;
+  - `getAI('apiKey')` ran once at boot, only to migrate the old keys `cv_hyper_*`.
+- **The defect.** That migration **copied an old API key (a password) into the CV state**, which travels with every copy of the data. On the Mac it would have gone into the `.uicv` file. Measured: with `cv_hyper_aiApiKey` set before boot, V592 stores it inside `cv_unified_app_state_v2`.
+- **Change:**
+  - `getAI` / `setAI` become `purgeLegacyAI()`: the old keys are still deleted, as before, but never copied;
+  - `load()` drops `ai` from stored data, and `save()` never writes it. Old data loses the field on its next save.
+- **Recorded as a future option:** an AI assistant, in the Mac repo (`ROADMAP.md` "Future options", D-006 C). Its key would live outside the CV: the Keychain on the Mac.
+- **New mode `storage_trace.mjs --ai`:**
+
+| File | old key copied into the CV | old keys left | old `ai` removed after load + save | everything else identical |
+|---|---|---|---|---|
+| V592 | **yes** | 0 | no | — |
+| **V593** | **no** | 0 | **yes** | **yes** |
+
+- **Gates:**
+  - `storage_trace.mjs 592.html index-test.html`: IDENTICAL after every step (the default state has no `ai`);
+  - golden 6/6 at 0.000 %;
+  - `pdf_check` desktop and `--mobile`: ALL PASS;
+  - `photo_test.mjs`, `cvhost_test.mjs`, `webkit_photo.swift --reload`: ALL PASS;
+  - observatory `PROBLEMS: none`;
+  - `verify.py`: YES;
+  - Mac dev build: `--selftest`, `--full`, `--selftest-persist write` and `read` all PASS.
+
+**V594 = the core reads and writes a Mac document (Mac Phase 2, step 2, core side; D-006).** It is active only when the Mac app opens a `.uicv`. On the web nothing of it exists.
+- **The contract.**
+  - Before any script runs, the app injects `window.CVHostDoc = { version: 1, items: { key: value } }` (the document's data) and the handler `window.webkit.messageHandlers.cvDoc`, which answers with a Promise.
+  - **`CVStore`** then reads from the document in memory, so reads stay synchronous and no caller changes. Each write or removal goes to the host as `{op:'set', key, value}` or `{op:'remove', key}`. The message is sent *before* memory changes, so a throw leaves memory as it was and reaches the caller, like a full `localStorage`. A write with the same value is not sent, so a document is never marked edited without a reason.
+  - **Photo bytes (decision A).** `PhotoAssets` keeps its interface, but in a document it asks the host (`asset.put` / `asset.get` / `asset.keys` / `asset.del`) instead of IndexedDB. The bytes live inside the `.uicv` (`photos/`), two documents never share photos, and the browser quota warning is off (a disk has no such quota).
+  - **Profile photo (decision B).** In a document it is saved in `cv_profile_photo` through `CVStore` and shown again on open. Reset removes it. **The web keeps V563:** never stored.
+- **Pre-existing redundant write removed, found by the new test.** After every page load, the photo engine re-saved the record of every restored photo. The image `load` handler always fired a change, and the only difference was `rw`/`rh`: the layer's size at that moment, which nothing reads, and which varies from load to load. In a document this would have marked the `.uicv` edited every time it opened. A restored photo now reports a change only if restoring moved or resized it (clamp). New photos, duplicate, undo/redo and replace report as before.
+- **New permanent test: `tools/cvdoc_test.mjs`.** It plays the Mac app in Chrome with a fake `.uicv` document held by Node, and re-opens the page with it. **ALL PASS, 14/14** (twice in a row):
+  - host backend chosen; a new document gets the default state;
+  - text, A4 certificate and signature edits reach the document;
+  - a floating photo puts its bytes into the document and its record through `CVStore`;
+  - the profile photo reaches the document;
+  - **nothing** reaches `localStorage` or IndexedDB;
+  - reopening brings everything back (text, A4, signature, the photo from the document, the profile photo);
+  - a second reopen writes nothing;
+  - a second, empty document sees nothing of the first;
+  - Reset Default removes the photo records, the bytes and the profile photo from the document.
+- **The web.** `storage_trace.mjs 593.html index-test.html` is IDENTICAL at every step except the photo records after the reload. V593 rewrote them with that moment's `rw`/`rh` (198 characters); V594 no longer rewrites them (193 characters). The difference is exactly `1158`→`0` and `541`→`0`, nothing else. All other steps are identical.
+- **Gates:**
+  - golden 6/6 at 0.000 %;
+  - `pdf_check` desktop and `--mobile`: ALL PASS;
+  - `photo_test.mjs` (migration and fallbacks included), `cvhost_test.mjs`, `webkit_photo.swift --reload`: ALL PASS;
+  - `storage_trace --fail` 1 / 1 / 2;
+  - `--ai` clean;
+  - observatory `PROBLEMS: none`;
+  - `verify.py`: YES;
+  - Mac dev build: all four self-tests PASS.
+
 #### Sandbox ahead of production — V582–V587 (2026-10-04) — CLOSED by the V588 promotion
 
 **Closed on 2026-10-04:** `index-test.html` = `index.html` = `588.html`.
@@ -2001,6 +2185,40 @@ Two implementations of one function go against Neni 9.1. The live path was alway
 - `pdf_check` desktop and `--mobile`: ALL PASS.
 - `verify.py`: YES (msg keys 60/60, all referenced).
 - The file is 10,342 bytes smaller (1,346,255 → 1,335,517).
+
+### Release record — V595 (2026-10-05) — Mac Phase 2: the CV as a `.uicv` document (V589–V594)
+
+**Promoted on the owner's instruction** after their hands-on check of the Mac test build with core V594. The real first-launch import produced `Documents/Ultra Instinct CV/CV-ja ime.uicv`, and a double-click opened it. The owner's edits (a design change at 02:29, a text edit at 10:13) were autosaved into the file. The owner: "çdo gjë funksionon nga ato që rregullove". V595 is V594 plus the build label and its history line; a byte comparison confirmed that nothing else differs.
+
+**What it carries, V588 → V595.** The full evidence is in *Sandbox ahead of production — V589–V594*.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V589 | `window.CVStore`: the one door to the document's storage (on the web it is `localStorage`, byte-identical) | Refactor; no behaviour change | identical (`storage_trace`) |
+| V590 | The CV state is written only when it changes (R-1/F-2): 35 s idle 1 → 0 writes, a test session 15 → 7 | Behaviour (fewer writes) | identical content; `timestamp` = time of the last real change |
+| V591 | A failed state save is announced once per run of failures (F-1, `msg.stateNotSaved`) | Visible (a message on failure only) | none |
+| V592 | A red ⚠ on error messages; success and info keep the green ✓ (D-006 D) | Visible (icon) | none |
+| V593 | The AI leftover leaves the CV data; old API keys are no longer copied into the state (D-006 C) | Privacy | `ai` dropped from stored state |
+| V594 | Host source for a Mac `.uicv` (data, photo bytes, the profile photo; D-006 A/B); restored photos no longer re-saved on load | Native-host hook; one redundant web write removed | photo records keep `rw`/`rh` from their last real change |
+
+**Device gate (Neni 72): passed, by the owner on the Mac** (the test build with core V594): import, open by double-click, autosave into the file. The web-visible changes are the error message and icon (V591–V592, checked on screen). The rest is invisible on the web and proven by `storage_trace.mjs` and `cvdoc_test.mjs`.
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v595-20261005-102116` (= V588, `3bd91f3a…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v595-20261005-102116` (= V594, `7332dbba…`).
+- **Identity:** `md5 -q index.html index-test.html 595.html | sort -u` printed one hash (`f249aa63…`).
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `python3 tools/verify.py --file index.html` | WARN 1 (`ui.langChanged`), FAIL 0 → YES |
+| Golden image export | 0.000 % in all six cases |
+| `pdf_check` on `index.html`, desktop and `--mobile` | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
+| `photo_test.mjs` / `cvhost_test.mjs` / `cvdoc_test.mjs` | ALL PASS / ALL PASS / ALL PASS |
+| `storage_trace.mjs --fail` / `--ai` | 1 / 1 / 2 messages / no key copied, old `ai` removed |
+| `webkit_photo.swift --ua safari --reload` | ALL PASS |
+| Observatory on production (`tools/observatory_run.mjs`) | `V595`; 7 terminals; 0 duplicate ids; msg 69/69 in de/en/sq; **`PROBLEMS: none`** |
+
+**Rollback:** production returns to V588 by copying `index.html.bak-pre-v595-20261005-102116` over `index.html` (the command is in *Current baseline*). A rollback below V594 is safe for the web; a Mac `.uicv` needs a V594+ core.
 
 ### Release record — V588 (2026-10-04) — Mac Phase 3 (A4, print, PNG, Share), the certificate, Terminal 1's buttons (V582–V587)
 
