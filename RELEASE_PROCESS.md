@@ -26,9 +26,9 @@
 
 | | Artifact | Hash (md5) | Bytes | Date |
 |---|---|---|---|---|
-| **PRODUCTION** | `index.html` | `f249aa6383ebace1720a28852404416d` | 1,397,370 | 2026-10-05 |
-| **Release snapshot** | `595.html` | `f249aa6383ebace1720a28852404416d` | 1,397,370 | 2026-10-05 |
-| **Rollback point** | `index.html.bak-pre-v595-20261005-102116` | `3bd91f3a4be8842032a28aee057c908c` (V588) | 1,387,101 | 2026-10-05 |
+| **PRODUCTION** | `index.html` | `bc04157ec84a857dca06e2c2da9d5821` | 1,401,170 | 2026-10-07 |
+| **Release snapshot** | `597.html` | `bc04157ec84a857dca06e2c2da9d5821` | 1,401,170 | 2026-10-07 |
+| **Rollback point** | `index.html.bak-pre-v597-20261007-132408` | `f249aa6383ebace1720a28852404416d` (V595) | 1,397,370 | 2026-10-07 |
 
 > ### ⚠️ The rollback point is a Release Snapshot, not a backup — corrected 2026-08-29
 >
@@ -54,14 +54,14 @@ artifact, tracked separately, and it changes nothing here: **identity is the has
 CVQualify apparatus `VERSION` = **V482s** (unchanged — ADR-031 is a product change and must not bump
 the apparatus; see "Two versions" below).
 
-**V595 is the reference point for every future audit.** A future delta-audit compares against
-`f249aa63`. (V588 = `3bd91f3a` is the rollback target; V581 = `2e19374c` is two back.)
+**V597 is the reference point for every future audit.** A future delta-audit compares against
+`bc04157e`. (V595 = `f249aa63` is the rollback target; V588 = `3bd91f3a` is two back.)
 
-`window.CV.build` reports **`V595`** in production — measured from the artifact. Since V509 the label
+`window.CV.build` reports **`V597`** in production — measured from the artifact. Since V509 the label
 is bumped with every version, which is why it can be trusted again; **identity is still the hash.**
 
 ```bash
-cp "index.html.bak-pre-v595-20261005-102116" "index.html"
+cp "index.html.bak-pre-v597-20261007-132408" "index.html"
 ```
 
 ## Quality gate (`tools/verify.py`) and observatory (`tools/observatory.js`)
@@ -224,6 +224,7 @@ The owner chose that it is **updated after every production release** and carrie
 | 2026-10-02 | V567 (`34498155…`) | `fb8e024d…` | public commit `4b1984a`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory PROBLEMS: none); its 9 PDFs contain only fictitious values and 0 real tokens; Pages serving V567, byte-identical. `lab/` (11 files) untouched, still the Chromium-issue repro |
 | 2026-10-04 | V581 (`2e19374c…`) | `57d271b9…` | public commit `a62dd75`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory PROBLEMS: none); its 9 PDFs contain 0 private tokens (27 pairs + 3 words checked); Pages serving V581, byte-identical. `lab/` untouched (`bug017.html` serving), still the Chromium-issue repro |
 | 2026-10-04 | V588 (`3bd91f3a…`) | `e24a4826…` | public commit `0dd8aeb`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory: V588, PROBLEMS: none); its 9 PDFs contain 0 private tokens; Pages serving V588. `lab/` untouched (`bug017.html` serving), still the Chromium-issue repro |
+| 2026-10-05 | V595 (`f249aa63…`) | `d8170a75…` | public commit `0d7cd55`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory: V595, PROBLEMS: none); its 9 PDFs contain 0 private tokens; Pages serving V595, byte-identical. `lab/` untouched (`bug017.html` serving), still the Chromium-issue repro |
 
 ## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V550 since 2026-09-30; photo-series rows added at V565, 2026-10-02)
 
@@ -1395,6 +1396,47 @@ The external review asked for C1 (normalise) and C2 (no remote fallback) as one 
 - Golden image export: 6/6 at 0.000 %.
 - `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
 
+#### Sandbox ahead of production — V596 (2026-10-05) — Mac Phase 4 (native photos), core side — CLOSED by the V597 promotion
+
+**Closed on 2026-10-07:** `index-test.html` = `index.html` = `597.html`.
+
+Production is V595 (`f249aa63…`).
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V596 | `596.html` | `16a876a3c69f8d73c43512f7261614cf` | 1,400,845 | `index-test.html.bak-pre-v596-20261005-105457` (= V595, `f249aa63…`) |
+
+**V596 = photos through the Mac's own tools (Mac Phase 4, core side; audit F-11, F-12, B.1).** The owner asked to continue with Phase 4. Everything here is active only when the Mac app offers the hooks; on the web `CVHost` does not exist and nothing changes.
+- **`CVHost.preparePhoto({src, maxSide: 1100, budget: PHOTO_BUDGET})`.** Every new photo is asked of the host *before* the browser path: file, replace, background removal, and link. On the Mac, ImageIO opens every format macOS knows (HEIC, camera RAW, 16-bit TIFF, very large photos), applies EXIF orientation, converts to sRGB, and downscales to ≤ 1100 px within the budget, a **guaranteed** limit (F-11).
+  - V571's rule stays: a small, light, unrotated photo in a common format passes untouched.
+  - An invalid answer, an answer over the budget, or a host failure falls back to the browser path, exactly as before.
+- **RAW and other formats are accepted only with the host** (`isImg`): `.dng`, `.cr2`, `.nef`, `.arw` and the like, plus any `image/*`. On the web the list is unchanged.
+- **Profile photo on the Mac.** It goes through the host, so any format and files up to 200 MB work; the result is within the budget. On the web it is as before: up to 5 MB, shown as chosen, never stored (V563).
+- **Links (F-12).** With `CVHost.fetchPhoto`, the Mac app fetches the link itself (no cookies, no referrer, no CORS) and prepares it like any photo. There is **no Weserv and no question**. A failure shows the usual link message and adds nothing. On the web V573 stays: direct fetch first, Weserv only with consent.
+- **New permanent test: `tools/photohost_test.mjs`.** A fake `CVHost` records the calls and returns a marker photo. **ALL PASS, 12/12** (18/18 after the balloon checks below):
+  - the Terminal 1 photo, an iframe-terminal photo and the profile photo use the host result;
+  - a host failure, or an over-budget answer, falls back to the web path and the photo is still added;
+  - RAW is accepted with the host; RAW the host cannot open gives the "unsupported" message and adds nothing;
+  - a link goes to `fetchPhoto`, with no Weserv request, no question and no page fetch; a failed link gives the link message and adds nothing;
+  - with no host, RAW is refused as before and JPEG takes the web path.
+- **Balloon check (2026-10-07, at the owner's request).** The owner had seen the V562 balloon work on JPG and PNG photos and asked to verify it on the new paths. `photohost_test.mjs` gained 6 checks, **all PASS**.
+  - For every photo:
+    - the toolbar button turns the balloon on;
+    - touches pass through the photo (`elementFromPoint` reaches what lies below, `pointer-events: none`);
+    - 📌 shows, selects the photo for editing and turns it back;
+    - `pt:1` is stored;
+    - undo turns it off and redo on again.
+  - This holds for the photo prepared by the host, a RAW photo, a link photo, an iframe-terminal photo, and (with no host) a web-path JPEG.
+  - **After a reload, all four host-path photos come back as balloons, unselected.**
+  - The Mac counterpart `--selftest-photos` passes the same checks in real WebKit for HEIC (ImageIO), 16-bit TIFF and a link (`URLSession`), and again after save and reopen of the `.uicv`.
+- **Gates:**
+  - `storage_trace.mjs 595.html index-test.html`: IDENTICAL after every step;
+  - golden 6/6 at 0.000 %;
+  - `pdf_check` desktop and `--mobile`: ALL PASS;
+  - `photo_test.mjs`, `cvhost_test.mjs`, `cvdoc_test.mjs`, `webkit_photo.swift --reload`: ALL PASS;
+  - observatory `PROBLEMS: none`;
+  - `verify.py`: YES.
+
 #### Sandbox ahead of production — V589–V594 (2026-10-04 / 10-05) — Mac Phase 2, steps 1–2 — CLOSED by the V595 promotion
 
 **Closed on 2026-10-05:** `index-test.html` = `index.html` = `595.html`.
@@ -2185,6 +2227,33 @@ Two implementations of one function go against Neni 9.1. The live path was alway
 - `pdf_check` desktop and `--mobile`: ALL PASS.
 - `verify.py`: YES (msg keys 60/60, all referenced).
 - The file is 10,342 bytes smaller (1,346,255 → 1,335,517).
+
+### Release record — V597 (2026-10-07) — Mac Phase 4: photos through the Mac's own tools (V596)
+
+**Promoted on the owner's instruction** ("funksionon") after their hands-on check of the Mac test build with core V596. They tried a drag from the Photos app, HEIC/RAW from Finder and a photo link from Safari. At their request the V562 balloon was also verified on every new photo path: `photohost_test.mjs` 18/18, and `--selftest-photos` on HEIC, TIFF and link photos in real WebKit. V597 is V596 plus the build label and its history line; a comparison confirmed that nothing else differs.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V596 | Every new photo goes to `CVHost.preparePhoto` first (ImageIO: HEIC, RAW, 16-bit TIFF, a guaranteed budget, F-11); RAW is accepted with the host; the Mac profile photo goes through the host; links go via `CVHost.fetchPhoto`, with no Weserv (F-12) | Native-host hook (Mac); the web is unchanged | none (`storage_trace` identical) |
+
+**Device gate (Neni 72): passed, by the owner on the Mac.** On the web nothing changes, as proven by `storage_trace.mjs` and the no-host rows of `photohost_test.mjs`.
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v597-20261007-132408` (= V595, `f249aa63…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v597-20261007-132408` (= V596, `16a876a3…`).
+- **Identity:** `md5 -q index.html index-test.html 597.html | sort -u` printed one hash (`bc04157e…`).
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `python3 tools/verify.py --file index.html` | WARN 1 (`ui.langChanged`), FAIL 0 → YES |
+| Golden image export | 0.000 % in all six cases |
+| `pdf_check` on `index.html`, desktop and `--mobile` | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
+| `photo_test` / `cvhost_test` / `cvdoc_test` / `photohost_test` | ALL PASS each |
+| `storage_trace.mjs --fail` / `--ai` | 1 / 1 / 2 messages / no key copied, old `ai` removed |
+| `webkit_photo.swift --ua safari --reload` | ALL PASS |
+| Observatory on production | `V597`; 7 terminals; 0 duplicate ids; msg 69/69 in de/en/sq; **`PROBLEMS: none`** |
+
+**Rollback:** production returns to V595 by copying `index.html.bak-pre-v597-20261007-132408` over `index.html` (the command is in *Current baseline*). With V595 the Mac app falls back to the browser photo path, so nothing breaks.
 
 ### Release record — V595 (2026-10-05) — Mac Phase 2: the CV as a `.uicv` document (V589–V594)
 
