@@ -1,10 +1,10 @@
 # How this public copy is made
 
-Generated 2026-10-08 16:38 from the private production release **V607** by `tools/public_copy.py` (private).
+Generated 2026-10-08 17:45 from the private production release **V609** by `tools/public_copy.py` (private).
 
 | | Private (real data) | Public (this repository) |
 |---|---|---|
-| `index.html` md5 | `2762b4277d044fd27e82b598f22195a1` | `f7b7cd89ec80898df2a008c7e5aa112a` |
+| `index.html` md5 | `ec2498848cd7fb12e2fbfd244decaf62` | `692780c2340e8411aa4d1bfe710f87fe` |
 
 **Why the hashes differ.** The public file is the private release with personal data replaced by fictitious values: name, e-mail, phone number, date of birth, postal address, personal and company ID numbers, the employer and a third party's name, and local file paths. The replacements change lengths, so the byte size differs slightly. Nothing else is changed. The project's release identity is the private hash above.
 

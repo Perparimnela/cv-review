@@ -26,9 +26,9 @@
 
 | | Artifact | Hash (md5) | Bytes | Date |
 |---|---|---|---|---|
-| **PRODUCTION** | `index.html` | `2762b4277d044fd27e82b598f22195a1` | 1,389,840 | 2026-10-08 |
-| **Release snapshot** | `607.html` | `2762b4277d044fd27e82b598f22195a1` | 1,389,840 | 2026-10-08 |
-| **Rollback point** | `index.html.bak-pre-v607-20261008-161042` | `bc04157ec84a857dca06e2c2da9d5821` (V597) | 1,401,170 | 2026-10-08 |
+| **PRODUCTION** | `index.html` | `ec2498848cd7fb12e2fbfd244decaf62` | 1,390,856 | 2026-10-08 |
+| **Release snapshot** | `609.html` | `ec2498848cd7fb12e2fbfd244decaf62` | 1,390,856 | 2026-10-08 |
+| **Rollback point** | `index.html.bak-pre-v609-20261008-172128` | `2762b4277d044fd27e82b598f22195a1` (V607) | 1,389,840 | 2026-10-08 |
 
 > ### ⚠️ The rollback point is a Release Snapshot, not a backup — corrected 2026-08-29
 >
@@ -54,14 +54,14 @@ artifact, tracked separately, and it changes nothing here: **identity is the has
 CVQualify apparatus `VERSION` = **V482s** (unchanged — ADR-031 is a product change and must not bump
 the apparatus; see "Two versions" below).
 
-**V607 is the reference point for every future audit.** A future delta-audit compares against
-`2762b427`. (V597 = `bc04157e` is the rollback target, see the caveat in its record; V595 = `f249aa63` is two back.)
+**V609 is the reference point for every future audit.** A future delta-audit compares against
+`ec249884`. (V607 = `2762b427` is the rollback target; V597 = `bc04157e` is two back, see the caveat in *Release record — V607*.)
 
-`window.CV.build` reports **`V607`** in production — measured from the artifact. Since V509 the label
+`window.CV.build` reports **`V609`** in production — measured from the artifact. Since V509 the label
 is bumped with every version, which is why it can be trusted again; **identity is still the hash.**
 
 ```bash
-cp "index.html.bak-pre-v607-20261008-161042" "index.html"
+cp "index.html.bak-pre-v609-20261008-172128" "index.html"
 ```
 
 ## Quality gate (`tools/verify.py`) and observatory (`tools/observatory.js`)
@@ -226,6 +226,7 @@ The owner chose that it is **updated after every production release** and carrie
 | 2026-10-04 | V588 (`3bd91f3a…`) | `e24a4826…` | public commit `0dd8aeb`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory: V588, PROBLEMS: none); its 9 PDFs contain 0 private tokens; Pages serving V588. `lab/` untouched (`bug017.html` serving), still the Chromium-issue repro |
 | 2026-10-05 | V595 (`f249aa63…`) | `d8170a75…` | public commit `0d7cd55`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory: V595, PROBLEMS: none); its 9 PDFs contain 0 private tokens; Pages serving V595, byte-identical. `lab/` untouched (`bug017.html` serving), still the Chromium-issue repro |
 | 2026-10-07 | V597 (`bc04157e…`) | `193f3caa…` | public commit `3bdac59`: all 7 files byte-identical to the package; leak scan clean; the public copy renders (observatory: V597, PROBLEMS: none); its 9 PDFs contain 0 private tokens; Pages serving V597, byte-identical. `lab/` untouched (`bug017.html` serving), still the Chromium-issue repro |
+| 2026-10-08 | V607 (`2762b427…`) | `f7b7cd89…` | public commit `c4bd49f`: **all 8 files** byte-identical to the package (new: `RELEASE_ARCHIVE.md`); known-token and generic leak scans clean; the public copy renders (observatory: V607, msg 70/70, PROBLEMS: none); its 9 PDFs contain 0 private tokens (32 pairs/words + 22 patterns); Pages serving V607, byte-identical (`f7b7cd89`); `lab/bug017.html` still online. **Before the upload, the tool stopped a leak:** the bare street name, which I had written in a V604 comment and doc. A new token pair covers it. A mangled e-mail fragment, public in `ARCHITECTURE_DECISIONS.md` since earlier syncs, is now replaced too, and a pattern detects it. The old public history still holds it (owner's decision). |
 
 ## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V550 since 2026-09-30; photo-series rows added at V565, 2026-10-02)
 
@@ -301,269 +302,84 @@ V537's identity (`d2b8a938…`) is untouched: `537.html` and its rollback backup
 
 Moved on 2026-10-08 (Mac Phase 5, audit F-10). This file had grown to 315 KB and was hard to read. The text was moved **byte for byte, in its original order**; nothing was edited, summarised or dropped.
 - **Moved:**
-  - closed sandbox sections V510–V564 (closed by V520 … V565) and V566–V596 (closed by V567 … V597);
-  - release records V581 back to V482u, with the note *Sandbox after promotion — V509*.
+  - closed sandbox sections V510–V564 (closed by V520 … V565) and V566–V606 (closed by V567 … V607);
+  - release records V588 back to V482u, with the note *Sandbox after promotion — V509*.
 - **Stays here:**
   - the current baseline, the gates, the public mirror and the device matrix;
-  - the open sandbox section, if any, and the last closed one (V598–V606);
-  - the last four release records (V588–V607);
+  - the open sandbox section, if any, and the last closed one (V608);
+  - the last four release records (V595–V609);
   - the production mirror invariant and the checklist.
 - **From now on:** at each promotion, the sandbox section it closes and any release record older than the last four move to the archive.
 
 ## Sandbox sections and release records (newest first)
 
-#### Sandbox ahead of production — V598–V606 (2026-10-07 / 10-08) — Mac Phase 5 (core architecture) — CLOSED by the V607 promotion
+#### Sandbox ahead of production — V608 (2026-10-08) — the profile photo can be undone — CLOSED by the V609 promotion
 
-**Closed on 2026-10-08:** `index-test.html` = `index.html` = `607.html`.
+**Closed on 2026-10-08:** `index-test.html` = `index.html` = `609.html`.
 
-Production is V597 (`bc04157e…`).
+Production is V607 (`2762b427…`).
 
 | Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
 |---|---|---|---|---|
-| V598 | `598.html` | `c6c423b5e7031956a531646ca0fc4e15` | 1,409,404 | `index-test.html.bak-pre-v598-20261007-142038` (= V597, `bc04157e…`) |
-| V599 | `599.html` | `289284140d8289b76dd6001e3d84cebe` | 1,410,506 | `index-test.html.bak-pre-v599-20261007-144025` (= V598, `c6c423b5…`) |
-| V600 | `600.html` | `9420a345d2cd1d068488e4be861edb29` | 1,411,632 | `index-test.html.bak-pre-v600-20261007-151844` (= V599, `28928414…`) |
-| V601 | `601.html` | `1d940a1e059f2115b3d467e3da4e06c5` | 1,413,253 | `index-test.html.bak-pre-v601-20261007-153054` (= V600, `9420a345…`) |
-| V602 | `602.html` | `1d24329f6706482f8c44c6b5422da24f` | 1,413,771 | `index-test.html.bak-pre-v602-20261008-010031` (= V601, `1d940a1e…`) |
-| V603 | `603.html` | `195dd727f75fc8ebab6905f9db8ddf05` | 1,385,600 | `index-test.html.bak-pre-v603-20261008-010932` (= V602, `1d24329f…`) |
-| V604 | `604.html` | `958684f7eb695670ceaa6f8da32aa31e` | 1,391,338 | `index-test.html.bak-pre-v604-20261008-111323` (= V603, `195dd727…`) |
-| V605 | `605.html` | `2f334fefecf262063aece6c2a108aecf` | 1,392,698 | `index-test.html.bak-pre-v605-20261008-115914` (= V604, `958684f7…`) |
-| V606 | `606.html` | `7d073be5d68c28e74464065c359e46ec` | 1,389,182 | `index-test.html.bak-pre-v606-20261008-153136` (= V605, `2f334fef…`) |
+| V608 | `608.html` | `ebfd8f2e2f3046686a2ee16e6a06e77a` | 1,390,650 | `index-test.html.bak-pre-v608-20261008-165749` (= V607, `2762b427…`) |
 
-**V598 = the photo toolbar's titles and tips follow the language flag (Mac Phase 5, audit F-6).** The owner asked to continue with Phase 5.
-- **The defect.** The 37 controls (toolbar buttons, rotate handle, 📌 pin) had fixed titles in a mix of Albanian and English ("Transform", "Crop", "Dyfisho", "Fshi"). Their click tips (`OBJ_TIPS`) were mixed too, whatever the flag. One tip key was wrong: "Turbullim" looked up "Mjegullim", so clicking blur showed only the word.
-- **Change:**
-  - `OBJ_TEXT` holds `[title, tip]` in de, en and sq for every control.
-  - Each control keeps its old Albanian label as a **stable key**, `data-tip`.
-  - The title is set from the flag's language when the control is created and refreshed on `pointerenter`. So a language change applies at once to existing photos too, in the page and in the iframe.
-  - The click tip is read at click time.
-  - Albanian titles are now Albanian throughout (Transformo, Rregullo, Rendit, Prerje, Stili, Korniza).
-- **Visual.** The longest tip (German "Ballon") wraps inside the existing 250 px box.
-  - **Observation, not changed:** on a balloon photo that is selected, the 📌 pin overlaps the first word of an open tip, in every language, as before.
-- **New permanent test: `tools/phototips_test.mjs`, 13/13.** For each language:
-  - all 37 controls have a key and a title, and the representative titles are right (Tullumbace / Balloon / Ballon …);
-  - the "Transform" and "Turbullim" click tips are in the language;
-  - an iframe-terminal photo shows the same titles;
-  - in German no title is left untranslated.
-
-  On V597 the same test gives 12 FAIL, so it catches the old behaviour.
-- **Tests adapted.** `photo_test.mjs` and `photohost_test.mjs` found buttons by their Albanian title, so they use `data-tip` now, with the title as fallback, and still run on older versions. The Mac `PhotoTest.swift` is updated the same way.
-- **Gates:**
-  - `storage_trace.mjs index.html index-test.html`: IDENTICAL after every step;
-  - golden 6/6 at 0.000 %;
-  - `pdf_check` desktop and `--mobile`: ALL PASS;
-  - `photo_test`, `cvhost_test`, `cvdoc_test`, `photohost_test` (18/18), `webkit_photo --reload`: ALL PASS;
-  - observatory `PROBLEMS: none`;
-  - `verify.py`: YES.
-
-**V599 = one draw per frame while dragging a photo (Mac Phase 5, audit F-7).** The owner had reported a slight lag in fast circular moves (V564).
-- **Cause.** A pointer, especially a trackpad, sends 120–240 moves per second, while the screen draws 60. Until V598 every move ran a full `apply()`: position, toolbar, grips, filters, and a read of the layer's size, which forces a layout. So 2–4 full redraws happened per frame and only one could be seen.
-- **Change, in the engine's one `drag()` helper.** It covers moving, the corners, rotation and crop.
-  - The latest move is kept and applied once, in the next animation frame (`requestAnimationFrame`).
-  - On release, a pending move is applied **at once**, before `onEnd`, the save and the history entry. The final position is exactly that of the last move, as before.
-- **New measurement: `tools/photo_drag.js`** (for `webkit_run.swift`, in real WebKit). A fast circular drag sends 4 pointer moves per frame for 3 s, then a fixed corner drag and a fixed rotation follow.
-
-| | V598 | V599 |
-|---|---|---|
-| Full redraws per frame | 4.32 | **1.03** |
-| Time in move handlers over 3 s | 277 ms | **23 ms** |
-| The drag ends exactly on the last move, and that is what is saved | yes | yes |
-| Corner drag → size, saved | 312 × 228 | 312 × 228 |
-| Rotation → angle, saved | 58.4° | 58.4° |
-
-- **Gates:**
-  - `storage_trace.mjs 598.html index-test.html`: IDENTICAL after every step;
-  - golden 6/6 at 0.000 %;
-  - `pdf_check` desktop and `--mobile`: ALL PASS;
-  - `photo_test`, `cvhost_test`, `cvdoc_test`, `photohost_test`, `phototips_test`, `webkit_photo --reload`: ALL PASS;
-  - observatory `PROBLEMS: none`;
-  - `verify.py`: YES.
-- **The owner tested V598 and V599 in a Mac test build:** titles and tips follow the flag, the blur tip shows, and fast circular drags, corners and rotation are smooth ("funksionon").
-
-**V600 = the state's owners are separated (Mac Phase 5, audit R-2).** No behaviour change.
-- **Before.** `StorageManager` was a 21.6 KB class: persistence, migration, and — three quarters of it — the CV's default content.
-- **Now each has its own owner:**
-  - **`CVDefaultState.build(version)`** holds the default content, moved verbatim (only `this.version` became the `version` argument). Every call returns a new object, because callers change it.
-  - **`CVStateMigration.run(repo, oldData)`** turns an older state into the current version, writes it at once, and shows `dataMigrated`, as before.
-  - **`StorageManager`** keeps only persistence (`load`/`save`/`clear` through `CVStore`) and its old entry points `getDefaultState()` / `migrate()` / `normalizeState()`, which now delegate. None of the 11 + 16 callers changes. Normalization has belonged to `CVDomain.Input` since V482b; the AI part was removed in V593. The class is now 5.2 KB.
-- **Proof** (headless Chrome, V599 against V600):
-  - the default state is identical (15,633 characters), and each call gives a fresh object;
-  - a stored **version-6** state migrates to an identical version-7 state, keeping its title and language;
-  - `storage_trace.mjs 599.html index-test.html` is IDENTICAL after every step;
-  - `--fail` gives 1 / 1 / 2, and `--ai` is clean.
-- **Gates:**
-  - golden 6/6 at 0.000 %;
-  - `pdf_check` desktop and `--mobile`: ALL PASS;
-  - `photo_test`, `cvhost_test`, `cvdoc_test`, `photohost_test`, `phototips_test`, `webkit_photo --reload`, `photo_drag.js`: ALL PASS;
-  - observatory `PROBLEMS: none`;
-  - `verify.py`: YES.
-
-**V601 = unreadable data is no longer overwritten in silence (Mac Phase 5, audit R-11).**
-- **The defect, measured by the new test.** Until V600, when the stored state could not be read (cut JSON, a number, a list), `load()` returned `null` and the default CV opened. A moment later the default was saved **over the damaged data**, which was lost without a word. The same happened in a `.uicv` document.
-- **Change:**
-  - Before the default CV opens, the damaged data is copied untouched to `cv_unified_app_state_v2.unreadable`, through `CVStore`: in `localStorage` on the web, inside the document on the Mac.
-  - **One** message appears, `msg.stateUnreadable` in de/en/sq, 2.5 s after start so that it shows after the boot curtain.
-  - A clean start, with no data, is untouched.
-- **The validator.** `CVDomain.Validation` already holds 13 laws, 10 of them checkable (structure, semantics, architecture). The new test runs them over migrated, default and reloaded states, and all pass.
-- **New permanent test: `tools/state_test.mjs`, ALL PASS, 12/12:**
-  - **migration** from stored versions **1–6** to 7, keeping the title and language, with the laws passing;
-  - the default state's round trip is identical after a reload;
-  - unreadable data (cut JSON / a number / a list) opens the default, keeps the damaged data byte for byte, and shows one message;
-  - the same in a Mac document, where the copy goes into the document;
-  - a valid state gets no copy and no message.
-
-  On V600 the 4 "unreadable" rows FAIL (no copy, no message).
-- **Gates:**
-  - `storage_trace.mjs 600.html index-test.html`: IDENTICAL after every step;
-  - golden 6/6 at 0.000 %;
-  - `pdf_check` desktop and `--mobile`: ALL PASS;
-  - `photo_test`, `cvhost_test`, `cvdoc_test`, `photohost_test`, `phototips_test`, `webkit_photo --reload`, `photo_drag.js`: ALL PASS;
-  - observatory: msg 70/70, `PROBLEMS: none`;
-  - `verify.py`: YES.
-- **Note.** The first gate run stalled overnight in `photo_test` (the Mac slept with headless Chrome waiting). It was stopped and the remaining gates were rerun: ALL PASS.
-
-**V602 = the tip shows above the 📌 pin (the owner's decision, 2026-10-08).** The owner chose "rregulloje" after seeing V598's observation.
-- **The defect.** The click tip lives inside the toolbar, at z 12, while the pin is at z 13. On a selected balloon photo the pin covered the tip's first word, in every language.
-- **Change.** The toolbar rises above the pin (`tip-open`, z 14) **only while a tip is open**, and drops back when it closes after 7 s. The tip takes no pointer events, so the pin stays clickable through it.
-- **Checked on screen** (headless Chrome, German): the whole tip is readable ("Ballon: …"), the toolbar's computed `z-index` is 14 while open, and `elementFromPoint` at the pin's centre still hits the pin.
-- **Gates:**
-  - `storage_trace` IDENTICAL;
-  - golden 0.000 %;
-  - `pdf_check` desktop and `--mobile`: ALL PASS;
-  - `photo_test`, `photohost_test` (balloon and pin included), `phototips_test`, `cvdoc_test`, `photo_drag.js`: ALL PASS;
-  - observatory `PROBLEMS: none`;
-  - `verify.py`: YES.
-
-**V603 = the BUG-017 instrument (CVFrame) is removed (the owner's decision "HIQE", 2026-10-08; Mac Phase 5).**
-- **What it was.** It was added on 2026-08-02 to measure frame production during Chrome's black screen.
-  - A `requestAnimationFrame` loop that ran on **every frame, always**.
-  - A `PerformanceObserver` for long animation frames.
-  - The Shift×3 marker.
-  - Episodes stored in `localStorage` (`cv_bug017_frames`).
-- **Why it can go.** The cause is known: a Chrome (Skia Graphite) defect, reported as crbug 567972098. The public repro page `cv-review/lab/bug017.html` keeps its own copy (V550) and is untouched. The full instrument stays in `602.html` and the backups.
-- **Change:**
-  - The self-contained 28,874-character script block is removed. Nothing else referenced it, neither in the core nor in the tools.
-  - Only the cleanup stays: the old key `cv_bug017_frames` is deleted at start.
-  - The `CVStore` comment notes the removal.
-- **Measured** (headless Chrome, with a pre-seeded old key):
-
-| | V602 | V603 |
-|---|---|---|
-| `requestAnimationFrame` calls per second, idle | **60** | **0** |
-| `window.CVFrame` | object | undefined |
-| Old `cv_bug017_frames` key after start | (kept) | removed |
-| File size | 1,413,771 | 1,385,600 (−28 KB) |
-
-- **Gates:**
-  - `storage_trace.mjs 602.html index-test.html`: IDENTICAL after every step;
-  - golden 6/6 at 0.000 %;
-  - `pdf_check` desktop and `--mobile`: ALL PASS;
-  - `photo_test`, `cvhost_test`, `cvdoc_test`, `photohost_test`, `phototips_test`, `state_test`, `webkit_photo --reload`, `photo_drag.js`: ALL PASS;
-  - `--fail` 1 / 1 / 2, and `--ai` clean;
-  - observatory: 7 terminals, msg 70/70, `PROBLEMS: none`;
-  - `verify.py`: YES.
-
-**V604 = what the author types is kept (Mac Phase 5, audit R-12: the undo and persistence inventory).** The owner asked to finish the Phase 5 inventories. Measuring undo with a new "kept after the CV is reopened" column found **long-standing data loss**: six kinds of text field showed what was typed, then lost it when the CV was opened again. All of it is older than this phase; the letter has been affected at least since V486, the oldest snapshot kept.
-- **New measuring tools:**
-  - **`tools/persist_test.mjs`** types a unique mark into every visible editable field, page and iframe (88 fields), with the real keyboard (CDP Input). It then closes the tab, reopens the CV in a new tab of the same profile, and looks for every mark. A plain reload is not enough: it also keeps what lives only in `sessionStorage`. A lost field is retried alone in a fresh profile. The tool also checks the state laws after all the edits, and that a DE → EN → DE switch loses nothing. `--fail` makes it a gate.
-  - **`tools/persist_webkit.js`** runs under `webkit_run`, the Mac engine. It types with `execCommand('insertText')` into the seven repaired fields, redraws the CV from state through a language round trip, and checks that every mark is still shown and stored.
-  - **`tools/undo_test.mjs`** has a new **kept** column: after redo, the field is left, the tab reloads, and the value is read again. It shows the value after reload when one is lost. A **by design** marker covers the two rows that are meant to behave this way. The totals now count "behaves as designed".
-- **Found and repaired:**
-  1. **The motivation letter (sender, recipient, body, date, signature) was never saved, for two independent reasons.**
-     - (a) `enableEditables` made the outer letter box `contenteditable`, because it carries the class `.editable`. The box then became the editing host, so the inner parts never received `input` or `blur`. Neither `terminal6.motivation` nor `cv_mot_firma` was written, and nothing was recorded for undo. The box is now `data-state-driven` and `contenteditable="false"`, and every part is its own host.
-     - (b) The state normalizer had a "stale letter" rule: a German letter without the word `Schrannenstr` was replaced by the default. The default address later became Musterstraße, but the rule stayed, so **every** saved letter was thrown away. The rule is removed. The author's text is never replaced silently, the same principle as V601.
-  2. **The professional description (title and text)** was written only to the mirror `prof.title` / `prof.content`, while the render reads `content.terminal1.professional_desc`. It is now written there as well.
-     - A second "stale" rule replaced the description whenever it contained the common phrases *"Meine Schwerpunkte liegen"* or *"praktischer Berufserfahrung"* without *"Spezialisiert"*. It is removed for the same reason.
-  3. **The "⚡ Skills / Hobby ⚡" label:** the render always took the dictionary. Now the author's text, stored per language in `content.terminal1.skills_hobby.title`, wins over the dictionary (ADR-035c).
-  4. **The Skills card title (iframe)** had three faults:
-     - its save callback never wrote the value;
-     - the render used fixed labels;
-     - the normalizer returned only `columns` and dropped `terminal2.skills.title`.
-
-     All three are fixed, matching the Languages, Experience and Education titles.
-  5. **The letter card title** lived only in `sessionStorage` through `data-key`. It survived a reload, but was lost when the CV was closed or the language changed. It is now `content.terminal6.title`, which the normalizer keeps.
-  6. **The LocalizedText shape:** an author override created `{de:'…'}` alone, which fails the law `STR-LOCALIZED-SHAPE` (contacts, the T1 title and the social title). The new helper `_cvT1LocalizedNext` and `_cvWithContactOverride` now fill the other languages with `''`, which means "no author text", so the dictionary still supplies them.
-  7. **⌘Z of a language switch** returned the CV to the previous language, but the flag, the messages and `cv_language` stayed on the new one. The flag now follows the state through a subscription.
-     - **Language switches stay in the history on purpose.** It was measured that without them, a later ⌘Z of text typed in another language would write that text into the language now shown.
-  8. **The old ⌘Z / ⌘⇧Z fallbacks** (the page's `ContactManager` and the iframe's `CVCreator`) called AppState's old stack whenever `HistoryEngine` had nothing. That silently restored an earlier state (for example the boot state) and announced "undone". When `HistoryEngine` exists, they now only say "nothing to undo" / "nothing to redo".
+**V608 = uploading a profile photo can be undone (owner's decision "shtoje", 2026-10-08).** The R-12 inventory had left one open decision. The profile photo was the only photo action outside the history: ⌘Z after a wrong upload did nothing, and since V604 it honestly said "nothing to undo".
+- **Change.** When a new profile photo is accepted, the previous picture is kept: its `src` and, in a Mac document, its stored bytes. A `project` step *Foto e profilit* is recorded.
+  - ⌘Z returns the previous picture. In a Mac document the previous bytes go back too; if the previous picture was the default one, no bytes remain.
+  - ⌘⇧Z brings the new picture back.
+  - In a browser only the view changes, because there the profile photo is never stored (V563, unchanged).
 - **Measured:**
+  - **`undo_test.mjs`:** profile photo upload recorded, ⌘Z undoes it, ⌘⇧Z redoes it. Kept after a reload: no, by design in a browser. V607: not recorded, a gap.
+  - **The real Mac app** (`--selftest-typing`, extended), through a real `.uicv` path:
+    - upload A, then B;
+    - ⌘Z gives A; ⌘Z again gives the default picture with no bytes in the document;
+    - ⌘⇧Z twice gives A, then B;
+    - B is still there after saving and reopening.
 
-| | V603 | V604 |
-|---|---|---|
-| `persist_test.mjs` (close and reopen) | 78/84 kept; 6 lost (letter, letter title, Skills card title, the Skills/Hobby label, professional title and text); state laws FAIL (`STR-LOCALIZED-SHAPE`: one-language overrides) | **88/88 kept**; state laws PASS; DE → EN → DE: nothing lost |
-| `persist_webkit.js` (WebKit, the 7 repaired fields) | 0/7 kept; letter box editable | **7/7 kept**; letter box not editable; laws PASS |
-| `undo_test.mjs` | 9/14 undo; letter body and signature not recorded and not kept; language: ⌘Z leaves the flag; profile photo: false "undone" | **12/14 undo, 14/14 as designed**; the profile photo (not stored in a browser by design, V563) and window minimize are the by-design rows and now say "nothing to undo" |
-
+    Core V608: 13/13. Core V607: the two undo checks FAIL.
 - **Gates:**
-  - `storage_trace.mjs 603.html index-test.html`: boot and Reset Default IDENTICAL. From the first T1 edit on, the state is 16 bytes longer at every step. That is exactly `,"en":"","sq":""`: the T1 title override is now a complete LocalizedText (point 6), as intended. `--fail` and `--ai`: clean.
-  - golden 6/6 at 0.000 %.
-  - `pdf_check` desktop and `--mobile`: ALL PASS, letter included.
-  - `photo_test`, `cvhost_test`, `cvdoc_test`, `photohost_test`, `phototips_test`, `state_test`: ALL PASS.
-  - `persist_test --fail`: 88/88. `undo_test`: 14/14 as designed. `persist_webkit.js`: 7/7.
-  - observatory: msg 70/70, `PROBLEMS: none`.
-  - `verify.py`: YES.
-
-**V605 = listeners are added once, and a title edited after a language switch stays in that language (Mac Phase 5, audit R-6: the listener inventory).** It continues the owner's "finish the Phase 5 inventories".
-- **New measuring tools:**
-  - **`tools/listener_map.py`** (static). It assigns every `addEventListener` in the code to its module, through `module_map.py` (which now exposes `build_units`; its output is unchanged). Result: 320 code sites, 31 `removeEventListener`, 27 `.onX =` handlers, 20 through wrappers. A4 has 86, Terminal 1 85, the photo engine 70.
-  - **`tools/listener_test.mjs`** (dynamic). It counts the **live** listeners on every node of the page and of the iframe, each read in its own frame context, after boot and after each cycle of re-renders (3 language switches, 4 design switches, typing, ⌘Z / ⌘⇧Z). `--fail` makes it a gate.
-- **Found:**
-  1. **Listeners piled up with every re-render.** The iframe card titles (Skills, Languages, Experience, Education, Letter) are not rebuilt when their card is drawn again. `_makeEditable` still added four new listeners each time (`focus`, `beforeinput`, `input`, `blur`): +60 per cycle, never removed.
-  2. **The consequence was data corruption across languages, older than V604.** The first listener always ran first, and it held the boot language in its closure. A card title edited in English after a switch was therefore saved into the **German** title. Measured on V603 and V604: Languages "Languages ZZ" landed in `title.de`.
-  3. **280 of the 984 live listeners (28 %) were on the 140 colour swatches** of the text toolbar, two per swatch.
-- **Change:**
-  - `_makeEditable` wires an element **once** (`__cvEditableWired`). Every render only updates the callback (`el.__cvOnBlur`), so the listeners always use the current render's language.
-  - The swatch listeners are **delegated** to their panel: two per panel. Hover still previews the colour (V443), a click still applies it, and the iPhone tap bridge's `click()` bubbles to the panel.
-  - `persist_test.mjs` gained the check *titles edited in EN stay out of DE and come back in EN*.
-- **Measured:**
-
-| | V604 | V605 |
-|---|---|---|
-| Live listeners after boot | 984 | **708** |
-| After 1 / 2 / 3 cycles | 1044 / 1104 / 1164 | **708 / 708 / 708** |
-| Titles edited in EN, seen in DE | 5 of 6 leaked | **none**; 6/6 back in EN |
-| Colour swatch: panel opens, hover preview, click applies and closes | yes | yes (the same values) |
-
-- **Gates:**
-  - `storage_trace.mjs 604.html index-test.html`: IDENTICAL after every step; `--fail` and `--ai`: clean.
+  - `storage_trace.mjs 607.html index-test.html`: IDENTICAL after every step; `--fail` and `--ai`: clean.
   - golden 6/6 at 0.000 %.
   - `pdf_check` desktop and `--mobile`: ALL PASS.
   - `photo_test`, `cvhost_test`, `cvdoc_test`, `photohost_test`, `phototips_test`, `state_test`: ALL PASS.
-  - `persist_test --fail`: 88/88, languages separated. `undo_test`: 14/14 as designed. `listener_test --fail`: no growth. `persist_webkit.js`: 7/7.
+  - `persist_test --fail`: 88/88. `undo_test`: 13/14 undo, 14/14 as designed. `listener_test --fail`: no growth. `important_test`: 0 proven dead.
+  - Mac app with core V608: `--selftest`, `--selftest-doc`, `--selftest-ui`, `--selftest-photos` 21/21, `--selftest-typing` 13/13.
   - observatory: `PROBLEMS: none`.
   - `verify.py`: YES.
 
-**V606 = the dead "Minimal Clean" design CSS is removed (Mac Phase 5, audit R-5: the `!important` inventory).** It continues the owner's "finish the Phase 5 inventories". Only CSS **proven** dead is removed; everything else is classified and left as it is.
-- **New measuring tool: `tools/important_test.mjs`.**
-  - **Static part:** where the `!important` declarations sit (page CSS, iframe CSS, CSS text inside JavaScript).
-  - **Dynamic part:** it reads every live rule (page and iframe, inside `@media` too) in 7 states: designs 1–4, preview, the A4 document and a 390 px phone. For each `!important` declaration it records whether the selector matches an element, and whether another `!important` sets the same property on the same element (*contested*). `:hover`, `::before` and the like are stripped before matching.
-  - **Classes:** in use, print/export, static fallback, unmatched, and **proven dead**. Proven dead means unmatched in every state, and some class or id that every part of the selector needs is created nowhere outside CSS. A written, explained `KNOWN_DEAD` entry may stand in for that check where the heuristic is not enough.
-- **The inventory on V605** (973 in the file: page CSS 583, iframe CSS 354, CSS text in JavaScript 25, other 11). Of the 887 live source-level declarations:
+### Release record — V609 (2026-10-08) — the profile photo can be undone (V608)
 
-| Class | Declarations | Rules |
-|---|---|---|
-| in use | 500 | 219 |
-| print / export (allowed by the constitution) | 95 | 54 |
-| static fallback (`#cvStaticFallback`, no-JS view) | 115 | 61 |
-| unmatched in the 7 states (rare states such as modals, photos and drag; kept) | 119 | 60 |
-| **proven dead** | **58** | **27** |
-| contested (another `!important` on the same property and element) | 484 | 197 |
+**Promoted on the owner's instruction** ("promovo"), after the owner's decision "shtoje" and my own test run. V609 is V608 plus the build label and its history line; a diff confirmed that nothing else differs.
 
-- **The proven dead group is the old "Minimal Clean" design.** Since V342 the template `minimal` renders as `tpl-neumorphic tpl-bw` (Black & White, `TemplateEngine`), and no code adds the class `tpl-minimal`. Its only other occurrence is harness test data, a stored template value that the normalizer turns into `minimal`.
-- **Change:**
-  - **Removed:** 31 whole rules (page, iframe and the static-fallback copies, including the two `.tpl-minimal{--tpl-…}` variable blocks).
-  - **Trimmed:** `.tpl-minimal .skill-category` is cut from two shared selector lists; the rules themselves stay.
-  - The orphaned comments are replaced by one note.
-  - Outside `<style>` the file is byte-identical, and every style block keeps its brace balance.
-- **Measured:** `!important` in the file 973 → **911**. Live declarations 887 → 827; *in use* unchanged at 500 (nothing in use was touched), static fallback 115 → 113, proven dead 58 → 0. The file is 3.4 KB smaller (1,392,698 → 1,389,182 bytes).
-- **Gates:**
-  - `storage_trace.mjs 605.html index-test.html`: IDENTICAL after every step; `--fail` and `--ai`: clean.
-  - golden 6/6 at **0.000 %**, the `minimal` reference included (it renders Black & White).
-  - `pdf_check` desktop and `--mobile`: ALL PASS.
-  - `photo_test`, `cvhost_test`, `cvdoc_test`, `photohost_test`, `phototips_test`, `state_test`: ALL PASS.
-  - `persist_test --fail`: 88/88. `undo_test`: 14/14 as designed. `listener_test --fail`: no growth. `persist_webkit.js`: 7/7.
-  - observatory: `PROBLEMS: none`.
-  - `verify.py`: YES.
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V608 | Uploading a profile photo records a `project` step *Foto e profilit*. ⌘Z returns the previous picture (in a Mac document also its bytes, or none for the default picture), and ⌘⇧Z returns the new one | Undo | none on the web (`storage_trace` identical); in a Mac document, undo and redo write the profile bytes as an upload does |
+
+**Device gate (Neni 72): passed in the real Mac app.** `--selftest-typing` (extended) ran on core V608, through a real `.uicv`:
+- upload A, then B;
+- ⌘Z gives A; ⌘Z again gives the default picture with no bytes left;
+- ⌘⇧Z twice gives A, then B;
+- B is still there after saving and reopening.
+
+Core V608: 13/13. Core V607: the two undo checks FAIL. On the web, `undo_test.mjs`: recorded, undone and redone.
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v609-20261008-172128` (= V607, `2762b427…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v609-20261008-172128` (= V608, `ebfd8f2e…`).
+- **Identity:** `md5 -q index.html index-test.html 609.html | sort -u` printed one hash (`ec249884…`).
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `python3 tools/verify.py --file index.html` | PASS 25, WARN 1 (`ui.langChanged`), FAIL 0 → YES |
+| Golden image export | 0.000 % in all six cases |
+| `pdf_check` on `index.html`, desktop and `--mobile` | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
+| `photo_test` / `cvhost_test` / `cvdoc_test` / `photohost_test` / `phototips_test` / `state_test` | ALL PASS each |
+| `storage_trace.mjs 608.html index.html` | IDENTICAL after every step; `--fail` and `--ai` clean |
+| `persist_test --fail` / `undo_test` / `listener_test --fail` | 88/88 / 13/14 undo, 14/14 as designed / no growth |
+| `important_test` / `persist_webkit.js` | 0 proven dead / 7/7 |
+| Observatory on production | `V609`; 7 terminals; 0 duplicate ids; msg 70/70 in de/en/sq; **`PROBLEMS: none`** |
+
+**Rollback:** production returns to V607 by copying `index.html.bak-pre-v609-20261008-172128` over `index.html` (the command is in *Current baseline*). Nothing is lost: V607 only loses the profile-photo undo. For a rollback below V607, read the caveat in *Release record — V607*.
 
 ### Release record — V607 (2026-10-08) — Mac Phase 5: core architecture, typed text kept, listeners, dead CSS (V598–V606)
 
@@ -680,39 +496,6 @@ Also in this cycle, outside the artifact:
 | Observatory on production (`tools/observatory_run.mjs`) | `V595`; 7 terminals; 0 duplicate ids; msg 69/69 in de/en/sq; **`PROBLEMS: none`** |
 
 **Rollback:** production returns to V588 by copying `index.html.bak-pre-v595-20261005-102116` over `index.html` (the command is in *Current baseline*). A rollback below V594 is safe for the web; a Mac `.uicv` needs a V594+ core.
-
-### Release record — V588 (2026-10-04) — Mac Phase 3 (A4, print, PNG, Share), the certificate, Terminal 1's buttons (V582–V587)
-
-**Promoted on the owner's explicit instruction** ("ok promovoje"), after their checks in the Mac test app: A4, ⌘P on the view on screen, PNG, Share, the certificate, and Terminal 1's buttons. V588 is V587 plus the build label only; a byte comparison confirmed that nothing else differs.
-
-**What it carries, V581 → V588.** The full evidence is in *Sandbox ahead of production — V582–V587*.
-
-| Version | Change | Class | Persistence |
-|---|---|---|---|
-| V582 | A4 page breaks (`cvPageBreaks`: no card, text line or orphaned header cut), host variants, `window.CVApi.exportForHost` | Native-host hook (Mac); no effect on the web | none |
-| V583 | The A4 certificate goes to the host as the finished PDF (print, share, PNG, save) | Native-host hook | none |
-| V584 | `doc:'current'` + `currentDoc()`: the host prints or exports the view on screen | Native-host hook | none |
-| V585 | FLIP "window-shade" terminal animation | **Rejected by the owner; withdrawn by V586** | none |
-| V586 | Terminal 1's window buttons take the same path as T2–T6; its separate animation is removed | Behaviour (web too) | none |
-| V587 | The end of Terminal 1's collapse slides with `transform` (WebKit: 16 steps × 17 ms instead of 8 at 52–65 ms) | Smoothness (web too) | none |
-
-**Device gate (Neni 72): passed, by the owner on the Mac** (test build with core V587): menus, print, A4, PNG, Share, the certificate, T1's buttons. The web-visible changes (V586–V587) touch only Terminal 1's buttons. They were measured in WebKit (`terminal_glide.js`) and checked by frame captures.
-
-**Backups:**
-- **Production:** `index.html.bak-pre-v588-20261004-172630` (= V581, `2e19374c…`), hash-verified before the copy and again after it.
-- **Sandbox:** `index-test.html.bak-pre-v588-20261004-172630` (= V587, `e24afa6a…`).
-- **Identity:** `md5 -q index.html index-test.html 588.html | sort -u` printed one hash (`3bd91f3a…`).
-
-| Sanity check after promotion (Neni 72.4) | Result |
-|---|---|
-| `python3 tools/verify.py --file index.html` | WARN 1 (`ui.langChanged`), FAIL 0 → YES |
-| Golden image export | 0.000 % in all six cases |
-| `pdf_check` on `index.html`, desktop and `--mobile` | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
-| `photo_test.mjs` / `cvhost_test.mjs` on `index.html` | ALL PASS / ALL PASS |
-| `webkit_photo.swift --ua safari --reload` | ALL PASS |
-| Observatory on production (`tools/observatory_run.mjs`) | `V588`; 7 terminals; 0 duplicate ids; msg 68/68; **`PROBLEMS: none`** |
-
-**Rollback:** production returns to V581 by copying `index.html.bak-pre-v588-20261004-172630` over `index.html` (the command is in *Current baseline*).
 
 ## Production mirror invariant
 
