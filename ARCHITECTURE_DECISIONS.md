@@ -3560,7 +3560,7 @@ uses it when the captured node is no longer `isConnected`.
   undo    AB / A / (original)        caret 49,48,47,46
   redo    symmetric
 contact .editable (email), 2 real keystrokes
-  after2  "perpaQWrimnela08@…"  d=2  exactly 2 records, both 'Tekst', merge=false
+  after2  "max.QWmustermann@…"  d=2  exactly 2 records, both 'Tekst', merge=false
   undo    Q / (original)             caret 7,6,5 — exact restore
 ```
 

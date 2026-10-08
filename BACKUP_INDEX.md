@@ -13,14 +13,14 @@ edits is gone. Every capability and every decision the project holds today is no
 
 ---
 
-## Manifest — what the folder holds now (2026-10-07, after the V597 promotion)
+## Manifest — what the folder holds now (2026-10-08, after the V607 promotion; sandbox = production)
 
 > A lean inventory, added after the external review (point 8). It is generated from the files themselves and their hashes. The narrative sections below remain the forensic history; this table is the operational list. Roles: **production** (live), **sandbox** (work in progress), **release snapshot** (immutable, Neni 6.5), **rollback** (production backup taken before a promotion, immutable), **sandbox iteration** (may be cleared by the owner, Neni 6.5).
 
 | File | Holds | md5 | Role |
 |---|---|---|---|
-| `index.html` | V597 | `bc04157e` | production |
-| `index-test.html` | V597 | `bc04157e` | sandbox |
+| `index.html` | V607 | `2762b427` | production |
+| `index-test.html` | V607 | `2762b427` | sandbox (= production) |
 | `486.html` | V486 | `b2c238c6` | release snapshot |
 | `487.html` | V487 | `d0962600` | release snapshot |
 | `488.html` | V488 | `deaeb3b1` | release snapshot |
@@ -104,6 +104,16 @@ edits is gone. Every capability and every decision the project holds today is no
 | `595.html` | V595 | `f249aa63` | release snapshot |
 | `596.html` | V596 | `16a876a3` | sandbox iteration |
 | `597.html` | V597 | `bc04157e` | release snapshot |
+| `598.html` | V598 | `c6c423b5` | sandbox iteration |
+| `599.html` | V599 | `28928414` | sandbox iteration |
+| `600.html` | V600 | `9420a345` | sandbox iteration |
+| `601.html` | V601 | `1d940a1e` | sandbox iteration |
+| `602.html` | V602 | `1d24329f` | sandbox iteration (the last version with the CVFrame instrument) |
+| `603.html` | V603 | `195dd727` | sandbox iteration |
+| `604.html` | V604 | `958684f7` | sandbox iteration |
+| `605.html` | V605 | `2f334fef` | sandbox iteration |
+| `606.html` | V606 | `7d073be5` | sandbox iteration |
+| `607.html` | V607 | `2762b427` | release snapshot |
 | `index.html.bak-pre-v482u` | V479 | `27e9d4cc` | rollback |
 | `index.html.bak-pre-v483` | V482u | `01f22f35` | rollback |
 | `index.html.bak-pre-v493-20260829-014817` | V492 | `56b0c307` | rollback |
@@ -128,7 +138,8 @@ edits is gone. Every capability and every decision the project holds today is no
 | `index.html.bak-pre-v581-20261004-012945` | V567 | `34498155` | rollback |
 | `index.html.bak-pre-v588-20261004-172630` | V581 | `2e19374c` | rollback |
 | `index.html.bak-pre-v595-20261005-102116` | V588 | `3bd91f3a` | rollback |
-| `index.html.bak-pre-v597-20261007-132408` | V595 | `f249aa63` | rollback — **operational** (one release back) |
+| `index.html.bak-pre-v597-20261007-132408` | V595 | `f249aa63` | rollback |
+| `index.html.bak-pre-v607-20261008-161042` | V597 | `bc04157e` | rollback — **operational** (one release back) |
 | `index.html.bak-v483-baseline` | V483 | `b2ece1ae` | rollback |
 | `index.html.bak-v484-baseline` | V484 | `6fc7d00a` | rollback |
 | `index.html.bak-v485-baseline` | V485 | `99e0f10d` | rollback |
@@ -193,10 +204,26 @@ edits is gone. Every capability and every decision the project holds today is no
 | `index-test.html.bak-pre-v595-20261005-102116` | V594 | `7332dbba` | sandbox iteration |
 | `index-test.html.bak-pre-v596-20261005-105457` | V595 | `f249aa63` | sandbox iteration |
 | `index-test.html.bak-pre-v597-20261007-132408` | V596 | `16a876a3` | sandbox iteration |
+| `index-test.html.bak-pre-v598-20261007-142038` | V597 | `bc04157e` | sandbox iteration |
+| `index-test.html.bak-pre-v599-20261007-144025` | V598 | `c6c423b5` | sandbox iteration |
+| `index-test.html.bak-pre-v600-20261007-151844` | V599 | `28928414` | sandbox iteration |
+| `index-test.html.bak-pre-v601-20261007-153054` | V600 | `9420a345` | sandbox iteration |
+| `index-test.html.bak-pre-v602-20261008-010031` | V601 | `1d940a1e` | sandbox iteration |
+| `index-test.html.bak-pre-v603-20261008-010932` | V602 | `1d24329f` | sandbox iteration |
+| `index-test.html.bak-pre-v604-20261008-111323` | V603 | `195dd727` | sandbox iteration |
+| `index-test.html.bak-pre-v605-20261008-115914` | V604 | `958684f7` | sandbox iteration |
+| `index-test.html.bak-pre-v606-20261008-153136` | V605 | `2f334fef` | sandbox iteration |
+| `index-test.html.bak-pre-v607-20261008-161042` | V606 | `7d073be5` | sandbox iteration |
 
-83 snapshots, 28 production backups, 61 sandbox backups. Verify any row with `md5 -q <file>`.
+93 snapshots, 29 production backups, 71 sandbox backups. Verify any row with `md5 -q <file>`.
 
 ---
+
+> **Sandbox deviation (named, 2026-10-07, after V597) — CLOSED on 2026-10-08 by the V607 promotion:**
+> `index-test.html` = `index.html` = `607.html` = V607 (`2762b427…`). The sandbox had run ahead as V598–V606.
+> Sandbox backup at the promotion: `index-test.html.bak-pre-v607-20261008-161042` (= V606).
+> Sandbox backups: `index-test.html.bak-pre-v598-20261007-142038` (= V597), `index-test.html.bak-pre-v599-20261007-144025` (= V598), `index-test.html.bak-pre-v600-20261007-151844` (= V599), `index-test.html.bak-pre-v601-20261007-153054` (= V600), `index-test.html.bak-pre-v602-20261008-010031` (= V601), `index-test.html.bak-pre-v603-20261008-010932` (= V602), `index-test.html.bak-pre-v604-20261008-111323` (= V603), `index-test.html.bak-pre-v605-20261008-115914` (= V604), `index-test.html.bak-pre-v606-20261008-153136` (= V605).
+> V598: the photo toolbar's titles and tips follow the language flag (Mac Phase 5, audit F-6); the blur tip key is fixed. `tools/phototips_test.mjs` 13/13. V599: one draw per frame while dragging a photo (audit F-7): 4.32 → 1.03 redraws per frame, the same final position (`tools/photo_drag.js`). V600: the state's owners are separated (audit R-2) — `CVDefaultState`, `CVStateMigration`, `StorageManager` for persistence only; the default and migrated states are identical. V601: unreadable stored data is kept (`cv_unified_app_state_v2.unreadable`) and announced once instead of being overwritten in silence (audit R-11); `tools/state_test.mjs` 12/12. V602: the photo tip shows above the 📌 pin while open (owner's decision). V603: the BUG-017 instrument CVFrame is removed (owner's decision); idle `requestAnimationFrame` 60/s → 0, the old key is deleted at start. V604: what the author types is kept (audit R-12). The motivation letter, its signature and title, the professional description, the Skills/Hobby label and the Skills card title were lost on reopen; this was long-standing, at least since V486 for the letter. Two silent "stale text" replacements are removed. ⌘Z of a language switch returns the flag too, and the old AppState undo is no longer reached from the keyboard. `tools/persist_test.mjs` 78/84 → 88/88; `tools/undo_test.mjs` 14/14 as designed. V605: listeners are wired once per element (audit R-6). Live listeners went from 984 to 708, with no growth across re-renders (+60 per cycle before). A card title edited after a language switch no longer lands in the boot language. The colour swatch listeners are delegated to their panel. V606: the dead `.tpl-minimal` design CSS is removed (audit R-5). Since V342, "minimal" renders as Black & White. `tools/important_test.mjs` classifies every `!important`, and the count goes from 973 to 911 with golden at 0.000 %.
 
 > **Sandbox deviation (named, 2026-10-05, after V595) — CLOSED on 2026-10-07 by the V597 promotion:**
 > `index-test.html` = `index.html` = `597.html` = V597 (`bc04157e…`). The sandbox had run ahead as V596.
@@ -336,6 +363,22 @@ edits is gone. Every capability and every decision the project holds today is no
 > | `index-test.html.bak-pre-v518-20260927-162722` | V517 (= `517.html`) | `1c254fef…` |
 > | `index-test.html.bak-pre-v519-20260927-164542` | V518 (= `518.html`) | `8c55cd79…` |
 
+## `index.html.bak-pre-v607-20261008-161042`
+
+| | |
+|---|---|
+| **Version** | V597 |
+| **Hash (md5)** | `bc04157ec84a857dca06e2c2da9d5821` |
+| **Size** | 1,401,170 bytes |
+
+**Purpose.** **The operational rollback for V607**, promoted 2026-10-08. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It is the last production artifact before Mac Phase 5. **Read the caveat in *Release record — V607*:** V597 drops a letter written under V607, as well as the Skills card and letter titles, on its next save.
+
+Byte-identical to `597.html`.
+
+```bash
+cp "index.html.bak-pre-v607-20261008-161042" "index.html"
+```
+
 ## `index.html.bak-pre-v597-20261007-132408`
 
 | | |
@@ -344,7 +387,7 @@ edits is gone. Every capability and every decision the project holds today is no
 | **Hash (md5)** | `f249aa6383ebace1720a28852404416d` |
 | **Size** | 1,397,370 bytes |
 
-**Purpose.** **The operational rollback for V597**, promoted 2026-10-07. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It is the last production artifact without the Mac photo hooks (`preparePhoto` / `fetchPhoto`).
+**Purpose.** The rollback for V597 (operational until the V607 promotion on 2026-10-08), promoted 2026-10-07. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It is the last production artifact without the Mac photo hooks (`preparePhoto` / `fetchPhoto`).
 
 Byte-identical to `595.html`.
 
@@ -999,17 +1042,17 @@ was written to stop without attempting automatic recovery.
 
 ## Restoring
 
-**Production is V597 (`bc04157e…`). To roll back one release, to V595:**
+**Production is V607 (`2762b427…`). To roll back one release, to V597** (first read the caveat in *Release record — V607*: a letter written under V607 would be lost):
 
 ```bash
-cp "index.html.bak-pre-v597-20261007-132408" "index.html"
+cp "index.html.bak-pre-v607-20261008-161042" "index.html"
 ```
 
-Two releases back, to V588: `cp "index.html.bak-pre-v595-20261005-102116" "index.html"`.
-Three back, to V581: `cp "index.html.bak-pre-v588-20261004-172630" "index.html"`.
+Two releases back, to V595: `cp "index.html.bak-pre-v597-20261007-132408" "index.html"`.
+Three back, to V588: `cp "index.html.bak-pre-v595-20261005-102116" "index.html"`.
 A Mac `.uicv` document needs a V594+ core; the web is safe at any of these.
 
-> **After a rollback below V574,** floating photos are hidden, not lost (IndexedDB + `cv_photos2_*`); see *Release record — V581* in `RELEASE_PROCESS.md`.
+> **After a rollback below V574,** floating photos are hidden, not lost (IndexedDB + `cv_photos2_*`); see *Release record — V581* in `RELEASE_ARCHIVE.md`.
 
 > **Corrected 2026-09-11 at the V507 promotion.** This line still read *"Production is V498 … roll
 > back to V497"* — it was not updated when V501 shipped on 2026-09-02, the exact drift the note
