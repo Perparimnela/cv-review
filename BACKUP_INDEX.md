@@ -13,14 +13,14 @@ edits is gone. Every capability and every decision the project holds today is no
 
 ---
 
-## Manifest — what the folder holds now (2026-10-08, after the V609 promotion; sandbox = production)
+## Manifest — what the folder holds now (2026-10-09, after the V613 promotion; sandbox = production)
 
 > A lean inventory, added after the external review (point 8). It is generated from the files themselves and their hashes. The narrative sections below remain the forensic history; this table is the operational list. Roles: **production** (live), **sandbox** (work in progress), **release snapshot** (immutable, Neni 6.5), **rollback** (production backup taken before a promotion, immutable), **sandbox iteration** (may be cleared by the owner, Neni 6.5).
 
 | File | Holds | md5 | Role |
 |---|---|---|---|
-| `index.html` | V609 | `ec249884` | production |
-| `index-test.html` | V609 | `ec249884` | sandbox (= production) |
+| `index.html` | V613 | `f7a0c614` | production |
+| `index-test.html` | V613 | `f7a0c614` | sandbox (= production) |
 | `486.html` | V486 | `b2c238c6` | release snapshot |
 | `487.html` | V487 | `d0962600` | release snapshot |
 | `488.html` | V488 | `deaeb3b1` | release snapshot |
@@ -116,6 +116,10 @@ edits is gone. Every capability and every decision the project holds today is no
 | `607.html` | V607 | `2762b427` | release snapshot |
 | `608.html` | V608 | `ebfd8f2e` | sandbox iteration |
 | `609.html` | V609 | `ec249884` | release snapshot |
+| `610.html` | V610 | `7283a7d3` | sandbox iteration |
+| `611.html` | V611 | `69bdac5b` | sandbox iteration |
+| `612.html` | V612 | `d61932f7` | sandbox iteration |
+| `613.html` | V613 | `f7a0c614` | release snapshot |
 | `index.html.bak-pre-v482u` | V479 | `27e9d4cc` | rollback |
 | `index.html.bak-pre-v483` | V482u | `01f22f35` | rollback |
 | `index.html.bak-pre-v493-20260829-014817` | V492 | `56b0c307` | rollback |
@@ -142,7 +146,8 @@ edits is gone. Every capability and every decision the project holds today is no
 | `index.html.bak-pre-v595-20261005-102116` | V588 | `3bd91f3a` | rollback |
 | `index.html.bak-pre-v597-20261007-132408` | V595 | `f249aa63` | rollback |
 | `index.html.bak-pre-v607-20261008-161042` | V597 | `bc04157e` | rollback (read the V607 caveat) |
-| `index.html.bak-pre-v609-20261008-172128` | V607 | `2762b427` | rollback — **operational** (one release back) |
+| `index.html.bak-pre-v609-20261008-172128` | V607 | `2762b427` | rollback |
+| `index.html.bak-pre-v613-20261009-132431` | V609 | `ec249884` | rollback — **operational** (one release back) |
 | `index.html.bak-v483-baseline` | V483 | `b2ece1ae` | rollback |
 | `index.html.bak-v484-baseline` | V484 | `6fc7d00a` | rollback |
 | `index.html.bak-v485-baseline` | V485 | `99e0f10d` | rollback |
@@ -219,10 +224,21 @@ edits is gone. Every capability and every decision the project holds today is no
 | `index-test.html.bak-pre-v607-20261008-161042` | V606 | `7d073be5` | sandbox iteration |
 | `index-test.html.bak-pre-v608-20261008-165749` | V607 | `2762b427` | sandbox iteration |
 | `index-test.html.bak-pre-v609-20261008-172128` | V608 | `ebfd8f2e` | sandbox iteration |
+| `index-test.html.bak-pre-v610-20261009-015053` | V609 | `ec249884` | sandbox iteration |
+| `index-test.html.bak-pre-v611-20261009-022359` | V610 | `7283a7d3` | sandbox iteration |
+| `index-test.html.bak-pre-v612-20261009-113851` | V611 | `69bdac5b` | sandbox iteration |
+| `index-test.html.bak-pre-v613-20261009-132431` | V612 | `d61932f7` | sandbox iteration |
 
-95 snapshots, 30 production backups, 73 sandbox backups. Verify any row with `md5 -q <file>`.
+99 snapshots, 31 production backups, 77 sandbox backups. Verify any row with `md5 -q <file>`.
 
 ---
+
+> **Sandbox deviation (named, 2026-10-09, after V609) — CLOSED on 2026-10-09 by the V613 promotion:**
+> `index-test.html` = `index.html` = `613.html` = V613 (`f7a0c614…`). The sandbox had run ahead as V610–V612.
+> Sandbox backups: `index-test.html.bak-pre-v610-20261009-015053` (= V609), `index-test.html.bak-pre-v611-20261009-022359` (= V610), `index-test.html.bak-pre-v612-20261009-113851` (= V611).
+> V610: the CV can be saved as one `.json` file and opened again in the browser (DeepSeek review B1). `tools/cvfile_test.mjs` 13/13; suite ALL PASS (32 steps).
+> V611: Word export (`.docx`) of the CV, the letter and the certificate (DeepSeek review B2). `tools/docx_test.mjs` 20/20; `tools/docx_webkit.js` PASS. Suite: 33 of 34; the `state_test` timeout was not reproducible (passes alone and in order). Checked in Microsoft Word (`tools/word_check.sh`).
+> V612: the Word CV shows each language's percentage again (owner's decision). `docx_test` 21/21; suite 33 of 34; the `undo_test` timeout was not reproducible. Mac: Word items in the Export menu.
 
 > **Sandbox deviation (named, 2026-10-08, after V607) — CLOSED on 2026-10-08 by the V609 promotion:**
 > `index-test.html` = `index.html` = `609.html` = V609 (`ec249884…`). The sandbox had run ahead as V608.
@@ -373,6 +389,22 @@ edits is gone. Every capability and every decision the project holds today is no
 > | `index-test.html.bak-pre-v518-20260927-162722` | V517 (= `517.html`) | `1c254fef…` |
 > | `index-test.html.bak-pre-v519-20260927-164542` | V518 (= `518.html`) | `8c55cd79…` |
 
+## `index.html.bak-pre-v613-20261009-132431`
+
+| | |
+|---|---|
+| **Version** | V609 |
+| **Hash (md5)** | `ec2498848cd7fb12e2fbfd244decaf62` |
+| **Size** | 1,390,856 bytes |
+
+**Purpose.** **The operational rollback for V613**, promoted 2026-10-09. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It lacks only the file save/open and the Word export, so the rollback loses no data.
+
+Byte-identical to `609.html`.
+
+```bash
+cp "index.html.bak-pre-v613-20261009-132431" "index.html"
+```
+
 ## `index.html.bak-pre-v609-20261008-172128`
 
 | | |
@@ -381,7 +413,7 @@ edits is gone. Every capability and every decision the project holds today is no
 | **Hash (md5)** | `2762b4277d044fd27e82b598f22195a1` |
 | **Size** | 1,389,840 bytes |
 
-**Purpose.** **The operational rollback for V609**, promoted 2026-10-08. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It differs from V609 only by the profile-photo undo, so the rollback loses no data.
+**Purpose.** The rollback for V609 (operational until the V613 promotion on 2026-10-09), promoted 2026-10-08. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It differs from V609 only by the profile-photo undo, so the rollback loses no data.
 
 Byte-identical to `607.html`.
 
@@ -1068,10 +1100,10 @@ was written to stop without attempting automatic recovery.
 
 ## Restoring
 
-**Production is V609 (`ec249884…`). To roll back one release, to V607** (no data is lost):
+**Production is V613 (`f7a0c614…`). To roll back one release, to V609** (no data is lost):
 
 ```bash
-cp "index.html.bak-pre-v609-20261008-172128" "index.html"
+cp "index.html.bak-pre-v613-20261009-132431" "index.html"
 ```
 
 Two releases back, to V597 (first read the caveat in *Release record — V607*: a letter written under V607 would be lost): `cp "index.html.bak-pre-v607-20261008-161042" "index.html"`.

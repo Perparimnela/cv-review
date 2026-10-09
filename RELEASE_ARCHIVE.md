@@ -1104,6 +1104,40 @@ The external review asked for C1 (normalise) and C2 (no remote fallback) as one 
 - Golden image export: 6/6 at 0.000 %.
 - `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
 
+#### Sandbox ahead of production — V608 (2026-10-08) — the profile photo can be undone — CLOSED by the V609 promotion
+
+**Closed on 2026-10-08:** `index-test.html` = `index.html` = `609.html`.
+
+Production is V607 (`2762b427…`).
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V608 | `608.html` | `ebfd8f2e2f3046686a2ee16e6a06e77a` | 1,390,650 | `index-test.html.bak-pre-v608-20261008-165749` (= V607, `2762b427…`) |
+
+**V608 = uploading a profile photo can be undone (owner's decision "shtoje", 2026-10-08).** The R-12 inventory had left one open decision. The profile photo was the only photo action outside the history: ⌘Z after a wrong upload did nothing, and since V604 it honestly said "nothing to undo".
+- **Change.** When a new profile photo is accepted, the previous picture is kept: its `src` and, in a Mac document, its stored bytes. A `project` step *Foto e profilit* is recorded.
+  - ⌘Z returns the previous picture. In a Mac document the previous bytes go back too; if the previous picture was the default one, no bytes remain.
+  - ⌘⇧Z brings the new picture back.
+  - In a browser only the view changes, because there the profile photo is never stored (V563, unchanged).
+- **Measured:**
+  - **`undo_test.mjs`:** profile photo upload recorded, ⌘Z undoes it, ⌘⇧Z redoes it. Kept after a reload: no, by design in a browser. V607: not recorded, a gap.
+  - **The real Mac app** (`--selftest-typing`, extended), through a real `.uicv` path:
+    - upload A, then B;
+    - ⌘Z gives A; ⌘Z again gives the default picture with no bytes in the document;
+    - ⌘⇧Z twice gives A, then B;
+    - B is still there after saving and reopening.
+
+    Core V608: 13/13. Core V607: the two undo checks FAIL.
+- **Gates:**
+  - `storage_trace.mjs 607.html index-test.html`: IDENTICAL after every step; `--fail` and `--ai`: clean.
+  - golden 6/6 at 0.000 %.
+  - `pdf_check` desktop and `--mobile`: ALL PASS.
+  - `photo_test`, `cvhost_test`, `cvdoc_test`, `photohost_test`, `phototips_test`, `state_test`: ALL PASS.
+  - `persist_test --fail`: 88/88. `undo_test`: 13/14 undo, 14/14 as designed. `listener_test --fail`: no growth. `important_test`: 0 proven dead.
+  - Mac app with core V608: `--selftest`, `--selftest-doc`, `--selftest-ui`, `--selftest-photos` 21/21, `--selftest-typing` 13/13.
+  - observatory: `PROBLEMS: none`.
+  - `verify.py`: YES.
+
 #### Sandbox ahead of production — V598–V606 (2026-10-07 / 10-08) — Mac Phase 5 (core architecture) — CLOSED by the V607 promotion
 
 **Closed on 2026-10-08:** `index-test.html` = `index.html` = `607.html`.
@@ -2188,6 +2222,40 @@ Two implementations of one function go against Neni 9.1. The live path was alway
 - `pdf_check` desktop and `--mobile`: ALL PASS.
 - `verify.py`: YES (msg keys 60/60, all referenced).
 - The file is 10,342 bytes smaller (1,346,255 → 1,335,517).
+
+### Release record — V595 (2026-10-05) — Mac Phase 2: the CV as a `.uicv` document (V589–V594)
+
+**Promoted on the owner's instruction** after their hands-on check of the Mac test build with core V594. The real first-launch import produced `Documents/Ultra Instinct CV/CV-ja ime.uicv`, and a double-click opened it. The owner's edits (a design change at 02:29, a text edit at 10:13) were autosaved into the file. The owner: "çdo gjë funksionon nga ato që rregullove". V595 is V594 plus the build label and its history line; a byte comparison confirmed that nothing else differs.
+
+**What it carries, V588 → V595.** The full evidence is in *Sandbox ahead of production — V589–V594*.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V589 | `window.CVStore`: the one door to the document's storage (on the web it is `localStorage`, byte-identical) | Refactor; no behaviour change | identical (`storage_trace`) |
+| V590 | The CV state is written only when it changes (R-1/F-2): 35 s idle 1 → 0 writes, a test session 15 → 7 | Behaviour (fewer writes) | identical content; `timestamp` = time of the last real change |
+| V591 | A failed state save is announced once per run of failures (F-1, `msg.stateNotSaved`) | Visible (a message on failure only) | none |
+| V592 | A red ⚠ on error messages; success and info keep the green ✓ (D-006 D) | Visible (icon) | none |
+| V593 | The AI leftover leaves the CV data; old API keys are no longer copied into the state (D-006 C) | Privacy | `ai` dropped from stored state |
+| V594 | Host source for a Mac `.uicv` (data, photo bytes, the profile photo; D-006 A/B); restored photos no longer re-saved on load | Native-host hook; one redundant web write removed | photo records keep `rw`/`rh` from their last real change |
+
+**Device gate (Neni 72): passed, by the owner on the Mac** (the test build with core V594): import, open by double-click, autosave into the file. The web-visible changes are the error message and icon (V591–V592, checked on screen). The rest is invisible on the web and proven by `storage_trace.mjs` and `cvdoc_test.mjs`.
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v595-20261005-102116` (= V588, `3bd91f3a…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v595-20261005-102116` (= V594, `7332dbba…`).
+- **Identity:** `md5 -q index.html index-test.html 595.html | sort -u` printed one hash (`f249aa63…`).
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `python3 tools/verify.py --file index.html` | WARN 1 (`ui.langChanged`), FAIL 0 → YES |
+| Golden image export | 0.000 % in all six cases |
+| `pdf_check` on `index.html`, desktop and `--mobile` | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
+| `photo_test.mjs` / `cvhost_test.mjs` / `cvdoc_test.mjs` | ALL PASS / ALL PASS / ALL PASS |
+| `storage_trace.mjs --fail` / `--ai` | 1 / 1 / 2 messages / no key copied, old `ai` removed |
+| `webkit_photo.swift --ua safari --reload` | ALL PASS |
+| Observatory on production (`tools/observatory_run.mjs`) | `V595`; 7 terminals; 0 duplicate ids; msg 69/69 in de/en/sq; **`PROBLEMS: none`** |
+
+**Rollback:** production returns to V588 by copying `index.html.bak-pre-v595-20261005-102116` over `index.html` (the command is in *Current baseline*). A rollback below V594 is safe for the web; a Mac `.uicv` needs a V594+ core.
 
 ### Release record — V588 (2026-10-04) — Mac Phase 3 (A4, print, PNG, Share), the certificate, Terminal 1's buttons (V582–V587)
 
