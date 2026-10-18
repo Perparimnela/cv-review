@@ -1104,6 +1104,112 @@ The external review asked for C1 (normalise) and C2 (no remote fallback) as one 
 - Golden image export: 6/6 at 0.000 %.
 - `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
 
+#### Sandbox ahead of production — V610–V612 (2026-10-09) — the CV as a file, Word export (DeepSeek review B1, B2) — CLOSED by the V613 promotion
+
+**Closed on 2026-10-09:** `index-test.html` = `index.html` = `613.html`.
+
+Production is V609 (`ec249884…`).
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V610 | `610.html` | `7283a7d3e05ea213abab45e553b8e0d4` | 1,403,426 | `index-test.html.bak-pre-v610-20261009-015053` (= V609, `ec249884…`) |
+| V611 | `611.html` | `69bdac5b35594c9222d7238b032fb5c2` | 1,429,863 | `index-test.html.bak-pre-v611-20261009-022359` (= V610, `7283a7d3…`) |
+| V612 | `612.html` | `d61932f74734a9d9f2c48874413af32d` | 1,430,312 | `index-test.html.bak-pre-v612-20261009-113851` (= V611, `69bdac5b…`) |
+
+**V610 = save the CV as a file and open it again, in the browser.** This is point B1 of the DeepSeek review (Mac `docs/DEEPSEEK-REVIEW.md`); the owner said "fillo me radh".
+- **The problem.** On the web the CV lived only in the browser's storage. Clearing it lost the CV, and there was room for one CV only.
+- **The UI.** The export sheet gains a quiet second row under the PDF buttons, in the style of "Save as image", with a one-line hint and texts in de/en/sq:
+  - "CV als Datei speichern" / "Save CV as file" / "Ruaj CV-në si skedar";
+  - "CV aus Datei öffnen" / "Open CV from file" / "Hap CV nga skedari".
+
+  On a phone the buttons follow the sheet's phone sizes. In the Mac app the section is hidden, because there the document itself is a file.
+- **The file.** One `.json` file (`Ultra-Instinct-CV-<name>-<date>.json`):
+  - `format: "ultra-instinct-cv"`, `formatVersion: 1`, the app build and the date;
+  - `items`: the same document keys as a Mac `.uicv`, read through `CVStore` (the state, the A4 certificate, the letter signature, the photo records);
+  - `assets`: the photo bytes, through a new read/write door on the photo engine, `CVPhotoEngine.assets`;
+  - `profilePhoto`, when a picture other than the default is shown.
+
+  It is saved by the same `<a download>` path as the PDFs, with the system share sheet as fallback.
+- **Opening.** The whole file is checked before anything changes: format, version, the state is a JSON object, and only document keys are present. A foreign file gets `cvFileInvalid` and no question. Then:
+  - a confirmation (`cvFileReplaceConfirm`, which advises saving the current CV first);
+  - the photo bytes are written first; they do not touch the current CV;
+  - then the keys. If a write fails, the previous values are restored (`cvFileFailed`).
+  - The page reloads, so the CV loads through the normal start path, including the migration of old states.
+  - The profile photo returns for the open page only, as always in a browser (V563), and `cvFileOpened` confirms.
+- **Measured:**
+  - **`tools/cvfile_test.mjs` (new): 13/13.**
+    - Round trip: a CV with T1 text, letter text, signature, A4 text, photos in T1 and Skills, another design and a profile photo is saved, then opened in a fresh empty browser. The stored state is identical, the photo bytes are the same, the profile photo is shown, and the confirmation and the message appear.
+    - Invalid files: another JSON, a text file, a foreign key.
+    - Cancel; a write failure rolls back; a version-6 state is migrated.
+    - The section is hidden in a Mac document; on a phone, saving works and the buttons fit.
+  - **`tools/cvfile_webkit.js` (new, WebKit):** the file is built with the photo bytes from WebKit's IndexedDB, validated, and a tampered file is refused.
+  - **Visual check:** desktop and phone screenshots of the sheet; on the phone the sizes were adjusted after the first screenshot.
+- **Gates:** `python3 tools/suite.py index-test.html --mac` → **SUITE: ALL PASS, 32 steps** (21.8 min; report `reports/suite-20261009-0156-V609-7283a7d3.md`; the label still reads V609 until promotion). `storage_trace` against production: IDENTICAL after every step, so the normal saving is unchanged; golden 6/6 at 0.000 %; `pdf_check` desktop and phone ALL PASS; all Mac self-tests PASS.
+
+**V611 = export to Word (`.docx`).** This is point B2 of the DeepSeek review. Recruiters and ATS systems often ask for Word.
+- **The UI.**
+  - The export sheet gains one more button under "Save as image": "Als Word-Datei speichern" / "Save as Word file" / "Ruaj si skedar Word". It has the same quiet style.
+  - The documents chosen in the sheet (CV, letter, certificate) become one `.docx` each. They are named like the PDFs (`Lebenslauf-<name>-<date>.docx`, …).
+  - A message confirms each file (`docxSaved`); a failure shows `docxFailed`. With nothing chosen, the usual `selectOption` message appears.
+- **The document.** A clean Word document, not a picture of the dark terminals (Word cannot carry that look):
+  - **CV:**
+    - a header with the name, the title, the contacts and the profile photo (when one other than the default is shown);
+    - then the professional description, Skills (column titles and items), Languages, Experience and Education (dates in a narrow left column; role and lines on the right; the standalone "Qualifikationen" subheading kept);
+    - section titles as Word headings;
+    - items as real Word lists (`numbering.xml`), so they can be edited in Word.
+  - **Letter:** sender, recipient, body paragraphs and the date, in the order shown, without the decorative `─── … ───` labels.
+  - **Certificate:** the A4 document's title, headings, paragraphs, lines and lists.
+  - **Texts:** they are exactly what the page shows in the active language: the author's titles and the language rules. They are read from the rendered page by one reader that follows the computed style (`display`, `white-space`, `text-transform`). `innerText` was not enough:
+    - WebKit (Safari, iPhone, the Mac app) drops the line break of a `pre-line` title;
+    - when the CV is hidden behind the A4 view, `innerText` returns the text without line breaks.
+  - **Languages:** shown with their level as written ("Deutsch – B1 …") but without the percentage number. Preview mode and the PDF hide that number too and show the bar.
+  - **Format and package:** A4, 2 cm margins, Arial (present on Windows, macOS and iPhone; Calibri is missing on a Mac without Office). The document language is de/en/sq. `settings.xml` declares Word 2013+ mode, so Word does not open it in "Compatibility Mode".
+- **How it is built.** `window.CVDocx` builds it without a library:
+  - a `.docx` is a ZIP of XML parts, written here by a small ZIP writer (STORE + CRC32);
+  - the element order follows the Word schema (Word refuses other orders), and all text is XML-escaped.
+- **Delivery:**
+  - **Browser:** the same `<a download>` path as the PDFs, 1.2 s apart (browsers block faster multiple downloads), with the share sheet as fallback.
+  - **Mac app:** WKWebView does not download, so the core calls the new `CVHost.saveFile({name, b64})`. The app opens the macOS save window (Mac `mac/Sources/FileSave.swift`):
+    - only `.docx`, under 100 MB, and the bytes must be a ZIP;
+    - in a self-test it writes to the temporary folder.
+- **Measured:**
+  - **`tools/docx_test.mjs` (new): 20/20.** Real clicks in the sheet.
+    - All three documents: the ZIP is valid, every XML part is well-formed, and all parts, relationships and content types are present.
+    - Text, read back with macOS `textutil`:
+      - the CV has the name and every section title in page order, every skill and every experience, and the typed marks;
+      - `< & > "` survive;
+      - real Word lists;
+      - the profile photo with the same bytes as shown;
+      - the letter has its text and date and no decorative lines; the certificate has its title and its mark.
+    - Exported while the A4 view is open, in preview mode, the CV and the letter have exactly the text of the CV view in edit mode.
+    - English: the English titles, the German ones absent, language `en`.
+    - Without a profile photo the CV has no picture; nothing chosen gives the message and no file.
+    - Mac host:
+      - each file goes to `CVHost.saveFile` and nothing to the browser;
+      - "Cancel" gives no message.
+    - Phone: the file is produced and valid. Quick Look draws the CV.
+  - **`tools/docx_webkit.js` (new, WebKit):** the same text in Safari's engine. The multi-line title is joined with " · ", all 18 section titles and skills are present, the letter keeps its address lines, and the text is the same in the A4 view.
+  - **Mac app:** `--selftest` gains `wordExport`. The real bridge wrote three `.docx` files through `FileSave.swift`. They were checked afterwards with Python `zipfile` and `textutil`.
+  - **Visual check:**
+    - Quick Look pictures of the CV (with and without photo), the letter and the certificate. After the first pictures the font was changed to Arial, and the photo was moved to the left, because Quick Look and Pages shrink table columns to their content;
+    - screenshots of the sheet on desktop and phone.
+- **Checked in Microsoft Word 16.113.3** (the owner granted the macOS automation permission on 2026-10-09):
+  - Word opened all three files without an "unreadable content" message and saved them as PDF;
+  - A4 pages: the CV 2, the letter 1, the certificate 2, with all marked texts and no decorative lines;
+  - the page images were checked by eye: photo, headings, lists, date column, letter layout, justified certificate.
+  - The new `tools/word_check.sh` repeats this with one command. It is not in the suite, because it opens Word on screen.
+- **Gates:** `python3 tools/suite.py index-test.html --mac` → **33 of 34 steps PASS** (27.6 min; report `reports/suite-20261009-1009-V609-69bdac5b.md`; the label still reads V609 until promotion). The one FAIL was `state_test`: a TIMEOUT with no output. It was not reproducible; alone, and in the suite order right after `docx_test`, it passes 12/12 in 60 s (report `reports/suite-20261009-1042-V609-69bdac5b.md`). Its headless Chrome had stayed open after the timeout. `tools/suite.py` now runs each step in its own process group, ends the whole group on a timeout and keeps the output. `storage_trace` against production: IDENTICAL after every step, so the normal saving is unchanged. Golden: no visual regression. `pdf_check` desktop and phone: ALL PASS. All six Mac self-tests PASS, `--selftest` with `wordExport`.
+
+**V612 = the languages in the Word CV carry their percentage again.** This was the owner's decision ("po i dua perqindjen") after the V611 report.
+- **The layout:** the language name with its level on the left, and the percentage right-aligned at the margin, joined by a dot leader (`Deutsch – B1 (in Entwicklung) ........ 85%`). It is a right tab stop in the list paragraph.
+- **The source:** the percentage is read from the text, not from the rendering. Preview mode hides the number on the page and shows the bar, but the Word document must be the same in every mode and view.
+- **Mac app:** the Export menu gains "CV — Word (.docx)…", "Letra — Word (.docx)…" and "Vërtetimi — Word (.docx)…" (owner: "shtoje dhe butonin Word ne Mac"). They take the same path as the sheet button. The app shows them once the core is synced after promotion (D-003).
+- **Measured:**
+  - `tools/docx_test.mjs`: **21/21**. A new check: every language with its percentage on the same line, exported from preview mode.
+  - `tools/docx_webkit.js`: PASS, with a new check of 3/3 languages with their percentage.
+  - `tools/word_check.sh` (real Microsoft Word): ALL PASS. The page image shows the dot leaders and the right-aligned percentages.
+- **Gates:** `python3 tools/suite.py index-test.html --mac` → **33 of 34 steps PASS** (report `reports/suite-20261009-1141-V609-d61932f7.md`). The one FAIL was `undo_test`: a TIMEOUT with no output. It was not reproducible; alone it passes with its usual result (13/14 undo where the cursor is, 14/14 as designed). This is the second one-off freeze of a headless-Chrome step in a long run (`state_test` froze in the V611 run). After the kill the suite waited 57 min, because another process kept the step's output open; `tools/suite.py` now waits at most 15 s after a kill. The Word items in the Mac Export menu were added after this run. The six Mac self-tests were then rerun one by one on a development build with the V612 core, and all PASS (`--selftest-ui` with the new `menuWord`). `tools/word_check.sh` (real Microsoft Word): ALL PASS.
+
 #### Sandbox ahead of production — V608 (2026-10-08) — the profile photo can be undone — CLOSED by the V609 promotion
 
 **Closed on 2026-10-08:** `index-test.html` = `index.html` = `609.html`.
@@ -2222,6 +2328,33 @@ Two implementations of one function go against Neni 9.1. The live path was alway
 - `pdf_check` desktop and `--mobile`: ALL PASS.
 - `verify.py`: YES (msg keys 60/60, all referenced).
 - The file is 10,342 bytes smaller (1,346,255 → 1,335,517).
+
+### Release record — V597 (2026-10-07) — Mac Phase 4: photos through the Mac's own tools (V596)
+
+**Promoted on the owner's instruction** ("funksionon") after their hands-on check of the Mac test build with core V596. They tried a drag from the Photos app, HEIC/RAW from Finder and a photo link from Safari. At their request the V562 balloon was also verified on every new photo path: `photohost_test.mjs` 18/18, and `--selftest-photos` on HEIC, TIFF and link photos in real WebKit. V597 is V596 plus the build label and its history line; a comparison confirmed that nothing else differs.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V596 | Every new photo goes to `CVHost.preparePhoto` first (ImageIO: HEIC, RAW, 16-bit TIFF, a guaranteed budget, F-11); RAW is accepted with the host; the Mac profile photo goes through the host; links go via `CVHost.fetchPhoto`, with no Weserv (F-12) | Native-host hook (Mac); the web is unchanged | none (`storage_trace` identical) |
+
+**Device gate (Neni 72): passed, by the owner on the Mac.** On the web nothing changes, as proven by `storage_trace.mjs` and the no-host rows of `photohost_test.mjs`.
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v597-20261007-132408` (= V595, `f249aa63…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v597-20261007-132408` (= V596, `16a876a3…`).
+- **Identity:** `md5 -q index.html index-test.html 597.html | sort -u` printed one hash (`bc04157e…`).
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `python3 tools/verify.py --file index.html` | WARN 1 (`ui.langChanged`), FAIL 0 → YES |
+| Golden image export | 0.000 % in all six cases |
+| `pdf_check` on `index.html`, desktop and `--mobile` | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
+| `photo_test` / `cvhost_test` / `cvdoc_test` / `photohost_test` | ALL PASS each |
+| `storage_trace.mjs --fail` / `--ai` | 1 / 1 / 2 messages / no key copied, old `ai` removed |
+| `webkit_photo.swift --ua safari --reload` | ALL PASS |
+| Observatory on production | `V597`; 7 terminals; 0 duplicate ids; msg 69/69 in de/en/sq; **`PROBLEMS: none`** |
+
+**Rollback:** production returns to V595 by copying `index.html.bak-pre-v597-20261007-132408` over `index.html` (the command is in *Current baseline*). With V595 the Mac app falls back to the browser photo path, so nothing breaks.
 
 ### Release record — V595 (2026-10-05) — Mac Phase 2: the CV as a `.uicv` document (V589–V594)
 

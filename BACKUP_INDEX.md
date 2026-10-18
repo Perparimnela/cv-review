@@ -13,225 +13,45 @@ edits is gone. Every capability and every decision the project holds today is no
 
 ---
 
-## Manifest — what the folder holds now (2026-10-09, after the V613 promotion; sandbox = production)
+## Manifest — what the folder holds now (2026-10-18, after the V615 promotion; sandbox = production)
 
-> A lean inventory, added after the external review (point 8). It is generated from the files themselves and their hashes. The narrative sections below remain the forensic history; this table is the operational list. Roles: **production** (live), **sandbox** (work in progress), **release snapshot** (immutable, Neni 6.5), **rollback** (production backup taken before a promotion, immutable), **sandbox iteration** (may be cleared by the owner, Neni 6.5).
+> A lean inventory, added after the external review (point 8). It is generated from the files themselves and their hashes. The narrative sections below remain the forensic history; this table is the operational list. Roles: **production** (live), **sandbox** (work in progress), **release snapshot** (immutable, Neni 6.5), **rollback** (production backup taken before a promotion), **sandbox iteration**, **test fixture**.
+
+> **Cleanup of 2026-10-18 (owner's decision: "mbaj gjithsej 7 versionet e fundit" — keep only the last 7 versions, remove everything not worth keeping).**
+> - **Kept:** the last seven versions V608–V614 (`608.html`–`614.html`), production and sandbox, the operational rollback (= V609) and the open sandbox's pre-edit backup (= V613).
+> - **Moved to the Trash** (293 files, 345.6 MB) into the folder `ProjectS-pastrim-2026-10-18`, with `LISTA.json` (name, md5, bytes of each file):
+>   - snapshots V486–V607;
+>   - 30 older production backups (back to V479, with the V483–V485 baselines);
+>   - 138 sandbox backups;
+>   - 29 `*.md.bak` copies;
+>   - four old test pages.
+> - **Recovery:** 199 of these files are tracked, so they stay in git history; restore any of them with `git checkout afc5006 -- <file>`.
+> - **One snapshot became a test fixture:** `573.html` is now `tools/photo/legacy-v573.html`, because `photo_test` uses it for the photo-storage migration.
+> - **After the V615 promotion (2026-10-18), the same rule:** `608.html`, the previous rollback (= V609, same bytes as `609.html`) and the sandbox backups went to the same Trash folder (listed in `LISTA.json`).
+> - The narrative sections below are history, and many files they name are no longer in the folder.
 
 | File | Holds | md5 | Role |
 |---|---|---|---|
-| `index.html` | V613 | `f7a0c614` | production |
-| `index-test.html` | V613 | `f7a0c614` | sandbox (= production) |
-| `486.html` | V486 | `b2c238c6` | release snapshot |
-| `487.html` | V487 | `d0962600` | release snapshot |
-| `488.html` | V488 | `deaeb3b1` | release snapshot |
-| `489.html` | V489 | `acfe9627` | release snapshot |
-| `490.html` | V490 | `b4143279` | release snapshot |
-| `491.html` | V491 | `a71de5fa` | release snapshot |
-| `492.html` | V492 | `56b0c307` | release snapshot |
-| `493.html` | V493 | `e8f9c29d` | release snapshot |
-| `494.html` | V494 | `ddce3d51` | release snapshot |
-| `495.html` | V495 | `b30c2599` | release snapshot |
-| `496.html` | V496 | `d331a41d` | release snapshot |
-| `497.html` | V497 | `53421f19` | release snapshot |
-| `498.html` | V498 | `ad23162d` | release snapshot |
-| `501.html` | V501 | `5267701c` | release snapshot |
-| `504.html` | V504 | `57c9dd4f` | snapshot of the pre-V507 series (release status not documented; kept) |
-| `505.html` | V505 | `43b865d1` | snapshot of the pre-V507 series (release status not documented; kept) |
-| `506.html` | V506 | `e19b4850` | snapshot of the pre-V507 series (release status not documented; kept) |
-| `507.html` | V507 | `ac22bc52` | release snapshot |
-| `509.html` | V509 | `660bc50b` | release snapshot |
-| `520.html` | V520 | `d02b3b39` | release snapshot |
-| `529.html` | V529 | `924e655c` | release snapshot |
-| `531.html` | V531 | `c418ef74` | release snapshot |
-| `537.html` | V537 | `d2b8a938` | release snapshot |
-| `538.html` | V538 | `c68ab10f` | sandbox iteration |
-| `539.html` | V539 | `aad7bd69` | sandbox iteration |
-| `540.html` | V540 | `c070fc34` | sandbox iteration |
-| `541.html` | V541 | `ce767087` | sandbox iteration |
-| `542.html` | V542 | `929e8b2c` | release snapshot |
-| `543.html` | V543 | `aca3eb6b` | sandbox iteration |
-| `544.html` | V544 | `e4605753` | sandbox iteration |
-| `545.html` | V545 | `841494e6` | sandbox iteration |
-| `546.html` | V546 | `e3a635da` | release snapshot |
-| `547.html` | V547 | `5b1ffa7e` | sandbox iteration |
-| `548.html` | V548 | `ba88f1ef` | release snapshot |
-| `549.html` | V549 | `6e4221c7` | sandbox iteration |
-| `550.html` | V550 | `792082b8` | release snapshot |
-| `551.html` | V551 | `713365e0` | sandbox iteration |
-| `552.html` | V552 | `b5540524` | sandbox iteration |
-| `553.html` | V553 | `8ef04d04` | sandbox iteration |
-| `554.html` | V554 | `63837550` | sandbox iteration |
-| `555.html` | V555 | `75cf6f94` | sandbox iteration |
-| `556.html` | V556 | `337d3cdc` | sandbox iteration |
-| `557.html` | V557 | `a31a1352` | sandbox iteration |
-| `558.html` | V558 | `69e93684` | sandbox iteration |
-| `559.html` | V559 | `bb32affd` | sandbox iteration |
-| `560.html` | V560 | `073afe16` | sandbox iteration |
-| `561.html` | V561 | `1d64ba88` | sandbox iteration |
-| `562.html` | V562 | `341ae137` | sandbox iteration |
-| `563.html` | V563 | `d4507bb4` | sandbox iteration |
-| `564.html` | V564 | `85acedf3` | sandbox iteration |
-| `565.html` | V565 | `b461676d` | release snapshot |
-| `566.html` | V566 | `23fe7317` | sandbox iteration |
-| `567.html` | V567 | `34498155` | release snapshot |
-| `568.html` | V568 | `8baefe40` | sandbox iteration |
-| `569.html` | V569 | `947c48b6` | sandbox iteration |
-| `570.html` | V570 | `86d94494` | sandbox iteration |
-| `571.html` | V571 | `9efbf9e4` | sandbox iteration |
-| `572.html` | V572 | `553ed541` | sandbox iteration |
-| `573.html` | V573 | `91abe8b1` | sandbox iteration |
-| `574.html` | V574 | `498b730b` | sandbox iteration |
-| `575.html` | V575 | `de4247c0` | sandbox iteration |
-| `576.html` | V576 | `98d05617` | sandbox iteration |
-| `577.html` | V577 | `db06e5eb` | sandbox iteration |
-| `578.html` | V578 | `82c419e4` | sandbox iteration |
-| `579.html` | V579 | `7c11d922` | sandbox iteration |
-| `580.html` | V580 | `7bca052d` | sandbox iteration |
-| `581.html` | V581 | `2e19374c` | release snapshot |
-| `582.html` | V582 | `bde0a1e3` | sandbox iteration |
-| `583.html` | V583 | `7b6edfe7` | sandbox iteration |
-| `584.html` | V584 | `fcd94894` | sandbox iteration |
-| `585.html` | V585 | `66f737c2` | sandbox iteration |
-| `586.html` | V586 | `40b6237b` | sandbox iteration |
-| `587.html` | V587 | `e24afa6a` | sandbox iteration |
-| `588.html` | V588 | `3bd91f3a` | release snapshot |
-| `589.html` | V589 | `9c06db5e` | sandbox iteration |
-| `590.html` | V590 | `d9040c4f` | sandbox iteration |
-| `591.html` | V591 | `b1d0905b` | sandbox iteration |
-| `592.html` | V592 | `49326903` | sandbox iteration |
-| `593.html` | V593 | `872dd51c` | sandbox iteration |
-| `594.html` | V594 | `7332dbba` | sandbox iteration |
-| `595.html` | V595 | `f249aa63` | release snapshot |
-| `596.html` | V596 | `16a876a3` | sandbox iteration |
-| `597.html` | V597 | `bc04157e` | release snapshot |
-| `598.html` | V598 | `c6c423b5` | sandbox iteration |
-| `599.html` | V599 | `28928414` | sandbox iteration |
-| `600.html` | V600 | `9420a345` | sandbox iteration |
-| `601.html` | V601 | `1d940a1e` | sandbox iteration |
-| `602.html` | V602 | `1d24329f` | sandbox iteration (the last version with the CVFrame instrument) |
-| `603.html` | V603 | `195dd727` | sandbox iteration |
-| `604.html` | V604 | `958684f7` | sandbox iteration |
-| `605.html` | V605 | `2f334fef` | sandbox iteration |
-| `606.html` | V606 | `7d073be5` | sandbox iteration |
-| `607.html` | V607 | `2762b427` | release snapshot |
-| `608.html` | V608 | `ebfd8f2e` | sandbox iteration |
+| `index.html` | V615 | `0bc12c45` | production |
+| `index-test.html` | V615 | `0bc12c45` | sandbox (= production) |
 | `609.html` | V609 | `ec249884` | release snapshot |
 | `610.html` | V610 | `7283a7d3` | sandbox iteration |
 | `611.html` | V611 | `69bdac5b` | sandbox iteration |
 | `612.html` | V612 | `d61932f7` | sandbox iteration |
 | `613.html` | V613 | `f7a0c614` | release snapshot |
-| `index.html.bak-pre-v482u` | V479 | `27e9d4cc` | rollback |
-| `index.html.bak-pre-v483` | V482u | `01f22f35` | rollback |
-| `index.html.bak-pre-v493-20260829-014817` | V492 | `56b0c307` | rollback |
-| `index.html.bak-pre-v494-20260829-020510` | V493 | `e8f9c29d` | rollback |
-| `index.html.bak-pre-v495-20260831-013719` | V494 | `ddce3d51` | rollback |
-| `index.html.bak-pre-v496-20260901-173224` | V495 | `b30c2599` | rollback |
-| `index.html.bak-pre-v497-20260902-011839` | V496 | `d331a41d` | rollback |
-| `index.html.bak-pre-v498-20260902-012633` | V497 | `53421f19` | rollback |
-| `index.html.bak-pre-v501-20260902-115235` | V498 | `ad23162d` | rollback |
-| `index.html.bak-pre-v507-20260911-000426` | V501 | `5267701c` | rollback |
-| `index.html.bak-pre-v509-20260911-001420` | V507 | `ac22bc52` | rollback |
-| `index.html.bak-pre-v520-20260927-172538` | V509 | `660bc50b` | rollback |
-| `index.html.bak-pre-v529-20260928-151109` | V520 | `d02b3b39` | rollback |
-| `index.html.bak-pre-v531-20260929-142927` | V529 | `924e655c` | rollback |
-| `index.html.bak-pre-v537-20260929-151453` | V531 | `c418ef74` | rollback |
-| `index.html.bak-pre-v542-20260929-171732` | V537 | `d2b8a938` | rollback |
-| `index.html.bak-pre-v546-20260930-113924` | V542 | `929e8b2c` | rollback |
-| `index.html.bak-pre-v548-20260930-144638` | V546 | `e3a635da` | rollback |
-| `index.html.bak-pre-v550-20260930-152856` | V548 | `ba88f1ef` | rollback |
-| `index.html.bak-pre-v565-20261002-141510` | V550 | `792082b8` | rollback |
-| `index.html.bak-pre-v567-20261002-151841` | V565 | `b461676d` | rollback |
-| `index.html.bak-pre-v581-20261004-012945` | V567 | `34498155` | rollback |
-| `index.html.bak-pre-v588-20261004-172630` | V581 | `2e19374c` | rollback |
-| `index.html.bak-pre-v595-20261005-102116` | V588 | `3bd91f3a` | rollback |
-| `index.html.bak-pre-v597-20261007-132408` | V595 | `f249aa63` | rollback |
-| `index.html.bak-pre-v607-20261008-161042` | V597 | `bc04157e` | rollback (read the V607 caveat) |
-| `index.html.bak-pre-v609-20261008-172128` | V607 | `2762b427` | rollback |
-| `index.html.bak-pre-v613-20261009-132431` | V609 | `ec249884` | rollback — **operational** (one release back) |
-| `index.html.bak-v483-baseline` | V483 | `b2ece1ae` | rollback |
-| `index.html.bak-v484-baseline` | V484 | `6fc7d00a` | rollback |
-| `index.html.bak-v485-baseline` | V485 | `99e0f10d` | rollback |
-| `index-test.html.bak-pre-pilot-retire` | pilot implementation (see its section) | `a0aa5484` | unique — kept |
-| `index-test.html.bak-pre-v538-20260929-164057` | V537 | `d2b8a938` | sandbox iteration |
-| `index-test.html.bak-pre-v539-20260929-164153` | V538 | `c68ab10f` | sandbox iteration |
-| `index-test.html.bak-pre-v540-20260929-164355` | V539 | `aad7bd69` | sandbox iteration |
-| `index-test.html.bak-pre-v541-20260929-164758` | V540 | `c070fc34` | sandbox iteration |
-| `index-test.html.bak-pre-v542-20260929-171732` | V541 | `ce767087` | sandbox iteration |
-| `index-test.html.bak-pre-v543-20260930-005650` | V542 | `929e8b2c` | sandbox iteration |
-| `index-test.html.bak-pre-v544-20260930-010634` | V543 | `aca3eb6b` | sandbox iteration |
-| `index-test.html.bak-pre-v545-20260930-113321` | V544 | `e4605753` | sandbox iteration |
-| `index-test.html.bak-pre-v546-20260930-113924` | V545 | `841494e6` | sandbox iteration |
-| `index-test.html.bak-pre-v547-20260930-134747` | V546 | `e3a635da` | sandbox iteration |
-| `index-test.html.bak-pre-v548-20260930-144638` | V547 | `5b1ffa7e` | sandbox iteration |
-| `index-test.html.bak-pre-v549-20260930-150739` | V548 | `ba88f1ef` | sandbox iteration |
-| `index-test.html.bak-pre-v550-20260930-152856` | V549 | `6e4221c7` | sandbox iteration |
-| `index-test.html.bak-pre-v551-20261002-002307` | V550 | `792082b8` | sandbox iteration |
-| `index-test.html.bak-pre-v552-20261002-004054` | V551 | `713365e0` | sandbox iteration |
-| `index-test.html.bak-pre-v553-20261002-004916` | V552 | `b5540524` | sandbox iteration |
-| `index-test.html.bak-pre-v554-20261002-010113` | V553 | `8ef04d04` | sandbox iteration |
-| `index-test.html.bak-pre-v555-20261002-011409` | V554 | `63837550` | sandbox iteration |
-| `index-test.html.bak-pre-v556-20261002-012337` | V555 | `75cf6f94` | sandbox iteration |
-| `index-test.html.bak-pre-v557-20261002-013154` | V556 | `337d3cdc` | sandbox iteration |
-| `index-test.html.bak-pre-v558-20261002-020233` | V557 | `a31a1352` | sandbox iteration |
-| `index-test.html.bak-pre-v559-20261002-021617` | V558 | `69e93684` | sandbox iteration |
-| `index-test.html.bak-pre-v560-20261002-022931` | V559 | `bb32affd` | sandbox iteration |
-| `index-test.html.bak-pre-v561-20261002-115759` | V560 | `073afe16` | sandbox iteration |
-| `index-test.html.bak-pre-v562-20261002-122544` | V561 | `1d64ba88` | sandbox iteration |
-| `index-test.html.bak-pre-v563-20261002-124300` | V562 | `341ae137` | sandbox iteration |
-| `index-test.html.bak-pre-v564-20261002-131744` | V563 | `d4507bb4` | sandbox iteration |
-| `index-test.html.bak-pre-v565-20261002-141510` | V564 | `85acedf3` | sandbox iteration |
-| `index-test.html.bak-pre-v566-20261002-144704` | V565 | `b461676d` | sandbox iteration |
-| `index-test.html.bak-pre-v567-20261002-151841` | V566 | `23fe7317` | sandbox iteration |
-| `index-test.html.bak-pre-v568-20261003-135233` | V567 | `34498155` | sandbox iteration |
-| `index-test.html.bak-pre-v569-20261003-141135` | V568 | `8baefe40` | sandbox iteration |
-| `index-test.html.bak-pre-v570-20261003-151520` | V569 | `947c48b6` | sandbox iteration |
-| `index-test.html.bak-pre-v571-20261003-151807` | V570 | `86d94494` | sandbox iteration |
-| `index-test.html.bak-pre-v572-20261003-151948` | V571 | `9efbf9e4` | sandbox iteration |
-| `index-test.html.bak-pre-v573-20261003-152233` | V572 | `553ed541` | sandbox iteration |
-| `index-test.html.bak-pre-v574-20261003-152722` | V573 | `91abe8b1` | sandbox iteration |
-| `index-test.html.bak-pre-v575-20261003-155927` | V574 | `498b730b` | sandbox iteration |
-| `index-test.html.bak-pre-v576-20261003-160513` | V575 | `de4247c0` | sandbox iteration |
-| `index-test.html.bak-pre-v577-20261003-160952` | V576 | `98d05617` | sandbox iteration |
-| `index-test.html.bak-pre-v578-20261003-161618` | V577 | `db06e5eb` | sandbox iteration |
-| `index-test.html.bak-pre-v579-20261003-163136` | V578 | `82c419e4` | sandbox iteration |
-| `index-test.html.bak-pre-v580-20261004-000059` | V579 | `7c11d922` | sandbox iteration |
-| `index-test.html.bak-pre-v581-20261004-012945` | V580 | `7bca052d` | sandbox iteration |
-| `index-test.html.bak-pre-v582-20261004-095657` | V581 | `2e19374c` | sandbox iteration |
-| `index-test.html.bak-pre-v583-20261004-103107` | V582 | `bde0a1e3` | sandbox iteration |
-| `index-test.html.bak-pre-v584-20261004-164155` | V583 | `7b6edfe7` | sandbox iteration |
-| `index-test.html.bak-pre-v585-20261004-165538` | V584 | `fcd94894` | sandbox iteration |
-| `index-test.html.bak-pre-v586-20261004-171042` | V585 | `66f737c2` | sandbox iteration |
-| `index-test.html.bak-pre-v587-20261004-172129` | V586 | `40b6237b` | sandbox iteration |
-| `index-test.html.bak-pre-v588-20261004-172630` | V587 | `e24afa6a` | sandbox iteration |
-| `index-test.html.bak-pre-v589-20261004-231205` | V588 | `3bd91f3a` | sandbox iteration |
-| `index-test.html.bak-pre-v590-20261004-233040` | V589 | `9c06db5e` | sandbox iteration |
-| `index-test.html.bak-pre-v591-20261004-234305` | V590 | `d9040c4f` | sandbox iteration |
-| `index-test.html.bak-pre-v592-20261005-013037` | V591 | `b1d0905b` | sandbox iteration |
-| `index-test.html.bak-pre-v593-20261005-013956` | V592 | `49326903` | sandbox iteration |
-| `index-test.html.bak-pre-v594-20261005-015222` | V593 | `872dd51c` | sandbox iteration |
-| `index-test.html.bak-pre-v595-20261005-102116` | V594 | `7332dbba` | sandbox iteration |
-| `index-test.html.bak-pre-v596-20261005-105457` | V595 | `f249aa63` | sandbox iteration |
-| `index-test.html.bak-pre-v597-20261007-132408` | V596 | `16a876a3` | sandbox iteration |
-| `index-test.html.bak-pre-v598-20261007-142038` | V597 | `bc04157e` | sandbox iteration |
-| `index-test.html.bak-pre-v599-20261007-144025` | V598 | `c6c423b5` | sandbox iteration |
-| `index-test.html.bak-pre-v600-20261007-151844` | V599 | `28928414` | sandbox iteration |
-| `index-test.html.bak-pre-v601-20261007-153054` | V600 | `9420a345` | sandbox iteration |
-| `index-test.html.bak-pre-v602-20261008-010031` | V601 | `1d940a1e` | sandbox iteration |
-| `index-test.html.bak-pre-v603-20261008-010932` | V602 | `1d24329f` | sandbox iteration |
-| `index-test.html.bak-pre-v604-20261008-111323` | V603 | `195dd727` | sandbox iteration |
-| `index-test.html.bak-pre-v605-20261008-115914` | V604 | `958684f7` | sandbox iteration |
-| `index-test.html.bak-pre-v606-20261008-153136` | V605 | `2f334fef` | sandbox iteration |
-| `index-test.html.bak-pre-v607-20261008-161042` | V606 | `7d073be5` | sandbox iteration |
-| `index-test.html.bak-pre-v608-20261008-165749` | V607 | `2762b427` | sandbox iteration |
-| `index-test.html.bak-pre-v609-20261008-172128` | V608 | `ebfd8f2e` | sandbox iteration |
-| `index-test.html.bak-pre-v610-20261009-015053` | V609 | `ec249884` | sandbox iteration |
-| `index-test.html.bak-pre-v611-20261009-022359` | V610 | `7283a7d3` | sandbox iteration |
-| `index-test.html.bak-pre-v612-20261009-113851` | V611 | `69bdac5b` | sandbox iteration |
-| `index-test.html.bak-pre-v613-20261009-132431` | V612 | `d61932f7` | sandbox iteration |
+| `614.html` | V614 | `84532dd2` | sandbox iteration |
+| `615.html` | V615 | `0bc12c45` | release snapshot |
+| `index.html.bak-pre-v615-20261018-142631` | V613 | `f7a0c614` | rollback — **operational** (one release back) |
+| `tools/photo/legacy-v573.html` | V573 | `91abe8b1` | test fixture — `photo_test` (the last version with the old photo storage format) |
 
-99 snapshots, 31 production backups, 77 sandbox backups. Verify any row with `md5 -q <file>`.
+7 snapshots, 1 production backup, 1 test fixture. Verify any row with `md5 -q <file>`.
 
 ---
+
+> **Sandbox deviation (named, 2026-10-09, after V613) — CLOSED on 2026-10-18 by the V615 promotion:**
+> `index-test.html` = `index.html` = `615.html` = V615 (`0bc12c45…`). The sandbox had run ahead as V614.
+> Sandbox backup: `index-test.html.bak-pre-v614-20261009-154002` (= V613).
+> V614: the Word certificate comes out identical to the A4 certificate, on the same 2 pages: Fira Mono embedded, the same pagination engine as the PDF, mode 14. `word_check.sh` reports every line identical to the app's PDF; `docx_test` 23/23; suite ALL PASS (35 steps).
 
 > **Sandbox deviation (named, 2026-10-09, after V609) — CLOSED on 2026-10-09 by the V613 promotion:**
 > `index-test.html` = `index.html` = `613.html` = V613 (`f7a0c614…`). The sandbox had run ahead as V610–V612.
@@ -389,6 +209,22 @@ edits is gone. Every capability and every decision the project holds today is no
 > | `index-test.html.bak-pre-v518-20260927-162722` | V517 (= `517.html`) | `1c254fef…` |
 > | `index-test.html.bak-pre-v519-20260927-164542` | V518 (= `518.html`) | `8c55cd79…` |
 
+## `index.html.bak-pre-v615-20261018-142631`
+
+| | |
+|---|---|
+| **Version** | V613 |
+| **Hash (md5)** | `f7a0c614c66593b07f2d2337d9ed564e` |
+| **Size** | 1,430,611 bytes |
+
+**Purpose.** **The operational rollback for V615**, promoted 2026-10-18. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It lacks only the A4-identical Word certificate, so the rollback loses no data.
+
+Byte-identical to `613.html`.
+
+```bash
+cp "index.html.bak-pre-v615-20261018-142631" "index.html"
+```
+
 ## `index.html.bak-pre-v613-20261009-132431`
 
 | | |
@@ -397,7 +233,7 @@ edits is gone. Every capability and every decision the project holds today is no
 | **Hash (md5)** | `ec2498848cd7fb12e2fbfd244decaf62` |
 | **Size** | 1,390,856 bytes |
 
-**Purpose.** **The operational rollback for V613**, promoted 2026-10-09. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It lacks only the file save/open and the Word export, so the rollback loses no data.
+**Purpose.** The rollback for V613 (operational until the V615 promotion on 2026-10-18; then moved to the Trash under the keep-seven rule, same bytes as `609.html`), promoted 2026-10-09. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It lacks only the file save/open and the Word export, so the rollback loses no data.
 
 Byte-identical to `609.html`.
 
@@ -1100,10 +936,10 @@ was written to stop without attempting automatic recovery.
 
 ## Restoring
 
-**Production is V613 (`f7a0c614…`). To roll back one release, to V609** (no data is lost):
+**Production is V615 (`0bc12c45…`). To roll back one release, to V613** (no data is lost):
 
 ```bash
-cp "index.html.bak-pre-v613-20261009-132431" "index.html"
+cp "index.html.bak-pre-v615-20261018-142631" "index.html"
 ```
 
 Two releases back, to V597 (first read the caveat in *Release record — V607*: a letter written under V607 would be lost): `cp "index.html.bak-pre-v607-20261008-161042" "index.html"`.
