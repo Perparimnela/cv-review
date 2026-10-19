@@ -26,9 +26,9 @@
 
 | | Artifact | Hash (md5) | Bytes | Date |
 |---|---|---|---|---|
-| **PRODUCTION** | `index.html` | `0bc12c454de888af5476cba1ad2a524a` | 1,505,518 | 2026-10-18 |
-| **Release snapshot** | `615.html` | `0bc12c454de888af5476cba1ad2a524a` | 1,505,518 | 2026-10-18 |
-| **Rollback point** | `index.html.bak-pre-v615-20261018-142631` | `f7a0c614c66593b07f2d2337d9ed564e` (V613) | 1,430,611 | 2026-10-18 |
+| **PRODUCTION** | `index.html` | `46e75b7d0dbf9f540c7125b956eec180` | 1,532,677 | 2026-10-19 |
+| **Release snapshot** | `617.html` | `46e75b7d0dbf9f540c7125b956eec180` | 1,532,677 | 2026-10-19 |
+| **Rollback point** | `index.html.bak-pre-v617-20261019-122124` | `0bc12c454de888af5476cba1ad2a524a` (V615) | 1,505,518 | 2026-10-19 |
 
 > ### ⚠️ The rollback point is a Release Snapshot, not a backup — corrected 2026-08-29
 >
@@ -54,14 +54,14 @@ artifact, tracked separately, and it changes nothing here: **identity is the has
 CVQualify apparatus `VERSION` = **V482s** (unchanged — ADR-031 is a product change and must not bump
 the apparatus; see "Two versions" below).
 
-**V615 is the reference point for every future audit.** A future delta-audit compares against
-`0bc12c45`. (V613 = `f7a0c614` is the rollback target. Since the cleanup of 2026-10-18 the folder keeps only the last seven versions (now V609–V615); older artifacts are in git history, e.g. `git checkout afc5006 -- 607.html`. Below V607, read the caveat in *Release record — V607*.)
+**V617 is the reference point for every future audit.** A future delta-audit compares against
+`46e75b7d`. (V615 = `0bc12c45` is the rollback target. Since the cleanup of 2026-10-18 the folder keeps only the last seven versions (now V611–V617); older artifacts are in git history, e.g. `git checkout afc5006 -- 607.html`. Below V607, read the caveat in *Release record — V607*.)
 
-`window.CV.build` reports **`V615`** in production — measured from the artifact. Since V509 the label
+`window.CV.build` reports **`V617`** in production — measured from the artifact. Since V509 the label
 is bumped with every version, which is why it can be trusted again; **identity is still the hash.**
 
 ```bash
-cp "index.html.bak-pre-v615-20261018-142631" "index.html"
+cp "index.html.bak-pre-v617-20261019-122124" "index.html"
 ```
 
 ## The test suite — one command (`tools/suite.py`, Phase 6)
@@ -253,6 +253,7 @@ The owner chose that it is **updated after every production release** and carrie
 | 2026-10-08 | V607 (`2762b427…`) | `f7b7cd89…` | public commit `c4bd49f`: **all 8 files** byte-identical to the package (new: `RELEASE_ARCHIVE.md`); known-token and generic leak scans clean; the public copy renders (observatory: V607, msg 70/70, PROBLEMS: none); its 9 PDFs contain 0 private tokens (32 pairs/words + 22 patterns); Pages serving V607, byte-identical (`f7b7cd89`); `lab/bug017.html` still online. **Before the upload, the tool stopped a leak:** the bare street name, which I had written in a V604 comment and doc. A new token pair covers it. A mangled e-mail fragment, public in `ARCHITECTURE_DECISIONS.md` since earlier syncs, is now replaced too, and a pattern detects it. The old public history still holds it (owner's decision). |
 | 2026-10-08 | V609 (`ec249884…`) | `692780c2…` | public commit `3b69c26`: all 8 files byte-identical to the package; known-token and generic leak scans clean; the public copy renders (observatory: V609, msg 70/70, PROBLEMS: none); its 9 PDFs contain 0 private tokens (checked before the upload); Pages serving V609, byte-identical (`692780c2`); `lab/bug017.html` still online |
 | 2026-10-09 | V613 (`f7a0c614…`) | `d38e4d31…` | public commit `3e59ab0`: all 8 files byte-identical to the package; known-token and generic leak scans clean; the public copy renders (observatory: PROBLEMS: none); its 9 PDFs **and its 3 Word files (text and all XML, including the author field)** contain 0 private tokens, checked before the upload. A positive control on a private Word file found 11, so the scan is not blind. Pages serving V613, byte-identical (`d38e4d31`); `lab/bug017.html` still online |
+| 2026-10-18 | V615 (`0bc12c45…`) | `df67498d…` | public commit `4f44111`: all 8 files byte-identical to the package; known-token and generic leak scans clean; the public copy renders (observatory: PROBLEMS: none); its 9 PDFs and 3 Word files (text and all XML) contain 0 private tokens, checked before the upload; Pages serving V615, byte-identical (`df67498d`); `lab/bug017.html` still online |
 
 ## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V550 since 2026-09-30; photo-series rows added at V565, 2026-10-02)
 
@@ -328,61 +329,88 @@ V537's identity (`d2b8a938…`) is untouched: `537.html` and its rollback backup
 
 Moved on 2026-10-08 (Mac Phase 5, audit F-10). This file had grown to 315 KB and was hard to read. The text was moved **byte for byte, in its original order**; nothing was edited, summarised or dropped.
 - **Moved:**
-  - closed sandbox sections V510–V564 (closed by V520 … V565) and V566–V612 (closed by V567 … V613);
-  - release records V597 back to V482u, with the note *Sandbox after promotion — V509*.
+  - closed sandbox sections V510–V564 (closed by V520 … V565) and V566–V614 (closed by V567 … V615);
+  - release records V607 back to V482u, with the note *Sandbox after promotion — V509*.
 - **Stays here:**
   - the current baseline, the gates, the public mirror and the device matrix;
-  - the open sandbox section, if any, and the last closed one (V614);
-  - the last four release records (V607–V615);
+  - the open sandbox section, if any, and the last closed one (V616);
+  - the last four release records (V609–V617);
   - the production mirror invariant and the checklist.
 - **From now on:** at each promotion, the sandbox section it closes and any release record older than the last four move to the archive.
 
 ## Sandbox sections and release records (newest first)
 
-#### Sandbox ahead of production — V614 (2026-10-09) — the Word certificate exactly like the A4 page — CLOSED by the V615 promotion
+#### Sandbox ahead of production — V616 (2026-10-19) — the AI co-author in "draft mode" (DeepSeek review B3) — CLOSED by the V617 promotion
 
-**Closed on 2026-10-18:** `index-test.html` = `index.html` = `615.html`.
+**Closed on 2026-10-19:** `index-test.html` = `index.html` = `617.html`.
 
-Production is V613 (`f7a0c614…`).
+Production is V615 (`0bc12c45…`).
 
 | Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
 |---|---|---|---|---|
-| V614 | `614.html` | `84532dd26d81ea28bd415e2bba9c7759` | 1,505,284 | `index-test.html.bak-pre-v614-20261009-154002` (= V613, `f7a0c614…`) |
+| V616 | `616.html` | `2b70c04659647b70b5388f93a3c5c696` | 1,532,474 | `index-test.html.bak-pre-v616-20261019-010154` (= V615, `0bc12c45…`) |
 
-**V614 = the Word certificate comes out identical to the A4 certificate, on the same 2 pages.** This was the owner's request after V613: "Wordi kur shkarkohet duhet te dali identik 2 faqe sic eshte te: VËRTETIM PUNE DHE REFERENCË PROFESIONALE". V611 had given the certificate the CV's Word style (Arial, coloured headings).
-- **Same source, same pagination as the PDF.** The certificate is built from the copy that `renderDocToA4Pdf` uses: the `.a4-page` cloned into `.a4-export-host` and paginated by `__a4PaginateRoot`, the editor's own engine.
-  - Every block and every list item knows its page.
-  - Every page becomes a Word section with that page's margins.
-  - So the page breaks exactly where it breaks on screen and in the PDF.
-- **Same look:**
-  - Fira Mono throughout: the same font as the A4 page, **embedded in the `.docx`**, so Word shows it even where it is not installed.
-  - Sizes, colours, bold and italic per run (e.g. a grey label with a bold value) and letter spacing come from the computed style.
-  - Also from the computed style: alignment (justified paragraphs), exact line heights, the thin rule under the headings, and the spacing taken from the real block positions.
-  - The short bar under the title (`::after`) is a small image.
-  - The list diamonds use a symbol font in the same navy, because Fira Mono has no ◆.
-  - Photos placed on the certificate (a stamp, a signature) are drawn as they look (crop, flip, corners, border, opacity; filters baked as for the PDF). They are placed at the same spot on their page, rotated as on screen.
-- **Two measured details:**
-  - **Font size.** Word knows sizes only in half points, and the certificate text is 12.5 px = 9.375 pt. Every measure is therefore scaled by the same factor, 19/18.75 (+1.3 %): text 9.5 pt, text width, spacing and heights. A line then holds exactly as many characters as on screen, because Fira Mono is monospaced.
-  - **Justified lines.** In its modern layout mode (15), Word **compresses** the spaces of justified lines and fits more words than the page; it was measured: "…gjatë periudhës" instead of "…gjatë". In mode 14 (Word 2010) it breaks lines like the browser. So the certificate is written in mode 14, and Word shows "Compatibility Mode" in its title bar. The document stays fully editable. The CV and the letter keep mode 15.
-- **The font in the page.** A new block `window.CVDocxFonts` (+54 KB) holds Fira Mono Regular and Bold:
-  - in Word's obfuscated form (`.odttf`, ECMA-376 §17.8.1), deflated;
-  - written straight into the ZIP (the ZIP writer now also takes ready-deflated entries);
-  - with the font's own copyright line and the SIL OFL 1.1 notice (fsType 0: embedding allowed).
-- **How the font block is made:**
-  - **`tools/docx_fonts.py` (new)** generates it from the page's own WOFF2 subsets. **`tools/docx_fonts.swift` (new)** turns WOFF2 into TTF with macOS CoreText; fontTools then merges latin and latin-ext and checks the Albanian and German letters.
-  - It is deterministic: fontTools' merge had stamped the current time into `head`; the dates now come from the source font.
-  - A new suite step checks that the block is up to date with the page.
-- **`CVDocx.build` now returns a Promise,** because the certificate waits for the pagination and the photos. The tests were updated.
+**V616 = the AI co-author (`window.CVAI`): Claude proposes, the owner decides.** This is point B3 of the DeepSeek review. The owner's decisions are recorded in Mac `docs/DECISIONS.md` D-010: Claude, the Mac app only, consent on every request, and four tasks (improve, translate, tailor to a job ad, proofread).
+- **Mac app only.** The core asks the app through `CVHost.aiPropose` (Mac `AIAssist.swift`). The app holds the Claude key in the macOS Keychain, so the page never sees it.
+  - It shows a native consent window with exactly the text that will leave the Mac, and calls Claude only after the owner clicks.
+  - The call: `claude-opus-5-5`, JSON-schema output, `fallbacks: "default"`. Only proposals that answer a sent field and change it are kept.
+  - In a browser `CVAI.open` does nothing, so the web and the iPhone have no AI.
+- **The panel** opens from the app's new menu "Bashkautori AI". It has the look of the export sheet, and its texts are in de/en/sq (48 + 1 new `ui` keys per language).
+  - **Which text:** the last edited field (tracked on focus in the page and in the iframe), title and professional summary, work experience, the cover letter (without the sender and recipient blocks), or the whole CV. Names, contacts and dates are never sent.
+  - **Options:** the target language for "translate"; the pasted job ad for "tailor" (nothing is sent without it).
+  - **Proposals:** each one is a card "now → suggestion" with Claude's reason, plus the summary and the token usage. Each card is **accepted or rejected** on its own; "Accept all" takes the rest.
+- **Applying = typing.** An accepted proposal is written through the same path as typing (`insertText`, or text plus an `input` event for multi-line fields), so it is saved in the document like any edit.
+  - **One undo step:** a group of acceptances is recorded as ONE history step "Bashkautori AI". During the group, history is suspended; then the state is snapshotted before and after.
+  - **The same undo path:** ⌘Z / ⌘⇧Z go through the history's own snapshot path. `window.__cvApplySnapshot` is exposed from the AppState bridge rather than copied.
+  - **Field text** is read with the Word export's style-aware reader (`CVDocx.text`), so line breaks survive in WebKit.
+- **Translate** switches to the target language once, then writes there, so the source-language text stays untouched.
 - **Measured:**
-  - **`tools/word_check.sh` (real Microsoft Word 16.113.3).** A fresh certificate in Word against the app's own A4 PDF (`pdf_export.mjs`): **2 / 2 pages, 35+31 lines on each side, every line identical.** The only text difference was the ◆ glyph, which is a CSS shape in the PDF.
-  - Word's PDF uses the embedded `FiraMono-Regular` / `FiraMono-Bold`. Fira Mono is not installed on this Mac, so they came from the document.
-  - A certificate with a stamp photo (rotated −12°) shows it at the same place on page 2.
-  - **`tools/docx_test.mjs`: 23/23.** New checks:
-    - the certificate has Fira Mono embedded, one section per A4 page, the diamond list, the title bar and mode 14;
-    - the CV and the letter are unchanged (no embedded font, mode 15).
-  - **`tools/docx_webkit.js`: PASS.** In WebKit the certificate has 2 sections and Fira Mono runs, and the font parts are in the ZIP.
-  - **Visual check:** Word's pages next to the app's PDF pages, with and without a photo.
-- **Gates:** `python3 tools/suite.py index-test.html --mac` → **SUITE: ALL PASS, 35 steps** (22.9 min; report `reports/suite-20261009-1558-V613-84532dd2.md`; the label still reads V613 until promotion). `storage_trace` against production: IDENTICAL after every step. Golden: no visual regression. `pdf_check` desktop and phone: ALL PASS. `docx_fonts`: UP TO DATE. All six Mac self-tests PASS, `wordExport` and `menuWord` included. `tools/word_check.sh` (real Word): ALL PASS, the certificate identical line for line.
+  - **`tools/ai_test.mjs` (new, Chrome with a fake Mac host): 12/12.** It covers:
+    - no host means no panel; the field sets; accepting stores the text (kept after a reload) as ONE step, and ⌘Z / ⌘⇧Z work;
+    - "Accept all" for two fields is one step, and one undo returns both; a rejected proposal is never applied;
+    - the last edited field is preselected and sent alone;
+    - translating DE → EN writes English and leaves German untouched;
+    - "tailor" sends nothing without a job ad;
+    - the error messages, "Back" and Escape.
+  - **Mac `--selftest-ai` (new): 13/13 with this core.** It covers the Keychain, the request headers and body, the consent text, proposal filtering, the retry after 429, 401 / refusal / bad requests / no key, the key never reaching the page, and the full panel path in real WebKit. A `URLProtocol` stub stands in for Claude, and the test Keychain item is removed afterwards.
+  - **Visual check:** screenshots of the panel (choice and proposals). The singular message for one accepted proposal was added after the first run.
+- **Not checked:** a real call to Claude, because that needs the owner's own Anthropic key, which only the owner enters.
+- **Gates:** `python3 tools/suite.py index-test.html --mac` → **SUITE: ALL PASS, 37 steps** (24.3 min; report `reports/suite-20261019-0111-V615-2b70c046.md`; the label still reads V615 until promotion). New steps: `ai_test` 12/12 and Mac `--selftest-ai` 13/13. `storage_trace` against production: IDENTICAL after every step. Golden: no visual regression. `pdf_check` desktop and phone: ALL PASS. `docx_test` 23/23. All seven Mac self-tests PASS.
+
+### Release record — V617 (2026-10-19) — the AI co-author in "draft mode" (DeepSeek review B3; V616)
+
+**Promoted on the owner's instruction** ("ateher Promovoje"), after the owner's decisions recorded as Mac D-010 (Claude, the Mac app only, consent on every request, four tasks). V617 is V616 plus the build label and its history line. A line diff confirmed that nothing else differs.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V616 | `window.CVAI`, the AI co-author: a panel opened from the Mac menu "Bashkautori AI" sends the chosen texts to the app (`CVHost.aiPropose`); Claude's proposals come back as cards that the owner accepts or rejects one by one; a group of acceptances is one undo step; translating writes into the target language | Functional (Mac only) | An accepted proposal is saved like typed text; nothing new is stored, no migration |
+
+**Delta-audit (execution surface).**
+- `CVAI` only runs when the Mac app opens it and only acts on a click.
+- In a browser `CVAI.open` returns `false`, and nothing else calls it.
+- The only change to existing code is `window.__cvApplySnapshot`, exposed from the AppState history bridge (the same path undo and redo use). Normal typing and saving are unchanged: `storage_trace` against V615 is IDENTICAL after every step.
+
+**Device gate:** the real Mac app with this core.
+- `--selftest-ai` covers the full path: menu task → panel → bridge → consent text → the stubbed Claude response → card → accept → the text changes (line break kept) → one history step.
+- **Not yet done:** a real call to Claude. The owner's own key is needed for it (menu Bashkautori AI → Çelësi i Claude…).
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v617-20261019-122124` (= V615, `0bc12c45…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v617-20261019-122124` (= V616). It went to the Trash folder afterwards under the keep-seven rule; it has the same bytes as `616.html`.
+- **Identity:** `md5 -q index.html index-test.html 617.html | sort -u` printed one hash (`46e75b7d…`).
+- **Keep-seven rule, applied after the copy:** `610.html`, the previous rollback `index.html.bak-pre-v615-20261018-142631` (= V613, same bytes as `613.html`) and the sandbox backups went to the Trash folder `ProjectS-pastrim-2026-10-18`. They are still in git history.
+
+**Gates on the candidate (bit-identical to the promoted file):** `python3 tools/suite.py index-test.html --mac` → **SUITE: ALL PASS, 37 steps** (24.1 min; report `reports/suite-20261019-1221-V617-46e75b7d.md`).
+- **Covered:**
+  - `ai_test` 12/12 and Mac `--selftest-ai` 13/13;
+  - `storage_trace` against V615: IDENTICAL after every step;
+  - golden: no visual regression; `pdf_check` desktop and phone: ALL PASS;
+  - `docx_test` 23/23; all seven Mac self-tests PASS.
+- **On the promoted `index.html`:**
+  - `verify.py --file index.html`: YES;
+  - observatory: 7 terminals, msg 77/77 in de/en/sq, `PROBLEMS: none`.
+
+**Rollback:** production returns to V615 by copying `index.html.bak-pre-v617-20261019-122124` over `index.html` (the command is in *Current baseline*). Nothing is lost: V615 only lacks the co-author panel. The Mac app's menu then reports that the co-author needs core V616 or newer.
 
 ### Release record — V615 (2026-10-18) — the Word certificate exactly like the A4 page (V614)
 
@@ -494,61 +522,6 @@ Core V608: 13/13. Core V607: the two undo checks FAIL. On the web, `undo_test.mj
 | Observatory on production | `V609`; 7 terminals; 0 duplicate ids; msg 70/70 in de/en/sq; **`PROBLEMS: none`** |
 
 **Rollback:** production returns to V607 by copying `index.html.bak-pre-v609-20261008-172128` over `index.html` (the command is in *Current baseline*). Nothing is lost: V607 only loses the profile-photo undo. For a rollback below V607, read the caveat in *Release record — V607*.
-
-### Release record — V607 (2026-10-08) — Mac Phase 5: core architecture, typed text kept, listeners, dead CSS (V598–V606)
-
-**Promoted on the owner's instruction** ("promovoje"). Before that, the owner had asked me to run every test myself and draw conclusions ("beji ti te gjitha testet dhe dile ne konkluzione").
-- **The real Mac app, document path.** A new self-test `--selftest-typing` checks the core in the real Mac app, through the real `.uicv` path (type, save to disk, reopen in a new core).
-  - Core V606: 10/10.
-  - Core V597, production until now: 8 failures. All six text fields were lost, and the English title edit landed in the German title.
-- **The real Mac app, existing self-tests** on core V606: `--selftest`, `--selftest-doc` 11/11, `--selftest-ui` 8/8, `--selftest-photos` 21/21.
-- V607 is V606 plus the build label and its history line. A diff confirmed that nothing else differs.
-
-| Version | Change | Class | Persistence |
-|---|---|---|---|
-| V598 | Photo toolbar titles and tips follow the flag (de/en/sq), with stable `data-tip` keys; the blur tip key fixed (F-6) | UI text | none |
-| V599 | One draw per frame while dragging a photo; the pending move is applied on release (F-7) | Performance | none |
-| V600 | `CVDefaultState` / `CVStateMigration` split out of `StorageManager` (R-2) | Structure | none (identical states) |
-| V601 | Unreadable stored data kept as `<key>.unreadable` and announced once (R-11) | Data safety | new `.unreadable` copy only on damaged data |
-| V602 | The photo tip shows above the 📌 pin (owner's decision) | UI | none |
-| V603 | BUG-017 instrument CVFrame removed (owner's decision); the old key is deleted at start | Removal | `cv_bug017_frames` deleted |
-| V604 | Typed text kept on reopen: letter, signature, titles, professional description, the Skills/Hobby label. Two "stale text" rules removed. LocalizedText complete de/en/sq. ⌘Z returns the flag, and the old AppState undo is no longer reached (R-12) | **Data-loss fix** | the author's text now stored where it is read; overrides carry `"en":"","sq":""` |
-| V605 | `_makeEditable` wires once: no listener growth, and titles edited after a language switch stay in that language. Swatches delegated (R-6) | **Data-corruption fix**, performance | none (`storage_trace` identical) |
-| V606 | Dead `.tpl-minimal` CSS removed (R-5): `!important` 973 → 911 | Removal | none (`storage_trace` identical) |
-
-Also in this cycle, outside the artifact:
-- F-10: `RELEASE_PROCESS.md` went from 315 KB to 70 KB, with the old records moved to `RELEASE_ARCHIVE.md`.
-- R-3: the owner map in `ARCHITECTURE.md` §8.
-- New tools: `persist_test`, `persist_webkit`, `undo_test`, `listener_test`, `listener_map`, `important_test`, `eval_page`, `module_map`; the Mac `--selftest-typing`.
-
-**Device gate (Neni 72): passed in the real Mac app (WebKit, `.uicv`), in WebKit (`webkit_run`) and in Chrome.** The owner tested V598 and V599 by hand on the Mac.
-
-**Backups:**
-- **Production:** `index.html.bak-pre-v607-20261008-161042` (= V597, `bc04157e…`), hash-verified before the copy and again after it.
-- **Sandbox:** `index-test.html.bak-pre-v607-20261008-161042` (= V606, `7d073be5…`).
-- **Identity:** `md5 -q index.html index-test.html 607.html | sort -u` printed one hash (`2762b427…`).
-
-| Sanity check after promotion (Neni 72.4) | Result |
-|---|---|
-| `python3 tools/verify.py --file index.html` | PASS 25, WARN 1 (`ui.langChanged`), FAIL 0 → YES |
-| Golden image export | 0.000 % in all six cases |
-| `pdf_check` on `index.html`, desktop and `--mobile` | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
-| `photo_test` / `cvhost_test` / `cvdoc_test` / `photohost_test` / `phototips_test` / `state_test` | ALL PASS each |
-| `storage_trace.mjs 606.html index.html` | IDENTICAL after every step; `--fail` and `--ai` clean |
-| `persist_test --fail` / `undo_test` / `listener_test --fail` | 88/88 kept, languages separated / 14/14 as designed / no growth |
-| `important_test` | 911 in the file, 0 proven dead |
-| `persist_webkit.js` (WebKit) | 7/7 |
-| Observatory on production | `V607`; 7 terminals; 0 duplicate ids; msg 70/70 in de/en/sq; **`PROBLEMS: none`** |
-
-**Rollback:** production returns to V597 by copying `index.html.bak-pre-v607-20261008-161042` over `index.html` (the command is in *Current baseline*).
-
-**Rollback caveat.** This was read from V597's normalizer, not measured, and is stated before it is needed.
-- **The letter would be lost.** V597 still has the "stale letter" rule. A letter written under V607 would be replaced by the default as soon as V597 loads and saves the CV.
-- **Two titles would be dropped.** V597 removes `terminal2.skills.title` and `terminal6.title` (the Skills card and letter titles) on its next save.
-- **What survives:**
-  - the professional description, because V597 reads the same `content.terminal1.professional_desc`;
-  - the Skills/Hobby override, kept in the data, although V597 shows the dictionary text.
-- **Before any rollback:** export the letter as a PDF, or keep a copy of the `.uicv` document.
 
 ## Production mirror invariant
 

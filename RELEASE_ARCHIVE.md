@@ -1104,6 +1104,51 @@ The external review asked for C1 (normalise) and C2 (no remote fallback) as one 
 - Golden image export: 6/6 at 0.000 %.
 - `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
 
+#### Sandbox ahead of production — V614 (2026-10-09) — the Word certificate exactly like the A4 page — CLOSED by the V615 promotion
+
+**Closed on 2026-10-18:** `index-test.html` = `index.html` = `615.html`.
+
+Production is V613 (`f7a0c614…`).
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V614 | `614.html` | `84532dd26d81ea28bd415e2bba9c7759` | 1,505,284 | `index-test.html.bak-pre-v614-20261009-154002` (= V613, `f7a0c614…`) |
+
+**V614 = the Word certificate comes out identical to the A4 certificate, on the same 2 pages.** This was the owner's request after V613: "Wordi kur shkarkohet duhet te dali identik 2 faqe sic eshte te: VËRTETIM PUNE DHE REFERENCË PROFESIONALE". V611 had given the certificate the CV's Word style (Arial, coloured headings).
+- **Same source, same pagination as the PDF.** The certificate is built from the copy that `renderDocToA4Pdf` uses: the `.a4-page` cloned into `.a4-export-host` and paginated by `__a4PaginateRoot`, the editor's own engine.
+  - Every block and every list item knows its page.
+  - Every page becomes a Word section with that page's margins.
+  - So the page breaks exactly where it breaks on screen and in the PDF.
+- **Same look:**
+  - Fira Mono throughout: the same font as the A4 page, **embedded in the `.docx`**, so Word shows it even where it is not installed.
+  - Sizes, colours, bold and italic per run (e.g. a grey label with a bold value) and letter spacing come from the computed style.
+  - Also from the computed style: alignment (justified paragraphs), exact line heights, the thin rule under the headings, and the spacing taken from the real block positions.
+  - The short bar under the title (`::after`) is a small image.
+  - The list diamonds use a symbol font in the same navy, because Fira Mono has no ◆.
+  - Photos placed on the certificate (a stamp, a signature) are drawn as they look (crop, flip, corners, border, opacity; filters baked as for the PDF). They are placed at the same spot on their page, rotated as on screen.
+- **Two measured details:**
+  - **Font size.** Word knows sizes only in half points, and the certificate text is 12.5 px = 9.375 pt. Every measure is therefore scaled by the same factor, 19/18.75 (+1.3 %): text 9.5 pt, text width, spacing and heights. A line then holds exactly as many characters as on screen, because Fira Mono is monospaced.
+  - **Justified lines.** In its modern layout mode (15), Word **compresses** the spaces of justified lines and fits more words than the page; it was measured: "…gjatë periudhës" instead of "…gjatë". In mode 14 (Word 2010) it breaks lines like the browser. So the certificate is written in mode 14, and Word shows "Compatibility Mode" in its title bar. The document stays fully editable. The CV and the letter keep mode 15.
+- **The font in the page.** A new block `window.CVDocxFonts` (+54 KB) holds Fira Mono Regular and Bold:
+  - in Word's obfuscated form (`.odttf`, ECMA-376 §17.8.1), deflated;
+  - written straight into the ZIP (the ZIP writer now also takes ready-deflated entries);
+  - with the font's own copyright line and the SIL OFL 1.1 notice (fsType 0: embedding allowed).
+- **How the font block is made:**
+  - **`tools/docx_fonts.py` (new)** generates it from the page's own WOFF2 subsets. **`tools/docx_fonts.swift` (new)** turns WOFF2 into TTF with macOS CoreText; fontTools then merges latin and latin-ext and checks the Albanian and German letters.
+  - It is deterministic: fontTools' merge had stamped the current time into `head`; the dates now come from the source font.
+  - A new suite step checks that the block is up to date with the page.
+- **`CVDocx.build` now returns a Promise,** because the certificate waits for the pagination and the photos. The tests were updated.
+- **Measured:**
+  - **`tools/word_check.sh` (real Microsoft Word 16.113.3).** A fresh certificate in Word against the app's own A4 PDF (`pdf_export.mjs`): **2 / 2 pages, 35+31 lines on each side, every line identical.** The only text difference was the ◆ glyph, which is a CSS shape in the PDF.
+  - Word's PDF uses the embedded `FiraMono-Regular` / `FiraMono-Bold`. Fira Mono is not installed on this Mac, so they came from the document.
+  - A certificate with a stamp photo (rotated −12°) shows it at the same place on page 2.
+  - **`tools/docx_test.mjs`: 23/23.** New checks:
+    - the certificate has Fira Mono embedded, one section per A4 page, the diamond list, the title bar and mode 14;
+    - the CV and the letter are unchanged (no embedded font, mode 15).
+  - **`tools/docx_webkit.js`: PASS.** In WebKit the certificate has 2 sections and Fira Mono runs, and the font parts are in the ZIP.
+  - **Visual check:** Word's pages next to the app's PDF pages, with and without a photo.
+- **Gates:** `python3 tools/suite.py index-test.html --mac` → **SUITE: ALL PASS, 35 steps** (22.9 min; report `reports/suite-20261009-1558-V613-84532dd2.md`; the label still reads V613 until promotion). `storage_trace` against production: IDENTICAL after every step. Golden: no visual regression. `pdf_check` desktop and phone: ALL PASS. `docx_fonts`: UP TO DATE. All six Mac self-tests PASS, `wordExport` and `menuWord` included. `tools/word_check.sh` (real Word): ALL PASS, the certificate identical line for line.
+
 #### Sandbox ahead of production — V610–V612 (2026-10-09) — the CV as a file, Word export (DeepSeek review B1, B2) — CLOSED by the V613 promotion
 
 **Closed on 2026-10-09:** `index-test.html` = `index.html` = `613.html`.
@@ -2328,6 +2373,61 @@ Two implementations of one function go against Neni 9.1. The live path was alway
 - `pdf_check` desktop and `--mobile`: ALL PASS.
 - `verify.py`: YES (msg keys 60/60, all referenced).
 - The file is 10,342 bytes smaller (1,346,255 → 1,335,517).
+
+### Release record — V607 (2026-10-08) — Mac Phase 5: core architecture, typed text kept, listeners, dead CSS (V598–V606)
+
+**Promoted on the owner's instruction** ("promovoje"). Before that, the owner had asked me to run every test myself and draw conclusions ("beji ti te gjitha testet dhe dile ne konkluzione").
+- **The real Mac app, document path.** A new self-test `--selftest-typing` checks the core in the real Mac app, through the real `.uicv` path (type, save to disk, reopen in a new core).
+  - Core V606: 10/10.
+  - Core V597, production until now: 8 failures. All six text fields were lost, and the English title edit landed in the German title.
+- **The real Mac app, existing self-tests** on core V606: `--selftest`, `--selftest-doc` 11/11, `--selftest-ui` 8/8, `--selftest-photos` 21/21.
+- V607 is V606 plus the build label and its history line. A diff confirmed that nothing else differs.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V598 | Photo toolbar titles and tips follow the flag (de/en/sq), with stable `data-tip` keys; the blur tip key fixed (F-6) | UI text | none |
+| V599 | One draw per frame while dragging a photo; the pending move is applied on release (F-7) | Performance | none |
+| V600 | `CVDefaultState` / `CVStateMigration` split out of `StorageManager` (R-2) | Structure | none (identical states) |
+| V601 | Unreadable stored data kept as `<key>.unreadable` and announced once (R-11) | Data safety | new `.unreadable` copy only on damaged data |
+| V602 | The photo tip shows above the 📌 pin (owner's decision) | UI | none |
+| V603 | BUG-017 instrument CVFrame removed (owner's decision); the old key is deleted at start | Removal | `cv_bug017_frames` deleted |
+| V604 | Typed text kept on reopen: letter, signature, titles, professional description, the Skills/Hobby label. Two "stale text" rules removed. LocalizedText complete de/en/sq. ⌘Z returns the flag, and the old AppState undo is no longer reached (R-12) | **Data-loss fix** | the author's text now stored where it is read; overrides carry `"en":"","sq":""` |
+| V605 | `_makeEditable` wires once: no listener growth, and titles edited after a language switch stay in that language. Swatches delegated (R-6) | **Data-corruption fix**, performance | none (`storage_trace` identical) |
+| V606 | Dead `.tpl-minimal` CSS removed (R-5): `!important` 973 → 911 | Removal | none (`storage_trace` identical) |
+
+Also in this cycle, outside the artifact:
+- F-10: `RELEASE_PROCESS.md` went from 315 KB to 70 KB, with the old records moved to `RELEASE_ARCHIVE.md`.
+- R-3: the owner map in `ARCHITECTURE.md` §8.
+- New tools: `persist_test`, `persist_webkit`, `undo_test`, `listener_test`, `listener_map`, `important_test`, `eval_page`, `module_map`; the Mac `--selftest-typing`.
+
+**Device gate (Neni 72): passed in the real Mac app (WebKit, `.uicv`), in WebKit (`webkit_run`) and in Chrome.** The owner tested V598 and V599 by hand on the Mac.
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v607-20261008-161042` (= V597, `bc04157e…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v607-20261008-161042` (= V606, `7d073be5…`).
+- **Identity:** `md5 -q index.html index-test.html 607.html | sort -u` printed one hash (`2762b427…`).
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `python3 tools/verify.py --file index.html` | PASS 25, WARN 1 (`ui.langChanged`), FAIL 0 → YES |
+| Golden image export | 0.000 % in all six cases |
+| `pdf_check` on `index.html`, desktop and `--mobile` | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
+| `photo_test` / `cvhost_test` / `cvdoc_test` / `photohost_test` / `phototips_test` / `state_test` | ALL PASS each |
+| `storage_trace.mjs 606.html index.html` | IDENTICAL after every step; `--fail` and `--ai` clean |
+| `persist_test --fail` / `undo_test` / `listener_test --fail` | 88/88 kept, languages separated / 14/14 as designed / no growth |
+| `important_test` | 911 in the file, 0 proven dead |
+| `persist_webkit.js` (WebKit) | 7/7 |
+| Observatory on production | `V607`; 7 terminals; 0 duplicate ids; msg 70/70 in de/en/sq; **`PROBLEMS: none`** |
+
+**Rollback:** production returns to V597 by copying `index.html.bak-pre-v607-20261008-161042` over `index.html` (the command is in *Current baseline*).
+
+**Rollback caveat.** This was read from V597's normalizer, not measured, and is stated before it is needed.
+- **The letter would be lost.** V597 still has the "stale letter" rule. A letter written under V607 would be replaced by the default as soon as V597 loads and saves the CV.
+- **Two titles would be dropped.** V597 removes `terminal2.skills.title` and `terminal6.title` (the Skills card and letter titles) on its next save.
+- **What survives:**
+  - the professional description, because V597 reads the same `content.terminal1.professional_desc`;
+  - the Skills/Hobby override, kept in the data, although V597 shows the dictionary text.
+- **Before any rollback:** export the letter as a PDF, or keep a copy of the `.uicv` document.
 
 ### Release record — V597 (2026-10-07) — Mac Phase 4: photos through the Mac's own tools (V596)
 
