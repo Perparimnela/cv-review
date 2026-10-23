@@ -13,7 +13,7 @@ edits is gone. Every capability and every decision the project holds today is no
 
 ---
 
-## Manifest — what the folder holds now (2026-10-19, after the V617 promotion; sandbox = production)
+## Manifest — what the folder holds now (2026-10-23, after the V619 promotion; sandbox = production)
 
 > A lean inventory, added after the external review (point 8). It is generated from the files themselves and their hashes. The narrative sections below remain the forensic history; this table is the operational list. Roles: **production** (live), **sandbox** (work in progress), **release snapshot** (immutable, Neni 6.5), **rollback** (production backup taken before a promotion), **sandbox iteration**, **test fixture**.
 
@@ -30,25 +30,32 @@ edits is gone. Every capability and every decision the project holds today is no
 > - **After the V615 promotion (2026-10-18), the same rule:** `608.html`, the previous rollback (= V609, same bytes as `609.html`) and the sandbox backups went to the same Trash folder (listed in `LISTA.json`).
 > - **2026-10-19:** with the V616 snapshot, `609.html` moved to the same Trash folder (keep-seven rule).
 > - **After the V617 promotion (2026-10-19):** `610.html`, the previous rollback (= V613) and the sandbox backups moved there too.
+> - **2026-10-23:** with the V618 snapshot, `611.html` moved to the same Trash folder (keep-seven rule).
+> - **After the V619 promotion (2026-10-23):** `612.html`, the previous rollback (= V615) and the sandbox backups moved there too.
 > - The narrative sections below are history, and many files they name are no longer in the folder.
 
 | File | Holds | md5 | Role |
 |---|---|---|---|
-| `index.html` | V617 | `46e75b7d` | production |
-| `index-test.html` | V617 | `46e75b7d` | sandbox (= production) |
-| `611.html` | V611 | `69bdac5b` | sandbox iteration |
-| `612.html` | V612 | `d61932f7` | sandbox iteration |
+| `index.html` | V619 | `32075571` | production |
+| `index-test.html` | V619 | `32075571` | sandbox (= production) |
 | `613.html` | V613 | `f7a0c614` | release snapshot |
 | `614.html` | V614 | `84532dd2` | sandbox iteration |
 | `615.html` | V615 | `0bc12c45` | release snapshot |
 | `616.html` | V616 | `2b70c046` | sandbox iteration |
 | `617.html` | V617 | `46e75b7d` | release snapshot |
-| `index.html.bak-pre-v617-20261019-122124` | V615 | `0bc12c45` | rollback — **operational** (one release back) |
+| `618.html` | V618 | `402671e1` | sandbox iteration |
+| `619.html` | V619 | `32075571` | release snapshot |
+| `index.html.bak-pre-v619-20261023-012104` | V617 | `46e75b7d` | rollback — **operational** (one release back) |
 | `tools/photo/legacy-v573.html` | V573 | `91abe8b1` | test fixture — `photo_test` (the last version with the old photo storage format) |
 
 7 snapshots, 1 production backup, 1 test fixture. Verify any row with `md5 -q <file>`.
 
 ---
+
+> **Sandbox deviation (named, 2026-10-23, after V617) — CLOSED on 2026-10-23 by the V619 promotion:**
+> `index-test.html` = `index.html` = `619.html` = V619 (`32075571…`). The sandbox had run ahead as V618.
+> Sandbox backup: `index-test.html.bak-pre-v618-20261023-002650` (= V617).
+> V618: five co-author fixes from the full recheck (empty target field when translating, a late answer after closing, closing while accepting, a missing field shown as accepted). `ai_test` 18/18, Mac `--selftest-ai` 15/15.
 
 > **Sandbox deviation (named, 2026-10-19, after V615) — CLOSED on 2026-10-19 by the V617 promotion:**
 > `index-test.html` = `index.html` = `617.html` = V617 (`46e75b7d…`). The sandbox had run ahead as V616.
@@ -216,6 +223,22 @@ edits is gone. Every capability and every decision the project holds today is no
 > | `index-test.html.bak-pre-v518-20260927-162722` | V517 (= `517.html`) | `1c254fef…` |
 > | `index-test.html.bak-pre-v519-20260927-164542` | V518 (= `518.html`) | `8c55cd79…` |
 
+## `index.html.bak-pre-v619-20261023-012104`
+
+| | |
+|---|---|
+| **Version** | V617 |
+| **Hash (md5)** | `46e75b7d0dbf9f540c7125b956eec180` |
+| **Size** | 1,532,677 bytes |
+
+**Purpose.** **The operational rollback for V619**, promoted 2026-10-23. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It lacks only the five co-author fixes, so the rollback loses no data.
+
+Byte-identical to `617.html`.
+
+```bash
+cp "index.html.bak-pre-v619-20261023-012104" "index.html"
+```
+
 ## `index.html.bak-pre-v617-20261019-122124`
 
 | | |
@@ -224,7 +247,7 @@ edits is gone. Every capability and every decision the project holds today is no
 | **Hash (md5)** | `0bc12c454de888af5476cba1ad2a524a` |
 | **Size** | 1,505,518 bytes |
 
-**Purpose.** **The operational rollback for V617**, promoted 2026-10-19. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It lacks only the AI co-author panel, so the rollback loses no data.
+**Purpose.** The rollback for V617 (operational until the V619 promotion on 2026-10-23; then moved to the Trash under the keep-seven rule, same bytes as `615.html`), promoted 2026-10-19. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It lacks only the AI co-author panel, so the rollback loses no data.
 
 Byte-identical to `615.html`.
 
@@ -959,10 +982,10 @@ was written to stop without attempting automatic recovery.
 
 ## Restoring
 
-**Production is V617 (`46e75b7d…`). To roll back one release, to V615** (no data is lost):
+**Production is V619 (`32075571…`). To roll back one release, to V617** (no data is lost):
 
 ```bash
-cp "index.html.bak-pre-v617-20261019-122124" "index.html"
+cp "index.html.bak-pre-v619-20261023-012104" "index.html"
 ```
 
 Two releases back, to V597 (first read the caveat in *Release record — V607*: a letter written under V607 would be lost): `cp "index.html.bak-pre-v607-20261008-161042" "index.html"`.

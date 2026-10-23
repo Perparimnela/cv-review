@@ -26,9 +26,9 @@
 
 | | Artifact | Hash (md5) | Bytes | Date |
 |---|---|---|---|---|
-| **PRODUCTION** | `index.html` | `46e75b7d0dbf9f540c7125b956eec180` | 1,532,677 | 2026-10-19 |
-| **Release snapshot** | `617.html` | `46e75b7d0dbf9f540c7125b956eec180` | 1,532,677 | 2026-10-19 |
-| **Rollback point** | `index.html.bak-pre-v617-20261019-122124` | `0bc12c454de888af5476cba1ad2a524a` (V615) | 1,505,518 | 2026-10-19 |
+| **PRODUCTION** | `index.html` | `32075571989869adfc05dd620e69beda` | 1,533,736 | 2026-10-23 |
+| **Release snapshot** | `619.html` | `32075571989869adfc05dd620e69beda` | 1,533,736 | 2026-10-23 |
+| **Rollback point** | `index.html.bak-pre-v619-20261023-012104` | `46e75b7d0dbf9f540c7125b956eec180` (V617) | 1,532,677 | 2026-10-23 |
 
 > ### ⚠️ The rollback point is a Release Snapshot, not a backup — corrected 2026-08-29
 >
@@ -54,14 +54,14 @@ artifact, tracked separately, and it changes nothing here: **identity is the has
 CVQualify apparatus `VERSION` = **V482s** (unchanged — ADR-031 is a product change and must not bump
 the apparatus; see "Two versions" below).
 
-**V617 is the reference point for every future audit.** A future delta-audit compares against
-`46e75b7d`. (V615 = `0bc12c45` is the rollback target. Since the cleanup of 2026-10-18 the folder keeps only the last seven versions (now V611–V617); older artifacts are in git history, e.g. `git checkout afc5006 -- 607.html`. Below V607, read the caveat in *Release record — V607*.)
+**V619 is the reference point for every future audit.** A future delta-audit compares against
+`32075571`. (V617 = `46e75b7d` is the rollback target. Since the cleanup of 2026-10-18 the folder keeps only the last seven versions (now V613–V619); older artifacts are in git history, e.g. `git checkout afc5006 -- 607.html`. Below V607, read the caveat in *Release record — V607*.)
 
-`window.CV.build` reports **`V617`** in production — measured from the artifact. Since V509 the label
+`window.CV.build` reports **`V619`** in production — measured from the artifact. Since V509 the label
 is bumped with every version, which is why it can be trusted again; **identity is still the hash.**
 
 ```bash
-cp "index.html.bak-pre-v617-20261019-122124" "index.html"
+cp "index.html.bak-pre-v619-20261023-012104" "index.html"
 ```
 
 ## The test suite — one command (`tools/suite.py`, Phase 6)
@@ -254,6 +254,7 @@ The owner chose that it is **updated after every production release** and carrie
 | 2026-10-08 | V609 (`ec249884…`) | `692780c2…` | public commit `3b69c26`: all 8 files byte-identical to the package; known-token and generic leak scans clean; the public copy renders (observatory: V609, msg 70/70, PROBLEMS: none); its 9 PDFs contain 0 private tokens (checked before the upload); Pages serving V609, byte-identical (`692780c2`); `lab/bug017.html` still online |
 | 2026-10-09 | V613 (`f7a0c614…`) | `d38e4d31…` | public commit `3e59ab0`: all 8 files byte-identical to the package; known-token and generic leak scans clean; the public copy renders (observatory: PROBLEMS: none); its 9 PDFs **and its 3 Word files (text and all XML, including the author field)** contain 0 private tokens, checked before the upload. A positive control on a private Word file found 11, so the scan is not blind. Pages serving V613, byte-identical (`d38e4d31`); `lab/bug017.html` still online |
 | 2026-10-18 | V615 (`0bc12c45…`) | `df67498d…` | public commit `4f44111`: all 8 files byte-identical to the package; known-token and generic leak scans clean; the public copy renders (observatory: PROBLEMS: none); its 9 PDFs and 3 Word files (text and all XML) contain 0 private tokens, checked before the upload; Pages serving V615, byte-identical (`df67498d`); `lab/bug017.html` still online |
+| 2026-10-19 | V617 (`46e75b7d…`) | `b43a76fa…` | public commit `4fdbdd5`: all 8 files byte-identical to the package (GitHub lists 6 as changed; the two architecture docs did not change); known-token and generic leak scans clean; the public copy renders (observatory: PROBLEMS: none); its 9 PDFs and 3 Word files (text, metadata and all XML) contain 0 private tokens, checked before the upload. The same scan on the private files found 278, so it is not blind. Pages serving V617, byte-identical (`b43a76fa`), about 20 s after the deployment run; `lab/bug017.html` still online |
 
 ## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V550 since 2026-09-30; photo-series rows added at V565, 2026-10-02)
 
@@ -329,53 +330,70 @@ V537's identity (`d2b8a938…`) is untouched: `537.html` and its rollback backup
 
 Moved on 2026-10-08 (Mac Phase 5, audit F-10). This file had grown to 315 KB and was hard to read. The text was moved **byte for byte, in its original order**; nothing was edited, summarised or dropped.
 - **Moved:**
-  - closed sandbox sections V510–V564 (closed by V520 … V565) and V566–V614 (closed by V567 … V615);
-  - release records V607 back to V482u, with the note *Sandbox after promotion — V509*.
+  - closed sandbox sections V510–V564 (closed by V520 … V565) and V566–V616 (closed by V567 … V617);
+  - release records V609 back to V482u, with the note *Sandbox after promotion — V509*.
 - **Stays here:**
   - the current baseline, the gates, the public mirror and the device matrix;
-  - the open sandbox section, if any, and the last closed one (V616);
-  - the last four release records (V609–V617);
+  - the open sandbox section, if any, and the last closed one (V618);
+  - the last four release records (V613–V619);
   - the production mirror invariant and the checklist.
 - **From now on:** at each promotion, the sandbox section it closes and any release record older than the last four move to the archive.
 
 ## Sandbox sections and release records (newest first)
 
-#### Sandbox ahead of production — V616 (2026-10-19) — the AI co-author in "draft mode" (DeepSeek review B3) — CLOSED by the V617 promotion
+#### Sandbox ahead of production — V618 (2026-10-23) — fixes from the full recheck (the AI co-author) — CLOSED by the V619 promotion
 
-**Closed on 2026-10-19:** `index-test.html` = `index.html` = `617.html`.
+**Closed on 2026-10-23:** `index-test.html` = `index.html` = `619.html`.
 
-Production is V615 (`0bc12c45…`).
+Production is V617 (`46e75b7d…`).
 
 | Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
 |---|---|---|---|---|
-| V616 | `616.html` | `2b70c04659647b70b5388f93a3c5c696` | 1,532,474 | `index-test.html.bak-pre-v616-20261019-010154` (= V615, `0bc12c45…`) |
+| V618 | `618.html` | `402671e17fa0667e53edf53788310fcf` | 1,533,693 | `index-test.html.bak-pre-v618-20261023-002650` (= V617, `46e75b7d…`) |
 
-**V616 = the AI co-author (`window.CVAI`): Claude proposes, the owner decides.** This is point B3 of the DeepSeek review. The owner's decisions are recorded in Mac `docs/DECISIONS.md` D-010: Claude, the Mac app only, consent on every request, and four tasks (improve, translate, tailor to a job ad, proofread).
-- **Mac app only.** The core asks the app through `CVHost.aiPropose` (Mac `AIAssist.swift`). The app holds the Claude key in the macOS Keychain, so the page never sees it.
-  - It shows a native consent window with exactly the text that will leave the Mac, and calls Claude only after the owner clicks.
-  - The call: `claude-opus-5-5`, JSON-schema output, `fallbacks: "default"`. Only proposals that answer a sent field and change it are kept.
-  - In a browser `CVAI.open` does nothing, so the web and the iPhone have no AI.
-- **The panel** opens from the app's new menu "Bashkautori AI". It has the look of the export sheet, and its texts are in de/en/sq (48 + 1 new `ui` keys per language).
-  - **Which text:** the last edited field (tracked on focus in the page and in the iframe), title and professional summary, work experience, the cover letter (without the sender and recipient blocks), or the whole CV. Names, contacts and dates are never sent.
-  - **Options:** the target language for "translate"; the pasted job ad for "tailor" (nothing is sent without it).
-  - **Proposals:** each one is a card "now → suggestion" with Claude's reason, plus the summary and the token usage. Each card is **accepted or rejected** on its own; "Accept all" takes the rest.
-- **Applying = typing.** An accepted proposal is written through the same path as typing (`insertText`, or text plus an `input` event for multi-line fields), so it is saved in the document like any edit.
-  - **One undo step:** a group of acceptances is recorded as ONE history step "Bashkautori AI". During the group, history is suspended; then the state is snapshotted before and after.
-  - **The same undo path:** ⌘Z / ⌘⇧Z go through the history's own snapshot path. `window.__cvApplySnapshot` is exposed from the AppState bridge rather than copied.
-  - **Field text** is read with the Word export's style-aware reader (`CVDocx.text`), so line breaks survive in WebKit.
-- **Translate** switches to the target language once, then writes there, so the source-language text stays untouched.
+**Why:** the owner asked for a recheck of everything for malfunctions, with fixes ("ribej nje richeck gjithshkaje, per keqfunksionim.. rregulloji ato nese ka!"). The normal paths all passed. A targeted probe of the co-author's edge cases (Chrome, fake Mac host) found **five real defects in V617**. All five are in `window.CVAI`; nothing else in the core changed.
+
+| # | Defect in V617 (measured) | Fix in V618 |
+|---|---|---|
+| 1 | **Translating into an empty field did nothing.** The field list skips empty fields, and the same list was used to find the target. So when the target language's field was still empty (the usual case for a first translation), the proposal was silently dropped (`applied 0`). | `fields(scope, keepEmpty)`: writing looks up empty fields too. Sending still skips them. |
+| 2 | **A late answer after closing the panel threw an error.** Close while Claude is working, reopen another task, and the old answer arrived into the new panel state (`TypeError … reading 'forEach'`). | Each request carries a token; an answer whose request is no longer the panel's current one is ignored. |
+| 3 | **The old answer could replace a newer request.** Close, reopen, ask again: the first answer showed up while the second was still pending. | The same token. |
+| 4 | **Closing the panel while accepting threw an error** (`TypeError … setting 't1.proftext'`). The text was written, but the card update hit the reset state. | The text is still written and the message shown; the card update is skipped when the panel has been closed. |
+| 5 | **A proposal whose field was not found was shown as "accepted".** | Such a card now says "Not applied – field not found" (new `ui` key `aiMissing` in de/en/sq). Only the fields actually written count. |
+
+- **Checked and fine:** preview mode (the same 66 fields are found and an accepted proposal is written; the preview guard blocks typing, not this path).
+- **The i18n "unreferenced keys" warning:** `tools/verify.py` now counts keys built at run time from a prefix written in the code (`'aiT_'+st.task`). The warning is back to the one key it has listed since before V611, `langChanged` (an unused string, harmless).
+- **The Mac app side** (Mac repo, ships with the next build): the request timeout was 150 s, but without streaming the answer arrives in one piece at the end. A long request (the whole CV) could time out and be retried up to three times, paying each time. Now 10 minutes, as in the official SDKs, and no retry after a timeout; a lost connection is still retried. The request shape (`fallbacks: "default"` with `server-side-fallback-2026-07-01`, `output_config.format` JSON schema, effort `medium`, no `thinking`) was checked against the current Claude API documentation and is valid.
 - **Measured:**
-  - **`tools/ai_test.mjs` (new, Chrome with a fake Mac host): 12/12.** It covers:
-    - no host means no panel; the field sets; accepting stores the text (kept after a reload) as ONE step, and ⌘Z / ⌘⇧Z work;
-    - "Accept all" for two fields is one step, and one undo returns both; a rejected proposal is never applied;
-    - the last edited field is preselected and sent alone;
-    - translating DE → EN writes English and leaves German untouched;
-    - "tailor" sends nothing without a job ad;
-    - the error messages, "Back" and Escape.
-  - **Mac `--selftest-ai` (new): 13/13 with this core.** It covers the Keychain, the request headers and body, the consent text, proposal filtering, the retry after 429, 401 / refusal / bad requests / no key, the key never reaching the page, and the full panel path in real WebKit. A `URLProtocol` stub stands in for Claude, and the test Keychain item is removed afterwards.
-  - **Visual check:** screenshots of the panel (choice and proposals). The singular message for one accepted proposal was added after the first run.
-- **Not checked:** a real call to Claude, because that needs the owner's own Anthropic key, which only the owner enters.
-- **Gates:** `python3 tools/suite.py index-test.html --mac` → **SUITE: ALL PASS, 37 steps** (24.3 min; report `reports/suite-20261019-0111-V615-2b70c046.md`; the label still reads V615 until promotion). New steps: `ai_test` 12/12 and Mac `--selftest-ai` 13/13. `storage_trace` against production: IDENTICAL after every step. Golden: no visual regression. `pdf_check` desktop and phone: ALL PASS. `docx_test` 23/23. All seven Mac self-tests PASS.
+  - **`tools/ai_test.mjs`: 18/18** (6 new checks: the empty target field, preview mode, the late answer twice, closing while accepting, the missing field). On V617 the 5 checks for the defects FAIL, so they detect them.
+  - **Mac `--selftest-ai`: 15/15** on a development build with this core (2 new: no retry after a timeout, a retry after a lost connection).
+- **Gates:** `python3 tools/suite.py index-test.html --mac` → **36 of 37 steps PASS** (36.4 min; report `reports/suite-20261023-0034-V618-402671e1.md`). The one failure was `undo_test` hitting the 900 s step timeout with no failed check. Run alone it passed in 190 s, the same as on V617 (189–190 s), and `python3 tools/suite.py index-test.html --only undo_test` → **ALL PASS** (report `reports/suite-20261023-0115-V618-402671e1.md`). It was a hung browser, not a regression; V618 does not touch the history engine. `ai_test` 18/18; `storage_trace` against production: IDENTICAL after every step; golden: no visual regression; `pdf_check` desktop and phone: ALL PASS; `docx_test` 23/23; all seven Mac self-tests PASS on the development build with this core.
+
+### Release record — V619 (2026-10-23) — fixes from the full recheck (the AI co-author; V618)
+
+**Promoted on the owner's instruction** ("promovo"; resumed the next morning with "vazhdojm perseri.."), after the full recheck the owner asked for. V619 is V618 plus the build label and its history line; a diff confirmed that nothing else differs.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V618 | Five fixes in `window.CVAI`: translating into an empty target-language field writes it; a late answer after the panel was closed is ignored (it threw, and could replace a newer request); closing the panel while accepting no longer throws; a proposal whose field is missing says "not applied" instead of "accepted" (new `ui` key `aiMissing`) | Corrective (Mac only) | Nothing new is stored, no migration |
+
+**Delta-audit (execution surface).**
+- Only `window.CVAI` changed (field lookup when writing, a request token, the accept path, one card state), plus one `ui` key in three languages.
+- `CVAI` still runs only when the Mac app opens it. `storage_trace` against V617 is IDENTICAL after every step.
+
+**Device gate:** the real Mac app with this core.
+- The Mac app also gets the request-timeout fix (Mac `3c4fc89`): 10 minutes instead of 150 s, no retry after a timeout.
+- **Still not done:** a real call to Claude. The owner's own key is needed (menu Bashkautori AI → Çelësi i Claude…).
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v619-20261023-012104` (= V617, `46e75b7d…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v619-20261023-012104` (= V618). It went to the Trash folder afterwards under the keep-seven rule; it has the same bytes as `618.html`.
+- **Identity:** `md5 -q index.html index-test.html 619.html | sort -u` printed one hash (`32075571…`).
+- **Keep-seven rule, applied after the copy:** `612.html`, the previous rollback `index.html.bak-pre-v617-20261019-122124` (= V615, same bytes as `615.html`) and the sandbox backups went to the Trash folder `ProjectS-pastrim-2026-10-18`. The tracked ones are still in git history.
+
+**Gates on the candidate (bit-identical to the promoted file):** `python3 tools/suite.py index-test.html --mac` → **SUITE: ALL PASS, 37 steps** (26.5 min; report `reports/suite-20261023-1041-V619-32075571.md`; the first run the night before was interrupted when the session ended and left no report). `ai_test` 18/18; `undo_test` 191 s; `storage_trace` against production: IDENTICAL after every step; golden: no visual regression; `pdf_check` desktop and phone: ALL PASS; `docx_test` 23/23; all seven Mac self-tests PASS on the development build with this core. After the copy: `verify` RELEASE CANDIDATE YES; observatory on `index.html`: PROBLEMS none.
+
+**Rollback:** production returns to V617 by copying `index.html.bak-pre-v619-20261023-012104` over `index.html` (the command is in *Current baseline*). Nothing is lost: V617 only lacks the five co-author fixes.
 
 ### Release record — V617 (2026-10-19) — the AI co-author in "draft mode" (DeepSeek review B3; V616)
 
@@ -488,40 +506,6 @@ Production is V615 (`0bc12c45…`).
   - `tools/word_check.sh index.html` (real Microsoft Word): ALL PASS.
 
 **Rollback:** production returns to V609 by copying `index.html.bak-pre-v613-20261009-132431` over `index.html` (the command is in *Current baseline*). Nothing is lost: V609 only lacks the file save/open and the Word export. A CV opened from a file stays, because it is stored in the same keys.
-
-### Release record — V609 (2026-10-08) — the profile photo can be undone (V608)
-
-**Promoted on the owner's instruction** ("promovo"), after the owner's decision "shtoje" and my own test run. V609 is V608 plus the build label and its history line; a diff confirmed that nothing else differs.
-
-| Version | Change | Class | Persistence |
-|---|---|---|---|
-| V608 | Uploading a profile photo records a `project` step *Foto e profilit*. ⌘Z returns the previous picture (in a Mac document also its bytes, or none for the default picture), and ⌘⇧Z returns the new one | Undo | none on the web (`storage_trace` identical); in a Mac document, undo and redo write the profile bytes as an upload does |
-
-**Device gate (Neni 72): passed in the real Mac app.** `--selftest-typing` (extended) ran on core V608, through a real `.uicv`:
-- upload A, then B;
-- ⌘Z gives A; ⌘Z again gives the default picture with no bytes left;
-- ⌘⇧Z twice gives A, then B;
-- B is still there after saving and reopening.
-
-Core V608: 13/13. Core V607: the two undo checks FAIL. On the web, `undo_test.mjs`: recorded, undone and redone.
-
-**Backups:**
-- **Production:** `index.html.bak-pre-v609-20261008-172128` (= V607, `2762b427…`), hash-verified before the copy and again after it.
-- **Sandbox:** `index-test.html.bak-pre-v609-20261008-172128` (= V608, `ebfd8f2e…`).
-- **Identity:** `md5 -q index.html index-test.html 609.html | sort -u` printed one hash (`ec249884…`).
-
-| Sanity check after promotion (Neni 72.4) | Result |
-|---|---|
-| `python3 tools/verify.py --file index.html` | PASS 25, WARN 1 (`ui.langChanged`), FAIL 0 → YES |
-| Golden image export | 0.000 % in all six cases |
-| `pdf_check` on `index.html`, desktop and `--mobile` | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
-| `photo_test` / `cvhost_test` / `cvdoc_test` / `photohost_test` / `phototips_test` / `state_test` | ALL PASS each |
-| `storage_trace.mjs 608.html index.html` | IDENTICAL after every step; `--fail` and `--ai` clean |
-| `persist_test --fail` / `undo_test` / `listener_test --fail` | 88/88 / 13/14 undo, 14/14 as designed / no growth |
-| `important_test` / `persist_webkit.js` | 0 proven dead / 7/7 |
-| Observatory on production | `V609`; 7 terminals; 0 duplicate ids; msg 70/70 in de/en/sq; **`PROBLEMS: none`** |
-
-**Rollback:** production returns to V607 by copying `index.html.bak-pre-v609-20261008-172128` over `index.html` (the command is in *Current baseline*). Nothing is lost: V607 only loses the profile-photo undo. For a rollback below V607, read the caveat in *Release record — V607*.
 
 ## Production mirror invariant
 

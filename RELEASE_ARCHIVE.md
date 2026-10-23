@@ -1104,6 +1104,43 @@ The external review asked for C1 (normalise) and C2 (no remote fallback) as one 
 - Golden image export: 6/6 at 0.000 %.
 - `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
 
+#### Sandbox ahead of production — V616 (2026-10-19) — the AI co-author in "draft mode" (DeepSeek review B3) — CLOSED by the V617 promotion
+
+**Closed on 2026-10-19:** `index-test.html` = `index.html` = `617.html`.
+
+Production is V615 (`0bc12c45…`).
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V616 | `616.html` | `2b70c04659647b70b5388f93a3c5c696` | 1,532,474 | `index-test.html.bak-pre-v616-20261019-010154` (= V615, `0bc12c45…`) |
+
+**V616 = the AI co-author (`window.CVAI`): Claude proposes, the owner decides.** This is point B3 of the DeepSeek review. The owner's decisions are recorded in Mac `docs/DECISIONS.md` D-010: Claude, the Mac app only, consent on every request, and four tasks (improve, translate, tailor to a job ad, proofread).
+- **Mac app only.** The core asks the app through `CVHost.aiPropose` (Mac `AIAssist.swift`). The app holds the Claude key in the macOS Keychain, so the page never sees it.
+  - It shows a native consent window with exactly the text that will leave the Mac, and calls Claude only after the owner clicks.
+  - The call: `claude-opus-5-5`, JSON-schema output, `fallbacks: "default"`. Only proposals that answer a sent field and change it are kept.
+  - In a browser `CVAI.open` does nothing, so the web and the iPhone have no AI.
+- **The panel** opens from the app's new menu "Bashkautori AI". It has the look of the export sheet, and its texts are in de/en/sq (48 + 1 new `ui` keys per language).
+  - **Which text:** the last edited field (tracked on focus in the page and in the iframe), title and professional summary, work experience, the cover letter (without the sender and recipient blocks), or the whole CV. Names, contacts and dates are never sent.
+  - **Options:** the target language for "translate"; the pasted job ad for "tailor" (nothing is sent without it).
+  - **Proposals:** each one is a card "now → suggestion" with Claude's reason, plus the summary and the token usage. Each card is **accepted or rejected** on its own; "Accept all" takes the rest.
+- **Applying = typing.** An accepted proposal is written through the same path as typing (`insertText`, or text plus an `input` event for multi-line fields), so it is saved in the document like any edit.
+  - **One undo step:** a group of acceptances is recorded as ONE history step "Bashkautori AI". During the group, history is suspended; then the state is snapshotted before and after.
+  - **The same undo path:** ⌘Z / ⌘⇧Z go through the history's own snapshot path. `window.__cvApplySnapshot` is exposed from the AppState bridge rather than copied.
+  - **Field text** is read with the Word export's style-aware reader (`CVDocx.text`), so line breaks survive in WebKit.
+- **Translate** switches to the target language once, then writes there, so the source-language text stays untouched.
+- **Measured:**
+  - **`tools/ai_test.mjs` (new, Chrome with a fake Mac host): 12/12.** It covers:
+    - no host means no panel; the field sets; accepting stores the text (kept after a reload) as ONE step, and ⌘Z / ⌘⇧Z work;
+    - "Accept all" for two fields is one step, and one undo returns both; a rejected proposal is never applied;
+    - the last edited field is preselected and sent alone;
+    - translating DE → EN writes English and leaves German untouched;
+    - "tailor" sends nothing without a job ad;
+    - the error messages, "Back" and Escape.
+  - **Mac `--selftest-ai` (new): 13/13 with this core.** It covers the Keychain, the request headers and body, the consent text, proposal filtering, the retry after 429, 401 / refusal / bad requests / no key, the key never reaching the page, and the full panel path in real WebKit. A `URLProtocol` stub stands in for Claude, and the test Keychain item is removed afterwards.
+  - **Visual check:** screenshots of the panel (choice and proposals). The singular message for one accepted proposal was added after the first run.
+- **Not checked:** a real call to Claude, because that needs the owner's own Anthropic key, which only the owner enters.
+- **Gates:** `python3 tools/suite.py index-test.html --mac` → **SUITE: ALL PASS, 37 steps** (24.3 min; report `reports/suite-20261019-0111-V615-2b70c046.md`; the label still reads V615 until promotion). New steps: `ai_test` 12/12 and Mac `--selftest-ai` 13/13. `storage_trace` against production: IDENTICAL after every step. Golden: no visual regression. `pdf_check` desktop and phone: ALL PASS. `docx_test` 23/23. All seven Mac self-tests PASS.
+
 #### Sandbox ahead of production — V614 (2026-10-09) — the Word certificate exactly like the A4 page — CLOSED by the V615 promotion
 
 **Closed on 2026-10-18:** `index-test.html` = `index.html` = `615.html`.
@@ -2373,6 +2410,40 @@ Two implementations of one function go against Neni 9.1. The live path was alway
 - `pdf_check` desktop and `--mobile`: ALL PASS.
 - `verify.py`: YES (msg keys 60/60, all referenced).
 - The file is 10,342 bytes smaller (1,346,255 → 1,335,517).
+
+### Release record — V609 (2026-10-08) — the profile photo can be undone (V608)
+
+**Promoted on the owner's instruction** ("promovo"), after the owner's decision "shtoje" and my own test run. V609 is V608 plus the build label and its history line; a diff confirmed that nothing else differs.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V608 | Uploading a profile photo records a `project` step *Foto e profilit*. ⌘Z returns the previous picture (in a Mac document also its bytes, or none for the default picture), and ⌘⇧Z returns the new one | Undo | none on the web (`storage_trace` identical); in a Mac document, undo and redo write the profile bytes as an upload does |
+
+**Device gate (Neni 72): passed in the real Mac app.** `--selftest-typing` (extended) ran on core V608, through a real `.uicv`:
+- upload A, then B;
+- ⌘Z gives A; ⌘Z again gives the default picture with no bytes left;
+- ⌘⇧Z twice gives A, then B;
+- B is still there after saving and reopening.
+
+Core V608: 13/13. Core V607: the two undo checks FAIL. On the web, `undo_test.mjs`: recorded, undone and redone.
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v609-20261008-172128` (= V607, `2762b427…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v609-20261008-172128` (= V608, `ebfd8f2e…`).
+- **Identity:** `md5 -q index.html index-test.html 609.html | sort -u` printed one hash (`ec249884…`).
+
+| Sanity check after promotion (Neni 72.4) | Result |
+|---|---|
+| `python3 tools/verify.py --file index.html` | PASS 25, WARN 1 (`ui.langChanged`), FAIL 0 → YES |
+| Golden image export | 0.000 % in all six cases |
+| `pdf_check` on `index.html`, desktop and `--mobile` | **ALL PASS: TEXT, ORDER, UNICODE and VISUAL 9/9 each** |
+| `photo_test` / `cvhost_test` / `cvdoc_test` / `photohost_test` / `phototips_test` / `state_test` | ALL PASS each |
+| `storage_trace.mjs 608.html index.html` | IDENTICAL after every step; `--fail` and `--ai` clean |
+| `persist_test --fail` / `undo_test` / `listener_test --fail` | 88/88 / 13/14 undo, 14/14 as designed / no growth |
+| `important_test` / `persist_webkit.js` | 0 proven dead / 7/7 |
+| Observatory on production | `V609`; 7 terminals; 0 duplicate ids; msg 70/70 in de/en/sq; **`PROBLEMS: none`** |
+
+**Rollback:** production returns to V607 by copying `index.html.bak-pre-v609-20261008-172128` over `index.html` (the command is in *Current baseline*). Nothing is lost: V607 only loses the profile-photo undo. For a rollback below V607, read the caveat in *Release record — V607*.
 
 ### Release record — V607 (2026-10-08) — Mac Phase 5: core architecture, typed text kept, listeners, dead CSS (V598–V606)
 
