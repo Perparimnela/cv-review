@@ -26,9 +26,9 @@
 
 | | Artifact | Hash (md5) | Bytes | Date |
 |---|---|---|---|---|
-| **PRODUCTION** | `index.html` | `32075571989869adfc05dd620e69beda` | 1,533,736 | 2026-10-23 |
-| **Release snapshot** | `619.html` | `32075571989869adfc05dd620e69beda` | 1,533,736 | 2026-10-23 |
-| **Rollback point** | `index.html.bak-pre-v619-20261023-012104` | `46e75b7d0dbf9f540c7125b956eec180` (V617) | 1,532,677 | 2026-10-23 |
+| **PRODUCTION** | `index.html` | `6cc59588f5a8853cc45f125f84955202` | 1,536,062 | 2026-10-24 |
+| **Release snapshot** | `621.html` | `6cc59588f5a8853cc45f125f84955202` | 1,536,062 | 2026-10-24 |
+| **Rollback point** | `index.html.bak-pre-v621-20261024-023949` | `32075571989869adfc05dd620e69beda` (V619) | 1,533,736 | 2026-10-24 |
 
 > ### ⚠️ The rollback point is a Release Snapshot, not a backup — corrected 2026-08-29
 >
@@ -54,14 +54,14 @@ artifact, tracked separately, and it changes nothing here: **identity is the has
 CVQualify apparatus `VERSION` = **V482s** (unchanged — ADR-031 is a product change and must not bump
 the apparatus; see "Two versions" below).
 
-**V619 is the reference point for every future audit.** A future delta-audit compares against
-`32075571`. (V617 = `46e75b7d` is the rollback target. Since the cleanup of 2026-10-18 the folder keeps only the last seven versions (now V613–V619); older artifacts are in git history, e.g. `git checkout afc5006 -- 607.html`. Below V607, read the caveat in *Release record — V607*.)
+**V621 is the reference point for every future audit.** A future delta-audit compares against
+`6cc59588`. (V619 = `32075571` is the rollback target. Since the cleanup of 2026-10-18 the folder keeps only the last seven versions (now V615–V621); older artifacts are in git history, e.g. `git checkout afc5006 -- 607.html`. Below V607, read the caveat in *Release record — V607*.)
 
-`window.CV.build` reports **`V619`** in production — measured from the artifact. Since V509 the label
+`window.CV.build` reports **`V621`** in production — measured from the artifact. Since V509 the label
 is bumped with every version, which is why it can be trusted again; **identity is still the hash.**
 
 ```bash
-cp "index.html.bak-pre-v619-20261023-012104" "index.html"
+cp "index.html.bak-pre-v621-20261024-023949" "index.html"
 ```
 
 ## The test suite — one command (`tools/suite.py`, Phase 6)
@@ -255,6 +255,7 @@ The owner chose that it is **updated after every production release** and carrie
 | 2026-10-09 | V613 (`f7a0c614…`) | `d38e4d31…` | public commit `3e59ab0`: all 8 files byte-identical to the package; known-token and generic leak scans clean; the public copy renders (observatory: PROBLEMS: none); its 9 PDFs **and its 3 Word files (text and all XML, including the author field)** contain 0 private tokens, checked before the upload. A positive control on a private Word file found 11, so the scan is not blind. Pages serving V613, byte-identical (`d38e4d31`); `lab/bug017.html` still online |
 | 2026-10-18 | V615 (`0bc12c45…`) | `df67498d…` | public commit `4f44111`: all 8 files byte-identical to the package; known-token and generic leak scans clean; the public copy renders (observatory: PROBLEMS: none); its 9 PDFs and 3 Word files (text and all XML) contain 0 private tokens, checked before the upload; Pages serving V615, byte-identical (`df67498d`); `lab/bug017.html` still online |
 | 2026-10-19 | V617 (`46e75b7d…`) | `b43a76fa…` | public commit `4fdbdd5`: all 8 files byte-identical to the package (GitHub lists 6 as changed; the two architecture docs did not change); known-token and generic leak scans clean; the public copy renders (observatory: PROBLEMS: none); its 9 PDFs and 3 Word files (text, metadata and all XML) contain 0 private tokens, checked before the upload. The same scan on the private files found 278, so it is not blind. Pages serving V617, byte-identical (`b43a76fa`), about 20 s after the deployment run; `lab/bug017.html` still online |
+| 2026-10-23 | V619 (`32075571…`) | `6aed9b91…` | public commit `136ccd9`: all 8 files byte-identical to the package (GitHub lists 6 as changed; the two architecture docs did not change); known-token and generic leak scans clean; the public copy renders (observatory: PROBLEMS: none); its 9 PDFs and 3 Word files (text, metadata and all XML) contain 0 private tokens, checked before the upload; the same scan on the private files found 278. Pages serving V619, byte-identical (`6aed9b91`); `lab/bug017.html` still online |
 
 ## Device coverage matrix (as of production V542 = sandbox, 2026-09-29; HTTPS and rotation rows updated 2026-09-30; production V550 since 2026-09-30; photo-series rows added at V565, 2026-10-02)
 
@@ -330,44 +331,75 @@ V537's identity (`d2b8a938…`) is untouched: `537.html` and its rollback backup
 
 Moved on 2026-10-08 (Mac Phase 5, audit F-10). This file had grown to 315 KB and was hard to read. The text was moved **byte for byte, in its original order**; nothing was edited, summarised or dropped.
 - **Moved:**
-  - closed sandbox sections V510–V564 (closed by V520 … V565) and V566–V616 (closed by V567 … V617);
-  - release records V609 back to V482u, with the note *Sandbox after promotion — V509*.
+  - closed sandbox sections V510–V564 (closed by V520 … V565) and V566–V618 (closed by V567 … V619);
+  - release records V613 back to V482u, with the note *Sandbox after promotion — V509*.
 - **Stays here:**
   - the current baseline, the gates, the public mirror and the device matrix;
-  - the open sandbox section, if any, and the last closed one (V618);
-  - the last four release records (V613–V619);
+  - the open sandbox section, if any, and the last closed one (V620);
+  - the last four release records (V615–V621);
   - the production mirror invariant and the checklist.
 - **From now on:** at each promotion, the sandbox section it closes and any release record older than the last four move to the archive.
 
 ## Sandbox sections and release records (newest first)
 
-#### Sandbox ahead of production — V618 (2026-10-23) — fixes from the full recheck (the AI co-author) — CLOSED by the V619 promotion
+#### Sandbox ahead of production — V620 (2026-10-24) — the photo bars keep clear of the corner squares — CLOSED by the V621 promotion
 
-**Closed on 2026-10-23:** `index-test.html` = `index.html` = `619.html`.
+**Closed on 2026-10-24:** `index-test.html` = `index.html` = `621.html`.
 
-Production is V617 (`46e75b7d…`).
+Production is V619 (`32075571…`).
 
 | Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
 |---|---|---|---|---|
-| V618 | `618.html` | `402671e17fa0667e53edf53788310fcf` | 1,533,693 | `index-test.html.bak-pre-v618-20261023-002650` (= V617, `46e75b7d…`) |
+| V620 | `620.html` | `926b42919b6905486cf7ea489424c7fe` | 1,536,019 | `index-test.html.bak-pre-v620-20261023-171031` (= V619, `32075571…`) |
 
-**Why:** the owner asked for a recheck of everything for malfunctions, with fixes ("ribej nje richeck gjithshkaje, per keqfunksionim.. rregulloji ato nese ka!"). The normal paths all passed. A targeted probe of the co-author's edge cases (Chrome, fake Mac host) found **five real defects in V617**. All five are in `window.CVAI`; nothing else in the core changed.
+**The owner's request:** the photo tool bars, first the adjust slider that starts at "100%" (opacity and the other colour settings), and every other bar, must not be as wide as the terminal; they should be a little narrower so they do not get in the way of the corner squares used to resize the photo ("…te mos jete me permasa totale sa vet Terminali por te jete pak me i ngushte qe mos te pengoj ne Cepat…").
 
-| # | Defect in V617 (measured) | Fix in V618 |
-|---|---|---|
-| 1 | **Translating into an empty field did nothing.** The field list skips empty fields, and the same list was used to find the target. So when the target language's field was still empty (the usual case for a first translation), the proposal was silently dropped (`applied 0`). | `fields(scope, keepEmpty)`: writing looks up empty fields too. Sending still skips them. |
-| 2 | **A late answer after closing the panel threw an error.** Close while Claude is working, reopen another task, and the old answer arrived into the new panel state (`TypeError … reading 'forEach'`). | Each request carries a token; an answer whose request is no longer the panel's current one is ignored. |
-| 3 | **The old answer could replace a newer request.** Close, reopen, ask again: the first answer showed up while the second was still pending. | The same token. |
-| 4 | **Closing the panel while accepting threw an error** (`TypeError … setting 't1.proftext'`). The text was written, but the card update hit the reset state. | The text is still written and the message shown; the card update is skipped when the panel has been closed. |
-| 5 | **A proposal whose field was not found was shown as "accepted".** | Such a card now says "Not applied – field not found" (new `ui` key `aiMissing` in de/en/sq). Only the fields actually written count. |
+**Measured in V619** (Chrome, a test photo in the first terminal, the gap from each bar to the corner squares' grab zone):
+- **The adjust slider was as wide as the photo, 18 px below it.** At 100% its thumb and the "100%" label sat right under the bottom-right corner square (gap 0; 3 px to the visible square).
+- **A photo larger than the terminal:** the corner squares are kept inside the terminal outline (V561), and the slider ran across the whole terminal at the same height, over the bottom-left square, with the "100%" label hiding the bottom-right one (1154 px wide, gap 0).
+- **The toolbar** sat 4 px above the top corner squares (inside their grab zone) for a normal or narrow photo.
 
-- **Checked and fine:** preview mode (the same 66 fields are found and an accepted proposal is written; the preview guard blocks typing, not this path).
-- **The i18n "unreferenced keys" warning:** `tools/verify.py` now counts keys built at run time from a prefix written in the code (`'aiT_'+st.task`). The warning is back to the one key it has listed since before V611, `langChanged` (an unused string, harmless).
-- **The Mac app side** (Mac repo, ships with the next build): the request timeout was 150 s, but without streaming the answer arrives in one piece at the end. A long request (the whole CV) could time out and be retried up to three times, paying each time. Now 10 minutes, as in the official SDKs, and no retry after a timeout; a lost connection is still retried. The request shape (`fallbacks: "default"` with `server-side-fallback-2026-07-01`, `output_config.format` JSON schema, effort `medium`, no `thinking`) was checked against the current Claude API documentation and is valid.
-- **Measured:**
-  - **`tools/ai_test.mjs`: 18/18** (6 new checks: the empty target field, preview mode, the late answer twice, closing while accepting, the missing field). On V617 the 5 checks for the defects FAIL, so they detect them.
-  - **Mac `--selftest-ai`: 15/15** on a development build with this core (2 new: no retry after a timeout, a retry after a lost connection).
-- **Gates:** `python3 tools/suite.py index-test.html --mac` → **36 of 37 steps PASS** (36.4 min; report `reports/suite-20261023-0034-V618-402671e1.md`). The one failure was `undo_test` hitting the 900 s step timeout with no failed check. Run alone it passed in 190 s, the same as on V617 (189–190 s), and `python3 tools/suite.py index-test.html --only undo_test` → **ALL PASS** (report `reports/suite-20261023-0115-V618-402671e1.md`). It was a hung browser, not a regression; V618 does not touch the history engine. `ai_test` 18/18; `storage_trace` against production: IDENTICAL after every step; golden: no visual regression; `pdf_check` desktop and phone: ALL PASS; `docx_test` 23/23; all seven Mac self-tests PASS on the development build with this core.
+**V620 (one place: the photo engine's `apply()`, where the bars are positioned):**
+- **The slider** is inset from the corner columns by their grab zone (12 px square, plus 9 px on desktop or 16 px on touch screens, plus a margin), and is at most 360 px wide, centred.
+- **A very narrow photo:** the slider keeps 120 px and moves down below the corner squares.
+- **A rotated photo:** if the lowest corner would touch the slider, the slider moves below it.
+- **The toolbar** moves up above the top corner squares when it would touch them. When there is no room above (the photo at the top of the terminal), it moves just below them.
+- The corner squares are computed exactly as they are placed (clamped inside the terminal outline). Nothing else changes: no stored data, no export path.
+
+**Measured in V620** (gap to the grab zone, desktop / phone emulation):
+- normal photo: slider 12 / 12 px, toolbar 6 / 6 px;
+- larger than the terminal: slider 370 px away and 360 px wide;
+- narrow: 6 / 6 px; rotated 20°: 4 / 4 px; photo in the top-left corner: slider 12 px, toolbar 6 px.
+- **Not changed:** the round rotate handle (shown only in Transform) sits between the top corners; on a 70 px wide photo on a phone it touches their touch zone, exactly as before. It is a handle, not a bar.
+- **Screenshots** before and after (normal photo and larger than the terminal) were checked by eye.
+
+**New permanent check:** `tools/photoedit_test.mjs` now has 26 checks. The new one, "bars · the adjust slider and the toolbar keep clear of the corner squares", passes on V620 and FAILS on V619 (slider 0 px, 1154 px wide).
+
+**Gates:** `python3 tools/suite.py index-test.html --mac` → **SUITE: ALL PASS, 37 steps** (23.9 min; report `reports/suite-20261024-0203-V620-926b4291.md`). `photoedit_test` 26/26 (with the new bars check); golden: no visual regression; `photoexport_test` 8/8; `storage_trace` against production: IDENTICAL after every step; `pdf_check` desktop and phone: ALL PASS; all seven Mac self-tests PASS on the development build with this core.
+
+### Release record — V621 (2026-10-24) — the photo bars keep clear of the corner squares (V620)
+
+**Promoted on the owner's instruction** ("ateher me mir promovoje", after seeing the before/after screenshots). V621 is V620 plus the build label and its history line; a diff confirmed that nothing else differs.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V620 | The photo's adjust slider is inset from the corner squares (their grab zone, desktop and touch) and at most 360 px wide; a narrow photo keeps a 120 px slider below the corners; the toolbar moves above (or below) the top corners when it would touch them | UI (layout of the photo tools) | Nothing stored changes, no migration |
+
+**Delta-audit (execution surface).**
+- One place changed: the photo engine's `apply()`, where the bars are positioned. It reads the corner squares' positions the same way they are placed. No new listener, no stored data, no export path.
+- `storage_trace` against V619 is IDENTICAL after every step; golden images: no visual regression; the PDFs (desktop and phone) unchanged.
+
+**Device gate:** the real Mac app with this core (the bars are the same in the app's WebKit).
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v621-20261024-023949` (= V619, `32075571…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v621-20261024-023949` (= V620). It went to the Trash folder afterwards under the keep-seven rule; it has the same bytes as `620.html`.
+- **Identity:** `md5 -q index.html index-test.html 621.html | sort -u` printed one hash (`6cc59588…`).
+- **Keep-seven rule, applied after the copy:** `614.html`, the previous rollback `index.html.bak-pre-v619-20261023-012104` (= V617, same bytes as `617.html`) and the sandbox backups went to the Trash folder `ProjectS-pastrim-2026-10-18`. The tracked ones are still in git history.
+
+**Gates on the candidate (bit-identical to the promoted file):** `python3 tools/suite.py index-test.html --mac` → **36 of 37 steps PASS** (29.7 min; report `reports/suite-20261024-0239-V621-6cc59588.md`). The one failure was `state_test` hitting its 396 s step timeout with no failed check (on V620 it passed in 61 s). Run alone it passed in 61 s, and `python3 tools/suite.py index-test.html --only state_test` → **ALL PASS** (report `reports/suite-20261024-0312-V621-6cc59588.md`): a hung browser, not a regression; V620 does not touch stored state. `photoedit_test` 26/26; golden: no visual regression; `storage_trace` against production: IDENTICAL after every step; `pdf_check` desktop and phone: ALL PASS; all seven Mac self-tests PASS on the development build with this core. After the copy: `verify` RELEASE CANDIDATE YES; observatory on `index.html`: PROBLEMS none.
+
+**Rollback:** production returns to V619 by copying `index.html.bak-pre-v621-20261024-023949` over `index.html` (the command is in *Current baseline*). Nothing is lost: V619 only lacks the narrower bars.
 
 ### Release record — V619 (2026-10-23) — fixes from the full recheck (the AI co-author; V618)
 
@@ -465,47 +497,6 @@ Production is V617 (`46e75b7d…`).
   - `tools/word_check.sh index.html` (real Microsoft Word): ALL PASS, the certificate identical to the app's A4 PDF line for line.
 
 **Rollback:** production returns to V613 by copying `index.html.bak-pre-v615-20261018-142631` over `index.html` (the command is in *Current baseline*). Nothing is lost: V613 gives the certificate the CV's Word style instead of the A4 layout.
-
-### Release record — V613 (2026-10-09) — the CV as a file and Word export (DeepSeek review B1, B2; V610–V612)
-
-**Promoted on the owner's instruction** ("promovoje"), after the owner's decisions "fillo me radh" (do the DeepSeek review in order), "po i dua perqindjen" and "shtoje dhe butonin Word ne Mac". V613 is V612 plus the build label and its history line. A line diff confirmed that nothing else differs.
-
-| Version | Change | Class | Persistence |
-|---|---|---|---|
-| V610 | The export sheet can save the whole CV as one `.json` file (texts, photos, design, profile photo) and open it again: validated first, confirmed, rolled back on a failed write; hidden in a Mac document | Functional / UI | Opening writes the same document keys a `.uicv` holds, only after confirmation; normal saving unchanged (`storage_trace` identical) |
-| V611 | "Save as Word file": the CV, the letter and the certificate as `.docx` (`window.CVDocx`, no library). Texts are read by one computed-style reader, the same in every engine and view. On the Mac through `CVHost.saveFile` | Functional / UI | none |
-| V612 | The Word CV shows each language's percentage, right-aligned with a dot leader | Functional | none |
-
-**Delta-audit (execution surface).**
-- `CVFile` and `CVDocx` run only on a click in the export sheet; at start-up they define themselves and do nothing else.
-- The new `CVPhotoEngine.assets` door is called only by `CVFile`.
-- The sheet's labels gain three keys and one row. No migration, no new storage key, no change to saving.
-- `storage_trace` against V609: IDENTICAL after every step.
-
-**Device gates.**
-- Microsoft Word 16.113.3 opened all three documents without a repair message (`tools/word_check.sh`: A4, full text, page images checked).
-- WebKit (Safari and iPhone engine): `cvfile_webkit.js` and `docx_webkit.js` PASS.
-- The real Mac app with the V612 core: `--selftest` `wordExport` and `--selftest-ui` `menuWord` (the Export menu item) PASS.
-- **The owner, in the installed Mac app (build 37, core V613):** downloaded the Word file and opened it in Word, and said "po duket mirë" (it looks good), 2026-10-09.
-
-**Backups:**
-- **Production:** `index.html.bak-pre-v613-20261009-132431` (= V609, `ec249884…`), hash-verified before the copy and again after it.
-- **Sandbox:** `index-test.html.bak-pre-v613-20261009-132431` (= V612, `d61932f7…`).
-- **Identity:** `md5 -q index.html index-test.html 613.html | sort -u` printed one hash (`f7a0c614…`).
-
-**Gates on the candidate (bit-identical to the promoted file):** `python3 tools/suite.py index-test.html --mac` → **33 of 34 steps PASS** (22.9 min; report `reports/suite-20261009-1324-V613-f7a0c614.md`).
-- **The one FAIL:** the WebKit timing check `photo_drag.js` ("one draw per frame"). It was not reproducible: twice by hand and once through the suite it passes, with 1.03 draws per frame and no long frame (report `reports/suite-20261009-1349-V613-f7a0c614.md`). The step before it ran slow too (19 s instead of 14 s), so the machine was busy. Photo dragging is untouched by V610–V612.
-- **The suite (all PASS):**
-  - `storage_trace` against V609: IDENTICAL after every step, `--fail` and `--ai` clean;
-  - golden: no visual regression; `pdf_check` desktop and phone: ALL PASS;
-  - `docx_test` 21/21, `cvfile_test` 13/13, `persist_test` 88/88, `undo_test` 14/14 as designed;
-  - all six Mac self-tests, with `wordExport` and `menuWord`.
-- **On the promoted `index.html`:**
-  - `verify.py --file index.html`: YES;
-  - observatory: `V613`, 7 terminals, msg 77/77 in de/en/sq, `PROBLEMS: none`;
-  - `tools/word_check.sh index.html` (real Microsoft Word): ALL PASS.
-
-**Rollback:** production returns to V609 by copying `index.html.bak-pre-v613-20261009-132431` over `index.html` (the command is in *Current baseline*). Nothing is lost: V609 only lacks the file save/open and the Word export. A CV opened from a file stays, because it is stored in the same keys.
 
 ## Production mirror invariant
 

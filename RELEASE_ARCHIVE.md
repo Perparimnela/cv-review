@@ -1104,6 +1104,34 @@ The external review asked for C1 (normalise) and C2 (no remote fallback) as one 
 - Golden image export: 6/6 at 0.000 %.
 - `pdf_check` desktop and `--mobile`: ALL PASS 9/9.
 
+#### Sandbox ahead of production — V618 (2026-10-23) — fixes from the full recheck (the AI co-author) — CLOSED by the V619 promotion
+
+**Closed on 2026-10-23:** `index-test.html` = `index.html` = `619.html`.
+
+Production is V617 (`46e75b7d…`).
+
+| Version | Artifact | Hash (md5) | Bytes | Pre-edit backup |
+|---|---|---|---|---|
+| V618 | `618.html` | `402671e17fa0667e53edf53788310fcf` | 1,533,693 | `index-test.html.bak-pre-v618-20261023-002650` (= V617, `46e75b7d…`) |
+
+**Why:** the owner asked for a recheck of everything for malfunctions, with fixes ("ribej nje richeck gjithshkaje, per keqfunksionim.. rregulloji ato nese ka!"). The normal paths all passed. A targeted probe of the co-author's edge cases (Chrome, fake Mac host) found **five real defects in V617**. All five are in `window.CVAI`; nothing else in the core changed.
+
+| # | Defect in V617 (measured) | Fix in V618 |
+|---|---|---|
+| 1 | **Translating into an empty field did nothing.** The field list skips empty fields, and the same list was used to find the target. So when the target language's field was still empty (the usual case for a first translation), the proposal was silently dropped (`applied 0`). | `fields(scope, keepEmpty)`: writing looks up empty fields too. Sending still skips them. |
+| 2 | **A late answer after closing the panel threw an error.** Close while Claude is working, reopen another task, and the old answer arrived into the new panel state (`TypeError … reading 'forEach'`). | Each request carries a token; an answer whose request is no longer the panel's current one is ignored. |
+| 3 | **The old answer could replace a newer request.** Close, reopen, ask again: the first answer showed up while the second was still pending. | The same token. |
+| 4 | **Closing the panel while accepting threw an error** (`TypeError … setting 't1.proftext'`). The text was written, but the card update hit the reset state. | The text is still written and the message shown; the card update is skipped when the panel has been closed. |
+| 5 | **A proposal whose field was not found was shown as "accepted".** | Such a card now says "Not applied – field not found" (new `ui` key `aiMissing` in de/en/sq). Only the fields actually written count. |
+
+- **Checked and fine:** preview mode (the same 66 fields are found and an accepted proposal is written; the preview guard blocks typing, not this path).
+- **The i18n "unreferenced keys" warning:** `tools/verify.py` now counts keys built at run time from a prefix written in the code (`'aiT_'+st.task`). The warning is back to the one key it has listed since before V611, `langChanged` (an unused string, harmless).
+- **The Mac app side** (Mac repo, ships with the next build): the request timeout was 150 s, but without streaming the answer arrives in one piece at the end. A long request (the whole CV) could time out and be retried up to three times, paying each time. Now 10 minutes, as in the official SDKs, and no retry after a timeout; a lost connection is still retried. The request shape (`fallbacks: "default"` with `server-side-fallback-2026-07-01`, `output_config.format` JSON schema, effort `medium`, no `thinking`) was checked against the current Claude API documentation and is valid.
+- **Measured:**
+  - **`tools/ai_test.mjs`: 18/18** (6 new checks: the empty target field, preview mode, the late answer twice, closing while accepting, the missing field). On V617 the 5 checks for the defects FAIL, so they detect them.
+  - **Mac `--selftest-ai`: 15/15** on a development build with this core (2 new: no retry after a timeout, a retry after a lost connection).
+- **Gates:** `python3 tools/suite.py index-test.html --mac` → **36 of 37 steps PASS** (36.4 min; report `reports/suite-20261023-0034-V618-402671e1.md`). The one failure was `undo_test` hitting the 900 s step timeout with no failed check. Run alone it passed in 190 s, the same as on V617 (189–190 s), and `python3 tools/suite.py index-test.html --only undo_test` → **ALL PASS** (report `reports/suite-20261023-0115-V618-402671e1.md`). It was a hung browser, not a regression; V618 does not touch the history engine. `ai_test` 18/18; `storage_trace` against production: IDENTICAL after every step; golden: no visual regression; `pdf_check` desktop and phone: ALL PASS; `docx_test` 23/23; all seven Mac self-tests PASS on the development build with this core.
+
 #### Sandbox ahead of production — V616 (2026-10-19) — the AI co-author in "draft mode" (DeepSeek review B3) — CLOSED by the V617 promotion
 
 **Closed on 2026-10-19:** `index-test.html` = `index.html` = `617.html`.
@@ -2410,6 +2438,47 @@ Two implementations of one function go against Neni 9.1. The live path was alway
 - `pdf_check` desktop and `--mobile`: ALL PASS.
 - `verify.py`: YES (msg keys 60/60, all referenced).
 - The file is 10,342 bytes smaller (1,346,255 → 1,335,517).
+
+### Release record — V613 (2026-10-09) — the CV as a file and Word export (DeepSeek review B1, B2; V610–V612)
+
+**Promoted on the owner's instruction** ("promovoje"), after the owner's decisions "fillo me radh" (do the DeepSeek review in order), "po i dua perqindjen" and "shtoje dhe butonin Word ne Mac". V613 is V612 plus the build label and its history line. A line diff confirmed that nothing else differs.
+
+| Version | Change | Class | Persistence |
+|---|---|---|---|
+| V610 | The export sheet can save the whole CV as one `.json` file (texts, photos, design, profile photo) and open it again: validated first, confirmed, rolled back on a failed write; hidden in a Mac document | Functional / UI | Opening writes the same document keys a `.uicv` holds, only after confirmation; normal saving unchanged (`storage_trace` identical) |
+| V611 | "Save as Word file": the CV, the letter and the certificate as `.docx` (`window.CVDocx`, no library). Texts are read by one computed-style reader, the same in every engine and view. On the Mac through `CVHost.saveFile` | Functional / UI | none |
+| V612 | The Word CV shows each language's percentage, right-aligned with a dot leader | Functional | none |
+
+**Delta-audit (execution surface).**
+- `CVFile` and `CVDocx` run only on a click in the export sheet; at start-up they define themselves and do nothing else.
+- The new `CVPhotoEngine.assets` door is called only by `CVFile`.
+- The sheet's labels gain three keys and one row. No migration, no new storage key, no change to saving.
+- `storage_trace` against V609: IDENTICAL after every step.
+
+**Device gates.**
+- Microsoft Word 16.113.3 opened all three documents without a repair message (`tools/word_check.sh`: A4, full text, page images checked).
+- WebKit (Safari and iPhone engine): `cvfile_webkit.js` and `docx_webkit.js` PASS.
+- The real Mac app with the V612 core: `--selftest` `wordExport` and `--selftest-ui` `menuWord` (the Export menu item) PASS.
+- **The owner, in the installed Mac app (build 37, core V613):** downloaded the Word file and opened it in Word, and said "po duket mirë" (it looks good), 2026-10-09.
+
+**Backups:**
+- **Production:** `index.html.bak-pre-v613-20261009-132431` (= V609, `ec249884…`), hash-verified before the copy and again after it.
+- **Sandbox:** `index-test.html.bak-pre-v613-20261009-132431` (= V612, `d61932f7…`).
+- **Identity:** `md5 -q index.html index-test.html 613.html | sort -u` printed one hash (`f7a0c614…`).
+
+**Gates on the candidate (bit-identical to the promoted file):** `python3 tools/suite.py index-test.html --mac` → **33 of 34 steps PASS** (22.9 min; report `reports/suite-20261009-1324-V613-f7a0c614.md`).
+- **The one FAIL:** the WebKit timing check `photo_drag.js` ("one draw per frame"). It was not reproducible: twice by hand and once through the suite it passes, with 1.03 draws per frame and no long frame (report `reports/suite-20261009-1349-V613-f7a0c614.md`). The step before it ran slow too (19 s instead of 14 s), so the machine was busy. Photo dragging is untouched by V610–V612.
+- **The suite (all PASS):**
+  - `storage_trace` against V609: IDENTICAL after every step, `--fail` and `--ai` clean;
+  - golden: no visual regression; `pdf_check` desktop and phone: ALL PASS;
+  - `docx_test` 21/21, `cvfile_test` 13/13, `persist_test` 88/88, `undo_test` 14/14 as designed;
+  - all six Mac self-tests, with `wordExport` and `menuWord`.
+- **On the promoted `index.html`:**
+  - `verify.py --file index.html`: YES;
+  - observatory: `V613`, 7 terminals, msg 77/77 in de/en/sq, `PROBLEMS: none`;
+  - `tools/word_check.sh index.html` (real Microsoft Word): ALL PASS.
+
+**Rollback:** production returns to V609 by copying `index.html.bak-pre-v613-20261009-132431` over `index.html` (the command is in *Current baseline*). Nothing is lost: V609 only lacks the file save/open and the Word export. A CV opened from a file stays, because it is stored in the same keys.
 
 ### Release record — V609 (2026-10-08) — the profile photo can be undone (V608)
 

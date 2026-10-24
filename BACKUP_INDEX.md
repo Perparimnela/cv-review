@@ -13,7 +13,7 @@ edits is gone. Every capability and every decision the project holds today is no
 
 ---
 
-## Manifest — what the folder holds now (2026-10-23, after the V619 promotion; sandbox = production)
+## Manifest — what the folder holds now (2026-10-24, after the V621 promotion; sandbox = production)
 
 > A lean inventory, added after the external review (point 8). It is generated from the files themselves and their hashes. The narrative sections below remain the forensic history; this table is the operational list. Roles: **production** (live), **sandbox** (work in progress), **release snapshot** (immutable, Neni 6.5), **rollback** (production backup taken before a promotion), **sandbox iteration**, **test fixture**.
 
@@ -32,25 +32,32 @@ edits is gone. Every capability and every decision the project holds today is no
 > - **After the V617 promotion (2026-10-19):** `610.html`, the previous rollback (= V613) and the sandbox backups moved there too.
 > - **2026-10-23:** with the V618 snapshot, `611.html` moved to the same Trash folder (keep-seven rule).
 > - **After the V619 promotion (2026-10-23):** `612.html`, the previous rollback (= V615) and the sandbox backups moved there too.
+> - **2026-10-24:** with the V620 snapshot, `613.html` moved to the same Trash folder (keep-seven rule).
+> - **After the V621 promotion (2026-10-24):** `614.html`, the previous rollback (= V617) and the sandbox backups moved there too.
 > - The narrative sections below are history, and many files they name are no longer in the folder.
 
 | File | Holds | md5 | Role |
 |---|---|---|---|
-| `index.html` | V619 | `32075571` | production |
-| `index-test.html` | V619 | `32075571` | sandbox (= production) |
-| `613.html` | V613 | `f7a0c614` | release snapshot |
-| `614.html` | V614 | `84532dd2` | sandbox iteration |
+| `index.html` | V621 | `6cc59588` | production |
+| `index-test.html` | V621 | `6cc59588` | sandbox (= production) |
 | `615.html` | V615 | `0bc12c45` | release snapshot |
 | `616.html` | V616 | `2b70c046` | sandbox iteration |
 | `617.html` | V617 | `46e75b7d` | release snapshot |
 | `618.html` | V618 | `402671e1` | sandbox iteration |
 | `619.html` | V619 | `32075571` | release snapshot |
-| `index.html.bak-pre-v619-20261023-012104` | V617 | `46e75b7d` | rollback — **operational** (one release back) |
+| `620.html` | V620 | `926b4291` | sandbox iteration |
+| `621.html` | V621 | `6cc59588` | release snapshot |
+| `index.html.bak-pre-v621-20261024-023949` | V619 | `32075571` | rollback — **operational** (one release back) |
 | `tools/photo/legacy-v573.html` | V573 | `91abe8b1` | test fixture — `photo_test` (the last version with the old photo storage format) |
 
 7 snapshots, 1 production backup, 1 test fixture. Verify any row with `md5 -q <file>`.
 
 ---
+
+> **Sandbox deviation (named, 2026-10-24, after V619) — CLOSED on 2026-10-24 by the V621 promotion:**
+> `index-test.html` = `index.html` = `621.html` = V621 (`6cc59588…`). The sandbox had run ahead as V620.
+> Sandbox backup: `index-test.html.bak-pre-v620-20261023-171031` (= V619).
+> V620: the photo's adjust slider and toolbar keep clear of the corner squares (owner's request). `photoedit_test` 26/26 (the new check FAILS on V619).
 
 > **Sandbox deviation (named, 2026-10-23, after V617) — CLOSED on 2026-10-23 by the V619 promotion:**
 > `index-test.html` = `index.html` = `619.html` = V619 (`32075571…`). The sandbox had run ahead as V618.
@@ -223,6 +230,22 @@ edits is gone. Every capability and every decision the project holds today is no
 > | `index-test.html.bak-pre-v518-20260927-162722` | V517 (= `517.html`) | `1c254fef…` |
 > | `index-test.html.bak-pre-v519-20260927-164542` | V518 (= `518.html`) | `8c55cd79…` |
 
+## `index.html.bak-pre-v621-20261024-023949`
+
+| | |
+|---|---|
+| **Version** | V619 |
+| **Hash (md5)** | `32075571989869adfc05dd620e69beda` |
+| **Size** | 1,533,736 bytes |
+
+**Purpose.** **The operational rollback for V621**, promoted 2026-10-24. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It lacks only the narrower photo bars, so the rollback loses no data.
+
+Byte-identical to `619.html`.
+
+```bash
+cp "index.html.bak-pre-v621-20261024-023949" "index.html"
+```
+
 ## `index.html.bak-pre-v619-20261023-012104`
 
 | | |
@@ -231,7 +254,7 @@ edits is gone. Every capability and every decision the project holds today is no
 | **Hash (md5)** | `46e75b7d0dbf9f540c7125b956eec180` |
 | **Size** | 1,532,677 bytes |
 
-**Purpose.** **The operational rollback for V619**, promoted 2026-10-23. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It lacks only the five co-author fixes, so the rollback loses no data.
+**Purpose.** The rollback for V619 (operational until the V621 promotion on 2026-10-24; then moved to the Trash under the keep-seven rule, same bytes as `617.html`), promoted 2026-10-23. It was hash-verified against the outgoing `index.html` immediately before the copy, and again after it. It lacks only the five co-author fixes, so the rollback loses no data.
 
 Byte-identical to `617.html`.
 
@@ -982,10 +1005,10 @@ was written to stop without attempting automatic recovery.
 
 ## Restoring
 
-**Production is V619 (`32075571…`). To roll back one release, to V617** (no data is lost):
+**Production is V621 (`6cc59588…`). To roll back one release, to V619** (no data is lost):
 
 ```bash
-cp "index.html.bak-pre-v619-20261023-012104" "index.html"
+cp "index.html.bak-pre-v621-20261024-023949" "index.html"
 ```
 
 Two releases back, to V597 (first read the caveat in *Release record — V607*: a letter written under V607 would be lost): `cp "index.html.bak-pre-v607-20261008-161042" "index.html"`.
